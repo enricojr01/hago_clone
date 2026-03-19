@@ -1,0 +1,49 @@
+erDiagram
+    EMPLOYEE {
+        int id
+        String role
+        String name
+        String email
+        String pword
+        
+    }    
+
+    PATIENT {
+        int id
+        String name
+        String email
+        String pword        
+    }
+
+    CLINIC {
+        int id
+        String name
+        String address        
+    }
+
+    SERVICE {
+        int id
+        String name
+        String desc
+    }
+
+    APPOINTMENT {
+        int id
+        slot TIMESLOT
+        String status        
+    }    
+    
+    TIMESLOT {
+        id int
+        start Time 
+        end Time
+        capacity int
+    }
+    
+	CLINIC }|--|{ SERVICE : Provides
+	CLINIC }|--|{ TIMESLOT : Has
+    CLINIC ||--|{ EMPLOYEE : Works
+    APPOINTMENT }|--|| TIMESLOT : In
+    PATIENT ||--|{ APPOINTMENT : Books
+    SERVICE ||--|{ APPOINTMENT : For
+    CLINIC ||--|{ APPOINTMENT : At
