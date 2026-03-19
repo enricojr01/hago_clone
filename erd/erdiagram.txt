@@ -29,6 +29,7 @@ erDiagram
 
     APPOINTMENT {
         int id
+		date Date
         slot TIMESLOT
         String status        
     }    
