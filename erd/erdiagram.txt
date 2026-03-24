@@ -60,6 +60,12 @@ erDiagram
         capacity int
     }
 
+	CLINICTIMESLOT {
+		int id 
+		int clinic_id
+		int timeslot_id
+	}
+
 	CLINIC ||--|{ CLINICSERVICE : Provides
 	SERVICE||--|{ CLINICSERVICE : Is_Provided_By
 	CLINIC }|--|{ TIMESLOT : Has
