@@ -9,15 +9,14 @@ import org.junit.jupiter.api.Test;
 import com.clone.hago_clone.models.EmployeeBean;
 import com.clone.hago_clone.db.BaseDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
-import org.junit.jupiter.api.AfterAll;
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+//import org.junit.jupiter.api.Disabled;
 
 /**
  *
@@ -138,7 +137,215 @@ public class TestEmployeeDao {
 					"hunter2"
 			);
 			int result = ed.deleteEmployee(r);
-			assertEquals(999, result);
+			assertEquals(1, result);
+		} catch(SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindEmployeeByID() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try {
+			EmployeeBean r = ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"admin@admin.com", 
+					"hunter2"
+			);
+
+			EmployeeBean t = ed.findEmployeeByID(r.getId());
+			assertEquals(r.getName(), t.getName());
+		} catch(SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindEmployeeByIDFail() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try {
+			EmployeeBean r = ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"admin@admin.com", 
+					"hunter2"
+			);
+
+			EmployeeBean t = ed.findEmployeeByID(5);
+			assertNull(t);
+		} catch(SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindEmployeesByRole() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try { 
+			ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"admin1@admin.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"admin", 
+					"john", 
+					"admin2@admin.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"staff", 
+					"jack", 
+					"admin3@admin.com", 
+					"hunter3"
+			);
+			ArrayList<EmployeeBean> result = ed.findEmployeesByRole("admin");
+			assertEquals(2, result.size());
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindEmployeesByRoleFail() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try { 
+			ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"admin1@admin.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"admin", 
+					"john", 
+					"admin2@admin.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"staff", 
+					"jack", 
+					"admin3@admin.com", 
+					"hunter3"
+			);
+			ArrayList<EmployeeBean> result = ed.findEmployeesByRole("patient");
+			assertEquals(0, result.size());
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testFindEmployeesByName() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try {
+			ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"enrico@admin.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"staff", 
+					"enrico", 
+					"enrico@staff.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"patient", 
+					"enrico", 
+					"enrico@gmail.com",
+					"hunter2"
+			);
+			ed.addEmployee(
+					"staff", 
+					"john", 
+					"john@staff.com",
+					"hunter2"
+			);
+			ArrayList<EmployeeBean> result = ed.findEmployeesByName("enrico");
+			assertEquals(3, result.size());
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindEmployeesByNameFail() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try {
+			ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"enrico@admin.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"staff", 
+					"enrico", 
+					"enrico@staff.com", 
+					"hunter2"
+			);
+			ed.addEmployee(
+					"patient", 
+					"enrico", 
+					"enrico@gmail.com",
+					"hunter2"
+			);
+			ed.addEmployee(
+					"staff", 
+					"john", 
+					"john@staff.com",
+					"hunter2"
+			);
+			ArrayList<EmployeeBean> result = ed.findEmployeesByName("james");
+			assertEquals(0, result.size());
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testFindEmployeeByEmail() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try {
+			EmployeeBean r = ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"admin@admin.com", 
+					"hunter2"
+			);
+
+			EmployeeBean t = ed.findEmployeeByEmail(r.getEmail());
+			assertEquals(r.getName(), t.getName());
+		} catch(SQLException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testFindEmployeeByEmailFail() {
+		BaseDAO bd = createBase();
+		EmployeeDAO ed = new EmployeeDAO(bd);
+		try {
+			EmployeeBean r = ed.addEmployee(
+					"admin", 
+					"enrico", 
+					"admin@admin.com", 
+					"hunter2"
+			);
+
+			EmployeeBean t = ed.findEmployeeByEmail("test@fake.com");
+			assertNull(t);
 		} catch(SQLException e) {
 			fail(e.toString());
 		}

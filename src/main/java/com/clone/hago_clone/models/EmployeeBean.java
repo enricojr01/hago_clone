@@ -16,6 +16,7 @@ public class EmployeeBean implements Serializable {
 	private String name;
 	private String email;
 	private String password;
+	private ClinicBean clinic;
 
 	public EmployeeBean(long id, String role, String name, String email, String password) {
 		this.id = id;
@@ -27,10 +28,6 @@ public class EmployeeBean implements Serializable {
 
 	public long getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getRole() {

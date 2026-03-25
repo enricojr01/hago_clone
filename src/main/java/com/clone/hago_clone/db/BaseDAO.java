@@ -17,11 +17,9 @@ public class BaseDAO {
 	private String dbUsername;
 	private String dbPassword;
 
-	public BaseDAO(
-			String url, 
-			String username, 
-			String password
-	) throws ClassNotFoundException {
+	public BaseDAO(String url, String username, String password) 
+			throws ClassNotFoundException 
+	{
 		this.dbURL = url;
 		this.dbUsername = username;
 		this.dbPassword = password;
