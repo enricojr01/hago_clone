@@ -39,8 +39,10 @@ public class EmployeeDAO {
 		try (Connection c = db.getConnection()) {
 			Statement s = c.prepareStatement(createStatement);
 			s.executeUpdate(createStatement);
+
 			s.close();
 			c.close();
+			
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -52,6 +54,10 @@ public class EmployeeDAO {
 		try (Connection c = db.getConnection()) {
 			Statement ps = c.createStatement();
 			ps.execute("drop table Employee");
+
+			ps.close();
+			c.close();
+			
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -91,10 +97,14 @@ public class EmployeeDAO {
 						email, 
 						password
 				);
+
 				ps.close();
 				c.close();
+
 				return eb;
 			} else {
+				ps.close();
+				c.close();
 				return null;
 			}
 		} catch (SQLException e) {
@@ -122,6 +132,9 @@ public class EmployeeDAO {
 				);
 				results.add(eb);
 			}
+
+			ps.close();
+			c.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -150,6 +163,10 @@ public class EmployeeDAO {
 						email, 
 						password
 				);
+					
+				ps.close();
+				c.close();
+
 				return eb;
 			} else {
 				return null;
@@ -175,6 +192,8 @@ public class EmployeeDAO {
 						rs.getString("email"),
 						rs.getString("password")
 				);
+				ps.close();
+				c.close();
 				return eb;
 			} else {
 				return null;
@@ -209,7 +228,10 @@ public class EmployeeDAO {
 						rs.getString("password")
 				);
 				results.add(eb);
-			} 		
+			} 
+			
+			ps.close();
+			c.close();
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw e;
