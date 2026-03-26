@@ -203,7 +203,8 @@ public class TestEmployeeDao extends TestBase {
 					"admin3@admin.com", 
 					"hunter3"
 			);
-			ArrayList<EmployeeBean> result = ed.findEmployeesByRole("admin");
+			ArrayList<EmployeeBean> result = 
+					ed.findEmployeesByRole("admin");
 			assertEquals(2, result.size());
 		} catch (SQLException e) {
 			fail(e.toString());
@@ -233,7 +234,8 @@ public class TestEmployeeDao extends TestBase {
 					"admin3@admin.com", 
 					"hunter3"
 			);
-			ArrayList<EmployeeBean> result = ed.findEmployeesByRole("patient");
+			ArrayList<EmployeeBean> result = 
+					ed.findEmployeesByRole("patient");
 			assertEquals(0, result.size());
 		} catch (SQLException e) {
 			fail(e.toString());
@@ -269,7 +271,8 @@ public class TestEmployeeDao extends TestBase {
 					"john@staff.com",
 					"hunter2"
 			);
-			ArrayList<EmployeeBean> result = ed.findEmployeesByName("enrico");
+			ArrayList<EmployeeBean> result = 
+					ed.findEmployeesByName("enrico");
 			assertEquals(3, result.size());
 		} catch (SQLException e) {
 			fail(e.toString());
@@ -305,7 +308,8 @@ public class TestEmployeeDao extends TestBase {
 					"john@staff.com",
 					"hunter2"
 			);
-			ArrayList<EmployeeBean> result = ed.findEmployeesByName("james");
+			ArrayList<EmployeeBean> result = 
+					ed.findEmployeesByName("james");
 			assertEquals(0, result.size());
 		} catch (SQLException e) {
 			fail(e.toString());
@@ -350,58 +354,3 @@ public class TestEmployeeDao extends TestBase {
 		}
 	}
 }
-//	@Test
-//	public void testUpdateEmployee() {
-//		try {
-//			ed.createEmployeeTable();
-//			EmployeeBean r = ed.addEmployee(
-//					"admin", 
-//					"enrico", 
-//					"admin@admin.com", 
-//					"hunter2"
-//			);
-//			r.setName("john wick");
-//			int results = ed.updateEmployee(r);
-//			assertEquals(999, results);
-//			ed.dropEmployeeTable();
-//		} catch (SQLException e) {
-//			fail(e.toString());	
-//		} 	
-//	}
-//
-//	@Test
-//	public void testDeleteEmployeeBean() {
-//		try {
-//			assertEquals(true, ed.createEmployeeTable());
-//			EmployeeBean r = ed.addEmployee(
-//					"admin", 
-//					"enrico", 
-//					"admin@admin.com", 
-//					"hunter2"
-//			);
-//			int results = ed.deleteEmployee(r);
-//			assertEquals(true, ed.dropEmployeeTable());
-//			assertEquals(1, results);
-//		} catch (SQLException e) {
-//			fail(e.toString());
-//		}
-//	}
-
-//	@Test
-//	public void testDeleteEmployeeById() {
-//		try {
-//			assertEquals(true, ed.createEmployeeTable());
-//			EmployeeBean r = ed.addEmployee(
-//					"admin", 
-//					"enrico", 
-//					"admin@admin.com", 
-//					"hunter2"
-//			);
-//			int results = ed.deleteEmployee(r.getId());
-//			assertEquals(true, ed.dropEmployeeTable());
-//			assertEquals(1, results);
-//		} catch (SQLException e) {
-//			fail(e.toString());
-//		}
-//	}
-//}

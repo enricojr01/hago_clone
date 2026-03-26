@@ -50,7 +50,10 @@ public class TestClinicDao extends TestBase {
 		ClinicDAO cd = new ClinicDAO(bd);
 	
 		try {
-			ClinicBean cb = cd.createClinic("test clinic 1", "123 Fake St.");
+			ClinicBean cb = cd.createClinic(
+					"test clinic 1", 
+					"123 Fake St."
+			);
 			assertEquals("test clinic 1", cb.getName());
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -64,7 +67,10 @@ public class TestClinicDao extends TestBase {
 		ClinicDAO cd = new ClinicDAO(bd);
 
 		try {
-			ClinicBean cb = cd.createClinic("test 1", "123 Fake St.");
+			ClinicBean cb = cd.createClinic(
+					"test 1", 
+					"123 Fake St."
+			);
 			cb.setName("modified test 1");
 			int results = cd.updateClinic(cb);
 			assertEquals(1, results);
@@ -74,13 +80,33 @@ public class TestClinicDao extends TestBase {
 	}
 
 	@Test
-	public void testDeleteClinic() {
+	public void testDeleteClinicWithBean() {
 		BaseDAO bd = createBase();
 		ClinicDAO cd = new ClinicDAO(bd);
 
 		try {
-			ClinicBean cb = cd.createClinic("test 1", "123 Fake St.");
+			ClinicBean cb = cd.createClinic(
+					"test 1", 
+					"123 Fake St."
+			);
 			int results = cd.deleteClinic(cb);	
+			assertEquals(1, results);
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testDeleteClinicWithId() {
+		BaseDAO bd = createBase();
+		ClinicDAO cd = new ClinicDAO(bd);
+
+		try {
+			ClinicBean cb = cd.createClinic(
+					"test 1", 
+					"123 Fake St."
+			);
+			int results = cd.deleteClinic(cb.getId());	
 			assertEquals(1, results);
 		} catch (SQLException e) {
 			fail(e.toString());

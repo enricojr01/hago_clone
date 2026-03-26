@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -28,8 +29,7 @@ public class ClinicDAO {
 					"id int not null auto_increment," +
 					"name varchar(64) not null," +
 					"address varchar(256) not null," +
-					"PRIMARY KEY (id)," +
-					"UNIQUE (name, address)" +
+					"PRIMARY KEY (id)" +
 				")";
 		Connection c = db.getConnection();
 		Statement s = c.createStatement();
@@ -86,17 +86,108 @@ public class ClinicDAO {
 		}
 	}
 
+	public ClinicBean findClinicById(long id) throws SQLException {
+		String query = "select * from Clinic where id=?";
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(query);
+
+		ps.setLong(1, id);
+		ResultSet cursor = ps.executeQuery();
+
+		if (cursor.first()) {
+			ClinicBean cb = new ClinicBean(
+					cursor.getLong("id"),
+					cursor.getString("name"),
+					cursor.getString("address")
+			);
+
+			cursor.close();
+			ps.close();
+			c.close();
+
+			return cb;
+		} else {
+			return null;
+		}
+	}
+
+	public ArrayList<ClinicBean> findClinicByName(String name) 
+			throws SQLException {
+		String query = "select * from Clinic where name=?";
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(query);
+		ArrayList<ClinicBean> results = new ArrayList<>();
+
+		ps.setString(1, name);
+		ResultSet cursor = ps.executeQuery();
+
+		if (cursor.next()) {
+			ClinicBean cb = new ClinicBean(
+					cursor.getLong("id"),
+					cursor.getString("name"),
+					cursor.getString("address")
+			);
+			results.add(cb);
+		}
+		
+		cursor.close();
+		ps.close();
+		c.close();
+
+		return results;
+	}
+
+	public ArrayList<ClinicBean> findClinicByAddress(String address) 
+			throws SQLException {
+		String query = "select * from Clinic where address LIKE % ? %";
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(query);
+		ArrayList<ClinicBean> results = new ArrayList<>();
+
+		ps.setString(1, address);
+		ResultSet cursor = ps.executeQuery();
+
+		while (cursor.next()) {
+			ClinicBean cb = new ClinicBean(
+					cursor.getLong("id"),
+					cursor.getString("name"),
+					cursor.getString("address")
+			);
+			results.add(cb);
+		}
+		
+		cursor.close();
+		ps.close();
+		c.close();
+
+		return results;
+	}
+
 	public int updateClinic(ClinicBean cb) throws SQLException {
 		String updateStatement = 
 				"update Clinic set name=?, address=? where id=?";
 		Connection c = db.getConnection();
 		PreparedStatement ps = c.prepareStatement(updateStatement);
-		int result = -1;
 		
 		ps.setString(1, cb.getName());
 		ps.setString(2, cb.getAddress());
 		ps.setLong(3, cb.getId());
-		result = ps.executeUpdate();
+		int result = ps.executeUpdate();
+
+		ps.close();
+		c.close();
+
+		return result;
+	}
+	
+
+	public int deleteClinic(ClinicBean cb) throws SQLException {
+		String deleteStatement = "delete from Clinic where id=?";
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(deleteStatement);
+
+		ps.setLong(1, cb.getId());
+		int result = ps.executeUpdate();
 
 		ps.close();
 		c.close();
@@ -104,14 +195,13 @@ public class ClinicDAO {
 		return result;
 	}
 
-	public int deleteClinic(ClinicBean cb) throws SQLException {
+	public int deleteClinic(long id) throws SQLException {
 		String deleteStatement = "delete from Clinic where id=?";
 		Connection c = db.getConnection();
 		PreparedStatement ps = c.prepareStatement(deleteStatement);
-		int result = -1;
 
-		ps.setLong(1, cb.getId());
-		result = ps.executeUpdate();
+		ps.setLong(1, id);
+		int result = ps.executeUpdate();
 
 		ps.close();
 		c.close();
