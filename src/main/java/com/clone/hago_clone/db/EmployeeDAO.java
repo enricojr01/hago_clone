@@ -32,8 +32,10 @@ public class EmployeeDAO {
 						"name varchar(128) not null," +
 						"email varchar(128) not null," +
 						"password varchar(128) not null," +
+						"clinic_id int not null," +
 						"PRIMARY KEY (id)," +
-						"UNIQUE (email)" +
+						"UNIQUE (email)," +
+						"FOREIGN KEY (clinic_id) REFERENCES Clinic(id)" +
 				")";
 		
 		try (Connection c = db.getConnection()) {
