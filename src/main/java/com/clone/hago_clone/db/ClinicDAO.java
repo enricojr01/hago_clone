@@ -16,14 +16,16 @@ import java.util.ArrayList;
  *
  * @author Enrico Tuvera Jr
  */
-public class ClinicDAO {
-	private final BaseDAO db;	
+public class ClinicDAO extends BaseDAO {
 
-	public ClinicDAO(BaseDAO db) {
-		this.db = db;
+	public ClinicDAO(String url, String username, String password) 
+			throws ClassNotFoundException {
+		super(url, username, password);
 	}
 
-	public boolean createClinicTable() throws SQLException {
+
+	@Override
+	protected String createTableStatement() {
 		String createStatement = 
 				"create table Clinic (" +
 					"id int not null auto_increment," +
@@ -32,25 +34,20 @@ public class ClinicDAO {
 					"PRIMARY KEY (id)," +
 					"UNIQUE (name)" +
 				")";
-		Connection c = db.getConnection();
-		Statement s = c.createStatement();
-		s.executeUpdate(createStatement);
+		return createStatement;
+	}
 
-		s.close();
-		c.close();
-		
-		return true;
+	@Override
+	protected String dropTableStatement() {
+		return "drop table Clinic";
+	}
+
+	public boolean createClinicTable() throws SQLException {
+		return createTable();
 	}
 
 	public boolean dropClinicTable() throws SQLException {
-		Connection c = db.getConnection();
-		Statement ps = c.createStatement();
-		ps.execute("drop table Clinic");
-
-		ps.close();
-		c.close();
-		
-		return true;
+		return dropTable();
 	}
 
 	public ClinicBean createClinic(String name, String address) 
@@ -58,7 +55,7 @@ public class ClinicDAO {
 		String insertStatement = 
 				"insert into Clinic (name, address) " + 
 				"values (?, ?)";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
 				insertStatement, 
 				Statement.RETURN_GENERATED_KEYS
@@ -89,7 +86,7 @@ public class ClinicDAO {
 
 	public ClinicBean findClinicById(long id) throws SQLException {
 		String query = "select * from Clinic where id=?";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(query);
 
 		ps.setLong(1, id);
@@ -115,7 +112,7 @@ public class ClinicDAO {
 	public ClinicBean findClinicByName(String name) 
 			throws SQLException {
 		String query = "select * from Clinic where name=?";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(query);
 
 		ps.setString(1, name);
@@ -130,6 +127,7 @@ public class ClinicDAO {
 			cursor.close();
 			ps.close();
 			c.close();
+			
 			return cb;
 		} else {
 			return null;
@@ -139,7 +137,7 @@ public class ClinicDAO {
 	public ArrayList<ClinicBean> findClinicByAddress(String address) 
 			throws SQLException {
 		String query = "select * from Clinic where address like ?";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(query);
 		ArrayList<ClinicBean> results = new ArrayList<>();
 
@@ -165,7 +163,7 @@ public class ClinicDAO {
 	public int updateClinic(ClinicBean cb) throws SQLException {
 		String updateStatement = 
 				"update Clinic set name=?, address=? where id=?";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(updateStatement);
 		
 		ps.setString(1, cb.getName());
@@ -182,7 +180,7 @@ public class ClinicDAO {
 
 	public int deleteClinic(ClinicBean cb) throws SQLException {
 		String deleteStatement = "delete from Clinic where id=?";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(deleteStatement);
 
 		ps.setLong(1, cb.getId());
@@ -196,7 +194,7 @@ public class ClinicDAO {
 
 	public int deleteClinic(long id) throws SQLException {
 		String deleteStatement = "delete from Clinic where id=?";
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(deleteStatement);
 
 		ps.setLong(1, id);

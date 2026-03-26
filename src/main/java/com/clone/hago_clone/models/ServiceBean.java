@@ -4,6 +4,7 @@
  */
 package com.clone.hago_clone.models;
 
+import java.util.ArrayList;
 /**
  *
  * @author Enrico Tuvera Jr
@@ -12,6 +13,7 @@ public class ServiceBean {
 	private long id;	
 	private String name;
 	private String description;
+	private ArrayList<ClinicBean> clinics;
 
 	public ServiceBean() {}	
 	public ServiceBean(long id, String name, String description) {
@@ -36,11 +38,19 @@ public class ServiceBean {
 		this.name = name;
 	}
 
-	public String getDesc() {
+	public String getDescription() {
 		return description;
 	}
 
-	public void setDesc(String desc) {
-		this.description = desc;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public ArrayList<ClinicBean> getClinics() {
+		return clinics;
+	}
+
+	public void setClinics(ArrayList<ClinicBean> clinics) {
+		this.clinics = clinics;
 	}
 }

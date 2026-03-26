@@ -17,14 +17,15 @@ import java.util.ArrayList;
  *
  * @author Enrico Tuvera Jr
  */
-public class EmployeeDAO {
-	private final BaseDAO db;
+public class EmployeeDAO extends BaseDAO {
 
-	public EmployeeDAO(BaseDAO db) {
-		this.db = db;
+	public EmployeeDAO(String url, String username, String password) 
+			throws ClassNotFoundException {
+		super(url, username, password);
 	}
 
-	public boolean createEmployeeTable() throws SQLException {
+	@Override
+	protected String createTableStatement() {
 		String createStatement = 
 				"create table Employee (" + 
 						"id int not null auto_increment," +
@@ -37,34 +38,20 @@ public class EmployeeDAO {
 						"UNIQUE (email)," +
 						"FOREIGN KEY (clinic_id) REFERENCES Clinic(id)" +
 				")";
-		
-		try (Connection c = db.getConnection()) {
-			Statement s = c.prepareStatement(createStatement);
-			s.executeUpdate(createStatement);
-
-			s.close();
-			c.close();
-			
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		return createStatement;
+	}
+	
+	@Override
+	protected String dropTableStatement() {
+		return "drop table Employee";
+	}
+	
+	public boolean createEmployeeTable() throws SQLException {
+		return createTable();
 	}
 	
 	public boolean dropEmployeeTable() throws SQLException {
-		try (Connection c = db.getConnection()) {
-			Statement ps = c.createStatement();
-			ps.execute("drop table Employee");
-
-			ps.close();
-			c.close();
-			
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		return dropTable();
 	}
 
 	public EmployeeBean addEmployee(
@@ -73,7 +60,7 @@ public class EmployeeDAO {
 			String email, 
 			String password
 	) throws SQLException {
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		String sql = 
 				"insert into Employee (role, name, email, password) " +
 				"values (?, ?, ?, ?)";
@@ -114,7 +101,7 @@ public class EmployeeDAO {
 	public ArrayList<EmployeeBean> findEmployeesByName(String name) 
 			throws SQLException {
 		ArrayList<EmployeeBean> results = new ArrayList<>();
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		String sql = "select * from Employee where name=?";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setString(1, name);
@@ -137,7 +124,7 @@ public class EmployeeDAO {
 	}
 
 	public EmployeeBean findEmployeeByID(long id) throws SQLException {
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		String sql = "select * from Employee where id=?";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setLong(1, id);
@@ -168,7 +155,7 @@ public class EmployeeDAO {
 	} 
 
 	public EmployeeBean findEmployeeByEmail(String email) throws SQLException {
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		String sql = "select * from Employee where email=?";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setString(1, email);
@@ -196,11 +183,12 @@ public class EmployeeDAO {
 	 * <p>
 	 * @param role a String representing a given role.
 	 * @return an ArrayList<EmployeeBean> with 0 or more items in it. 
+	 * @throws SQLException
 	 */
 	public ArrayList<EmployeeBean> findEmployeesByRole(String role)
 			throws SQLException {
 		ArrayList<EmployeeBean> results = new ArrayList<>();
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		String sql = "select * from Employee where role=?";
 		PreparedStatement ps = c.prepareStatement(sql);
 
@@ -225,7 +213,7 @@ public class EmployeeDAO {
 	}
 
 	public int updateEmployee(EmployeeBean eb) throws SQLException {
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
 				"update Employee set " +
 				"name=?, email=?, role=?, password=? " + 
@@ -246,7 +234,7 @@ public class EmployeeDAO {
 	}
 
 	public int deleteEmployee(EmployeeBean eb) throws SQLException {
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
 				"delete from Employee where id=?"
 		);
@@ -261,7 +249,7 @@ public class EmployeeDAO {
 	}
 
 	public int deleteEmployee(long id) throws SQLException {
-		Connection c = db.getConnection();
+		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
 				"delete from Employee where id=?"
 		);

@@ -19,13 +19,26 @@ import org.junit.jupiter.api.Test;
  *
  * @author Enrico Tuvera Jr
  */
-public class TestClinicDao extends TestBase {
+public class TestClinicDao {
+	public ClinicDAO createBase() {
+		try {
+			ClinicDAO cd = new ClinicDAO(
+						"jdbc:mysql://localhost:3306/javaclass_test",
+						"root",
+						""
+			);
+			return cd;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return null;
+	}
 
 	@BeforeEach
 	public void createDatabaseTable() {
 		try {
-			BaseDAO bd = createBase();
-			ClinicDAO cd = new ClinicDAO(bd);
+			ClinicDAO cd = createBase();
 			cd.createClinicTable();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -36,8 +49,7 @@ public class TestClinicDao extends TestBase {
 	@AfterEach
 	public void destroyDatabaseTable() {
 		try {
-			BaseDAO bd = createBase();
-			ClinicDAO cd = new ClinicDAO(bd);
+			ClinicDAO cd = createBase();
 			cd.dropClinicTable();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -47,8 +59,7 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testCreateClinic() {
-		BaseDAO bd = createBase();
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
 	
 		try {
 			ClinicBean cb = cd.createClinic(
@@ -64,8 +75,8 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testFindByClinicId() {
-		BaseDAO bd = createBase();
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
+
 		try {
 			ClinicBean cb1 = cd.createClinic("test1", "address1");
 			ClinicBean cb2 = cd.createClinic("test2", "address1");
@@ -81,8 +92,8 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testFindClinicByName() {
-		BaseDAO bd = createBase();
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
+		
 		try {
 			ClinicBean cb1 = cd.createClinic("test1", "address1");
 			ClinicBean cb2 = cd.createClinic("test2", "address1");
@@ -98,8 +109,8 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testFindClinicByAddress() {
-		BaseDAO bd = createBase();
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
+
 		try {
 			ClinicBean cb1 = cd.createClinic("test1", "address1");
 			ClinicBean cb2 = cd.createClinic("test2", "address1");
@@ -115,8 +126,7 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testUpdateClinic() {
-		BaseDAO bd = createBase();	
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
 
 		try {
 			ClinicBean cb = cd.createClinic(
@@ -133,8 +143,7 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testDeleteClinicWithBean() {
-		BaseDAO bd = createBase();
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
 
 		try {
 			ClinicBean cb = cd.createClinic(
@@ -150,8 +159,7 @@ public class TestClinicDao extends TestBase {
 
 	@Test
 	public void testDeleteClinicWithId() {
-		BaseDAO bd = createBase();
-		ClinicDAO cd = new ClinicDAO(bd);
+		ClinicDAO cd = createBase();
 
 		try {
 			ClinicBean cb = cd.createClinic(

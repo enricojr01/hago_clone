@@ -6,13 +6,17 @@ package com.clone.hago_clone.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
  * @author Enrico Tuvera Jr
  */
-public class BaseDAO {
+public abstract class BaseDAO {
 	private String dbURL;
 	private String dbUsername;
 	private String dbPassword;
@@ -42,5 +46,28 @@ public class BaseDAO {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	protected abstract String createTableStatement();
+	protected abstract String dropTableStatement();
+
+	private void executeStatement(String query) throws SQLException {
+		Connection c = 	getConnection();
+		Statement s = c.createStatement();
+		s.executeUpdate(query);
+		s.close();
+		c.close();
+	}
+
+	public boolean createTable() throws SQLException { 
+		String stmt = createTableStatement();
+		executeStatement(stmt);
+		return true;
+	}
+	
+	public boolean dropTable() throws SQLException {
+		String stmt = dropTableStatement();
+		executeStatement(stmt);
+		return true;
 	}
 }

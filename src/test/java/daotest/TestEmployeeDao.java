@@ -23,20 +23,20 @@ import org.junit.jupiter.api.BeforeEach;
  * @author Enrico Tuvera Jr
  */
 //@Disabled
-public class TestEmployeeDao extends TestBase {
-	public BaseDAO createBase() {
+public class TestEmployeeDao {
+	public EmployeeDAO createBase() {
 		try {
-			BaseDAO bd = new BaseDAO(
+			EmployeeDAO ed = new EmployeeDAO(
 					"jdbc:mysql://localhost:3306/javaclass_test",
 					"root",
 					""
 			);
-			return bd;
-		} catch (ClassNotFoundException e) {
+			return ed;
+		}
+		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		System.out.println("IF YOU SEE THIS SOMETHING'S GONE WRONG!");
 		return null;
 	}
 	
@@ -44,8 +44,7 @@ public class TestEmployeeDao extends TestBase {
 	public void createDatabaseTable() {
 		System.out.println("CREATING DATABASE TABLE!");
 		try {
-			BaseDAO bd = createBase();
-			EmployeeDAO ed = new EmployeeDAO(bd);
+			EmployeeDAO ed = createBase();
 			ed.createEmployeeTable();
 		} catch (SQLException e) {
 			System.out.println("COULDN'T CREATE EMPLOYEE TABLE!");
@@ -58,8 +57,7 @@ public class TestEmployeeDao extends TestBase {
 	public void destroyDatabaseTable() {
 		System.out.println("DROPPING DATABASE TABLE!");
 		try {
-			BaseDAO bd = createBase();
-			EmployeeDAO ed = new EmployeeDAO(bd);
+			EmployeeDAO ed = createBase();
 			ed.dropEmployeeTable();
 		} catch (SQLException e) {
 			System.out.println("COULDN'T DROP EMPLOYEE TABLE!");
@@ -70,8 +68,7 @@ public class TestEmployeeDao extends TestBase {
 	
 	@Test
 	public void testCreateEmployee() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		System.out.println("DOES THIS SHOW UP IN THE CONSOLE?!");
 		try {
 			EmployeeBean r = ed.addEmployee(
@@ -89,8 +86,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testUpdateEmployee() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
@@ -108,8 +104,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testDeleteEmployeeByBean() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
@@ -126,8 +121,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testDeleteEmployeeByID() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
@@ -144,8 +138,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testFindEmployeeByID() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
@@ -163,8 +156,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testFindEmployeeByIDFail() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
@@ -182,8 +174,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testFindEmployeesByRole() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try { 
 			ed.addEmployee(
 					"admin", 
@@ -213,8 +204,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testFindEmployeesByRoleFail() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try { 
 			ed.addEmployee(
 					"admin", 
@@ -244,8 +234,7 @@ public class TestEmployeeDao extends TestBase {
 	
 	@Test
 	public void testFindEmployeesByName() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			ed.addEmployee(
 					"admin", 
@@ -281,8 +270,7 @@ public class TestEmployeeDao extends TestBase {
 
 	@Test
 	public void testFindEmployeesByNameFail() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			ed.addEmployee(
 					"admin", 
@@ -318,8 +306,7 @@ public class TestEmployeeDao extends TestBase {
 	
 	@Test
 	public void testFindEmployeeByEmail() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
@@ -337,8 +324,7 @@ public class TestEmployeeDao extends TestBase {
 	
 	@Test
 	public void testFindEmployeeByEmailFail() {
-		BaseDAO bd = createBase();
-		EmployeeDAO ed = new EmployeeDAO(bd);
+		EmployeeDAO ed = createBase();
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
