@@ -72,7 +72,7 @@ public class ClinicDAO {
 					Statement.RETURN_GENERATED_KEYS
 			);
 			ps.setString(1, name);
-			ps.setString(1, address);
+			ps.setString(2, address);
 			ps.executeUpdate(	);
 			ResultSet r = ps.getGeneratedKeys();
 			if (r.next()) {

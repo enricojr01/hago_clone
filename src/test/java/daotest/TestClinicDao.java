@@ -6,11 +6,11 @@ package daotest;
 
 import com.clone.hago_clone.db.BaseDAO;
 import com.clone.hago_clone.db.ClinicDAO;
+import com.clone.hago_clone.models.ClinicBean;
 import java.sql.SQLException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -62,6 +62,15 @@ public class TestClinicDao {
 
 	@Test
 	public void testCreateClinic() {
-		assertEquals(1, 1);		
+		BaseDAO bd = createBase();
+		ClinicDAO cd = new ClinicDAO(bd);
+	
+		try {
+			ClinicBean cb = cd.createClinic("test clinic 1", "123 Fake St.");
+			assertEquals("test clinic 1", cb.getName());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
 	}
 }

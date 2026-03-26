@@ -71,136 +71,120 @@ public class EmployeeDAO {
 			String email, 
 			String password
 	) throws SQLException {
-		try (Connection c = db.getConnection()) {
-			String sql = 
-					"insert into Employee (role, name, email, password) " +
-					"values (?, ?, ?, ?)";
-			PreparedStatement ps = c.prepareStatement(
-					sql,
-					Statement.RETURN_GENERATED_KEYS
+		Connection c = db.getConnection();
+		String sql = 
+				"insert into Employee (role, name, email, password) " +
+				"values (?, ?, ?, ?)";
+		PreparedStatement ps = c.prepareStatement(
+				sql,
+				Statement.RETURN_GENERATED_KEYS
+		);
+		ps.setString(1, role);
+		ps.setString(2, name);
+		ps.setString(3, email);
+		ps.setString(4, password);
+		
+		// Should return `1` if successful, `0` otherwise.
+		ps.executeUpdate();
+
+		ResultSet result = ps.getGeneratedKeys();
+		if (result.next()) {
+			long id = result.getLong(1);
+			EmployeeBean eb = new EmployeeBean(
+					id, 
+					role, 
+					name, 
+					email, 
+					password
 			);
-			ps.setString(1, role);
-			ps.setString(2, name);
-			ps.setString(3, email);
-			ps.setString(4, password);
-			
-			// Should return `1` if successful, `0` otherwise.
-			ps.executeUpdate();
 
-			ResultSet result = ps.getGeneratedKeys();
-			if (result.next()) {
-				long id = result.getLong(1);
-				EmployeeBean eb = new EmployeeBean(
-						id, 
-						role, 
-						name, 
-						email, 
-						password
-				);
+			ps.close();
+			c.close();
 
-				ps.close();
-				c.close();
-
-				return eb;
-			} else {
-				ps.close();
-				c.close();
-				return null;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
+			return eb;
+		} else {
+			ps.close();
+			c.close();
+			return null;
 		}
 	}
 
 	public ArrayList<EmployeeBean> findEmployeesByName(String name) 
 			throws SQLException {
 		ArrayList<EmployeeBean> results = new ArrayList<>();
-		try (Connection c = db.getConnection()) {
-			String sql = "select * from Employee where name=?";
-			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setString(1, name);
+		Connection c = db.getConnection();
+		String sql = "select * from Employee where name=?";
+		PreparedStatement ps = c.prepareStatement(sql);
+		ps.setString(1, name);
 
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				EmployeeBean eb = new EmployeeBean(
-						rs.getLong("id"),
-						rs.getString("role"),
-						rs.getString("name"),
-						rs.getString("email"),
-						rs.getString("password")
-				);
-				results.add(eb);
-			}
-
-			ps.close();
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			EmployeeBean eb = new EmployeeBean(
+					rs.getLong("id"),
+					rs.getString("role"),
+					rs.getString("name"),
+					rs.getString("email"),
+					rs.getString("password")
+			);
+			results.add(eb);
 		}
+
+		ps.close();
+		c.close();
 		return results;
 	}
 
 	public EmployeeBean findEmployeeByID(long id) throws SQLException {
-		try (Connection c = db.getConnection()) {
-			String sql = "select * from Employee where id=?";
-			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setLong(1, id);
+		Connection c = db.getConnection();
+		String sql = "select * from Employee where id=?";
+		PreparedStatement ps = c.prepareStatement(sql);
+		ps.setLong(1, id);
 
-			ResultSet rs = ps.executeQuery();
-			if (rs.first()) {
-				long eid = rs.getLong("id");
-				String role = rs.getString("role");
-				String name = rs.getString("name");
-				String email = rs.getString("email");
-				String password = rs.getString("password");
+		ResultSet rs = ps.executeQuery();
+		if (rs.first()) {
+			long eid = rs.getLong("id");
+			String role = rs.getString("role");
+			String name = rs.getString("name");
+			String email = rs.getString("email");
+			String password = rs.getString("password");
 
-				EmployeeBean eb = new EmployeeBean(
-						eid, 
-						role, 
-						name, 
-						email, 
-						password
-				);
-					
-				ps.close();
-				c.close();
+			EmployeeBean eb = new EmployeeBean(
+					eid, 
+					role, 
+					name, 
+					email, 
+					password
+			);
+				
+			ps.close();
+			c.close();
 
-				return eb;
-			} else {
-				return null;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
+			return eb;
+		} else {
+			return null;
 		}
 	} 
 
 	public EmployeeBean findEmployeeByEmail(String email) throws SQLException {
-		try (Connection c = db.getConnection()) {
-			String sql = "select * from Employee where email=?";
-			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setString(1, email);
+		Connection c = db.getConnection();
+		String sql = "select * from Employee where email=?";
+		PreparedStatement ps = c.prepareStatement(sql);
+		ps.setString(1, email);
 
-			ResultSet rs = ps.executeQuery();
-			if (rs.first()) {
-				EmployeeBean eb = new EmployeeBean(
-						rs.getLong("id"),
-						rs.getString("role"),
-						rs.getString("name"),
-						rs.getString("email"),
-						rs.getString("password")
-				);
-				ps.close();
-				c.close();
-				return eb;
-			} else {
-				return null;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
+		ResultSet rs = ps.executeQuery();
+		if (rs.first()) {
+			EmployeeBean eb = new EmployeeBean(
+					rs.getLong("id"),
+					rs.getString("role"),
+					rs.getString("name"),
+					rs.getString("email"),
+					rs.getString("password")
+			);
+			ps.close();
+			c.close();
+			return eb;
+		} else {
+			return null;
 		}
 	}
 
@@ -214,92 +198,78 @@ public class EmployeeDAO {
 	public ArrayList<EmployeeBean> findEmployeesByRole(String role)
 			throws SQLException {
 		ArrayList<EmployeeBean> results = new ArrayList<>();
-		try (Connection c = db.getConnection()) {
-			String sql = "select * from Employee where role=?";
-			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setString(1, role);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				EmployeeBean eb = new EmployeeBean(
-						rs.getLong("id"),
-						rs.getString("role"),
-						rs.getString("name"),
-						rs.getString("email"),
-						rs.getString("password")
-				);
-				results.add(eb);
-			} 
-			
-			ps.close();
-			c.close();
-		} catch(SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		Connection c = db.getConnection();
+		String sql = "select * from Employee where role=?";
+		PreparedStatement ps = c.prepareStatement(sql);
+
+		ps.setString(1, role);
+		ResultSet rs = ps.executeQuery();
+
+		while (rs.next()) {
+			EmployeeBean eb = new EmployeeBean(
+					rs.getLong("id"),
+					rs.getString("role"),
+					rs.getString("name"),
+					rs.getString("email"),
+					rs.getString("password")
+			);
+			results.add(eb);
+		} 
+		
+		ps.close();
+		c.close();
 		
 		return results;
 	}
 
 	public int updateEmployee(EmployeeBean eb) throws SQLException {
-		try (Connection c = db.getConnection()) {
-			PreparedStatement ps = c.prepareStatement(
-					"update Employee set " +
-					"name=?, email=?, role=?, password=? " + 
-					"where id=?"
-			);
-			ps.setString(1, eb.getName());
-			ps.setString(2, eb.getEmail());
-			ps.setString(3, eb.getRole());
-			ps.setString(4, eb.getPassword());
-			ps.setLong(5, eb.getId());
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(
+				"update Employee set " +
+				"name=?, email=?, role=?, password=? " + 
+				"where id=?"
+		);
+		ps.setString(1, eb.getName());
+		ps.setString(2, eb.getEmail());
+		ps.setString(3, eb.getRole());
+		ps.setString(4, eb.getPassword());
+		ps.setLong(5, eb.getId());
 
-			int results = ps.executeUpdate();
+		int results = ps.executeUpdate();
 
-			ps.close();
-			c.close();
-			
-			return results;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		ps.close();
+		c.close();
+		
+		return results;
 	}
 
 	public int deleteEmployee(EmployeeBean eb) throws SQLException {
-		try (Connection c = db.getConnection()) {
-			PreparedStatement ps = c.prepareStatement(
-					"delete from Employee where id=?"
-			);
-			ps.setLong(1, eb.getId());
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(
+				"delete from Employee where id=?"
+		);
+		ps.setLong(1, eb.getId());
 
-			int result = ps.executeUpdate();
+		int result = ps.executeUpdate();
 
-			ps.close();
-			c.close();
-			
-			return result;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		ps.close();
+		c.close();
+		
+		return result;
 	}
 
 	public int deleteEmployee(long id) throws SQLException {
-		try (Connection c = db.getConnection()) {
-			PreparedStatement ps = c.prepareStatement(
-					"delete from Employee where id=?"
-			);
-			ps.setLong(1, id);
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(
+				"delete from Employee where id=?"
+		);
+		ps.setLong(1, id);
 
-			int result = ps.executeUpdate();
+		int result = ps.executeUpdate();
 
-			ps.close();
-			c.close();
+		ps.close();
+		c.close();
 
-			return result;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		return result;
 	}
 }
