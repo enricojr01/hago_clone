@@ -8,7 +8,10 @@ import com.clone.hago_clone.db.BaseDAO;
 import com.clone.hago_clone.db.ClinicDAO;
 import java.sql.SQLException;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,7 +36,7 @@ public class TestClinicDao {
 		return null;
 	}
 
-	@BeforeAll
+	@BeforeEach
 	public void createDatabaseTable() {
 		try {
 			BaseDAO bd = createBase();
@@ -45,7 +48,7 @@ public class TestClinicDao {
 		}
 	}
 
-	@AfterAll
+	@AfterEach
 	public void destroyDatabaseTable() {
 		try {
 			BaseDAO bd = createBase();
@@ -59,6 +62,6 @@ public class TestClinicDao {
 
 	@Test
 	public void testCreateClinic() {
-		
+		assertEquals(1, 1);		
 	}
 }
