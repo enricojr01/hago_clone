@@ -8,6 +8,7 @@ import com.clone.hago_clone.db.BaseDAO;
 import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.models.ClinicBean;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -55,6 +56,57 @@ public class TestClinicDao extends TestBase {
 					"123 Fake St."
 			);
 			assertEquals("test clinic 1", cb.getName());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindByClinicId() {
+		BaseDAO bd = createBase();
+		ClinicDAO cd = new ClinicDAO(bd);
+		try {
+			ClinicBean cb1 = cd.createClinic("test1", "address1");
+			ClinicBean cb2 = cd.createClinic("test2", "address1");
+			ClinicBean cb3 = cd.createClinic("test3", "address2");
+	
+			ClinicBean res = cd.findClinicById(cb1.getId());
+			assertEquals(1, res.getId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindClinicByName() {
+		BaseDAO bd = createBase();
+		ClinicDAO cd = new ClinicDAO(bd);
+		try {
+			ClinicBean cb1 = cd.createClinic("test1", "address1");
+			ClinicBean cb2 = cd.createClinic("test2", "address1");
+			ClinicBean cb3 = cd.createClinic("test3", "address2");
+
+			ClinicBean res = cd.findClinicByName(cb2.getName());
+			assertEquals(cb2.getName(), res.getName());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindClinicByAddress() {
+		BaseDAO bd = createBase();
+		ClinicDAO cd = new ClinicDAO(bd);
+		try {
+			ClinicBean cb1 = cd.createClinic("test1", "address1");
+			ClinicBean cb2 = cd.createClinic("test2", "address1");
+			ClinicBean cb3 = cd.createClinic("test3", "address2");
+			
+			ArrayList<ClinicBean> res = cd.findClinicByAddress("add");
+			assertEquals(3, res.size());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail(e.toString());

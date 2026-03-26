@@ -29,7 +29,8 @@ public class ClinicDAO {
 					"id int not null auto_increment," +
 					"name varchar(64) not null," +
 					"address varchar(256) not null," +
-					"PRIMARY KEY (id)" +
+					"PRIMARY KEY (id)," +
+					"UNIQUE (name)" +
 				")";
 		Connection c = db.getConnection();
 		Statement s = c.createStatement();
@@ -111,40 +112,38 @@ public class ClinicDAO {
 		}
 	}
 
-	public ArrayList<ClinicBean> findClinicByName(String name) 
+	public ClinicBean findClinicByName(String name) 
 			throws SQLException {
 		String query = "select * from Clinic where name=?";
 		Connection c = db.getConnection();
 		PreparedStatement ps = c.prepareStatement(query);
-		ArrayList<ClinicBean> results = new ArrayList<>();
 
 		ps.setString(1, name);
 		ResultSet cursor = ps.executeQuery();
 
-		if (cursor.next()) {
+		if (cursor.first()) {
 			ClinicBean cb = new ClinicBean(
 					cursor.getLong("id"),
 					cursor.getString("name"),
 					cursor.getString("address")
 			);
-			results.add(cb);
+			cursor.close();
+			ps.close();
+			c.close();
+			return cb;
+		} else {
+			return null;
 		}
-		
-		cursor.close();
-		ps.close();
-		c.close();
-
-		return results;
 	}
 
 	public ArrayList<ClinicBean> findClinicByAddress(String address) 
 			throws SQLException {
-		String query = "select * from Clinic where address LIKE % ? %";
+		String query = "select * from Clinic where address like ?";
 		Connection c = db.getConnection();
 		PreparedStatement ps = c.prepareStatement(query);
 		ArrayList<ClinicBean> results = new ArrayList<>();
 
-		ps.setString(1, address);
+		ps.setString(1, "%" + address + "%");
 		ResultSet cursor = ps.executeQuery();
 
 		while (cursor.next()) {
