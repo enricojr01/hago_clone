@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
 import com.clone.hago_clone.models.EmployeeBean;
 import com.clone.hago_clone.db.BaseDAO;
+import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
 import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * @author Enrico Tuvera Jr
  */
-//@Disabled
 public class TestEmployeeDao {
 	public EmployeeDAO createBase() {
 		try {
@@ -42,12 +42,12 @@ public class TestEmployeeDao {
 	
 	@BeforeEach
 	public void createDatabaseTable() {
-		System.out.println("CREATING DATABASE TABLE!");
 		try {
 			EmployeeDAO ed = createBase();
+			TestClinicDao tcd = new TestClinicDao();
+			tcd.createDatabaseTable();
 			ed.createEmployeeTable();
 		} catch (SQLException e) {
-			System.out.println("COULDN'T CREATE EMPLOYEE TABLE!");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -55,12 +55,12 @@ public class TestEmployeeDao {
 
 	@AfterEach
 	public void destroyDatabaseTable() {
-		System.out.println("DROPPING DATABASE TABLE!");
 		try {
 			EmployeeDAO ed = createBase();
+			TestClinicDao tcd = new TestClinicDao();
 			ed.dropEmployeeTable();
+			tcd.destroyDatabaseTable();
 		} catch (SQLException e) {
-			System.out.println("COULDN'T DROP EMPLOYEE TABLE!");
 			e.printStackTrace();
 			System.exit(1);
 		}

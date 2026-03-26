@@ -24,11 +24,11 @@ public class ServiceDAO extends BaseDAO {
 	
 	@Override
 	protected String createTableStatement() {
-		return "create table Service(" +
+		return "create table if not exists Service(" +
 			"id int not null auto_increment," +
 			"name varchar(128) not null," +
 			"description varchar(256) not null," +
-			"clinic_id int not null," +
+			"clinic_id int," +
 			"PRIMARY KEY (id)," +
 			"UNIQUE (name)," +
 			"FOREIGN KEY (clinic_id) REFERENCES Clinic(id)" +

@@ -27,7 +27,7 @@ public class ClinicDAO extends BaseDAO {
 	@Override
 	protected String createTableStatement() {
 		String createStatement = 
-				"create table Clinic (" +
+				"create table if not exists Clinic (" +
 					"id int not null auto_increment," +
 					"name varchar(64) not null," +
 					"address varchar(256) not null," +
@@ -119,11 +119,11 @@ public class ClinicDAO extends BaseDAO {
 		ps.setString(1, name);
 		ResultSet rs = ps.executeQuery();
 
-		if (cursor.first()) {
+		if (rs.first()) {
 			ClinicBean cb = new ClinicBean(
-					cursor.getLong("id"),
-					cursor.getString("name"),
-					cursor.getString("address")
+					rs.getLong("id"),
+					rs.getString("name"),
+					rs.getString("address")
 			);
 			rs.close();
 			ps.close();

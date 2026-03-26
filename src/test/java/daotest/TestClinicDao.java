@@ -30,7 +30,7 @@ public class TestClinicDao {
 			return cd;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			System.exit(1);
+			fail(e.toString());
 		}
 		return null;
 	}
@@ -42,7 +42,7 @@ public class TestClinicDao {
 			cd.createClinicTable();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.exit(1);
+			fail(e.toString());
 		}
 	}
 
@@ -53,7 +53,7 @@ public class TestClinicDao {
 			cd.dropClinicTable();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.exit(1);
+			fail(e.toString());
 		}
 	}
 
