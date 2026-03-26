@@ -23,9 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
  * @author Enrico Tuvera Jr
  */
 //@Disabled
-public class TestEmployeeDao {
+public class TestEmployeeDao extends TestBase {
 	public BaseDAO createBase() {
-		System.out.println("CREATING BASEDAO INSTANCE!");
 		try {
 			BaseDAO bd = new BaseDAO(
 					"jdbc:mysql://localhost:3306/javaclass_test",

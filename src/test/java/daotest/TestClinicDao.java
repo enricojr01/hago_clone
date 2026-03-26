@@ -18,23 +18,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Enrico Tuvera Jr
  */
-public class TestClinicDao {
-	public BaseDAO createBase() {
-		System.out.println("CREATING BASEDAO INSTANCE!");
-		try {
-			BaseDAO bd = new BaseDAO(
-					"jdbc:mysql://localhost:3306/javaclass_test",
-					"root",
-					""
-			);
-			return bd;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		System.out.println("IF YOU SEE THIS SOMETHING'S GONE WRONG!");
-		return null;
-	}
+public class TestClinicDao extends TestBase {
 
 	@BeforeEach
 	public void createDatabaseTable() {
@@ -70,6 +54,35 @@ public class TestClinicDao {
 			assertEquals("test clinic 1", cb.getName());
 		} catch (SQLException e) {
 			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testUpdateClinic() {
+		BaseDAO bd = createBase();	
+		ClinicDAO cd = new ClinicDAO(bd);
+
+		try {
+			ClinicBean cb = cd.createClinic("test 1", "123 Fake St.");
+			cb.setName("modified test 1");
+			int results = cd.updateClinic(cb);
+			assertEquals(1, results);
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testDeleteClinic() {
+		BaseDAO bd = createBase();
+		ClinicDAO cd = new ClinicDAO(bd);
+
+		try {
+			ClinicBean cb = cd.createClinic("test 1", "123 Fake St.");
+			int results = cd.deleteClinic(cb);	
+			assertEquals(1, results);
+		} catch (SQLException e) {
 			fail(e.toString());
 		}
 	}

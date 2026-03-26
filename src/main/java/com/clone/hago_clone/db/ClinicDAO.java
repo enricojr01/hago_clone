@@ -31,73 +31,91 @@ public class ClinicDAO {
 					"PRIMARY KEY (id)," +
 					"UNIQUE (name, address)" +
 				")";
-		try(Connection c = db.getConnection()) {
-			Statement s = c.createStatement();
-			s.executeUpdate(createStatement);
+		Connection c = db.getConnection();
+		Statement s = c.createStatement();
+		s.executeUpdate(createStatement);
 
-			s.close();
-			c.close();
-			
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		s.close();
+		c.close();
+		
+		return true;
 	}
 
 	public boolean dropClinicTable() throws SQLException {
-		try (Connection c = db.getConnection()) {
-			Statement ps = c.createStatement();
-			ps.execute("drop table Clinic");
+		Connection c = db.getConnection();
+		Statement ps = c.createStatement();
+		ps.execute("drop table Clinic");
 
-			ps.close();
-			c.close();
-			
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		}
+		ps.close();
+		c.close();
+		
+		return true;
 	}
 
 	public ClinicBean createClinic(String name, String address) 
-			throws SQLException 
-	{
+			throws SQLException {
 		String insertStatement = 
 				"insert into Clinic (name, address) " + 
 				"values (?, ?)";
-		try (Connection c = db.getConnection()) {
-			PreparedStatement ps = c.prepareStatement(
-					insertStatement, 
-					Statement.RETURN_GENERATED_KEYS
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(
+				insertStatement, 
+				Statement.RETURN_GENERATED_KEYS
+		);
+		ps.setString(1, name);
+		ps.setString(2, address);
+		ps.executeUpdate(	);
+		ResultSet r = ps.getGeneratedKeys();
+		if (r.next()) {
+			long id = r.getLong(1);
+			ClinicBean cb = new ClinicBean(
+					id,
+					name,
+					address
 			);
-			ps.setString(1, name);
-			ps.setString(2, address);
-			ps.executeUpdate(	);
-			ResultSet r = ps.getGeneratedKeys();
-			if (r.next()) {
-				long id = r.getLong(1);
-				ClinicBean cb = new ClinicBean(
-						id,
-						name,
-						address
-				);
-				
-				ps.close();
-				c.close();
-				
-				return cb;
-			} else {
-				ps.close();
-				c.close();
+			
+			ps.close();
+			c.close();
+			
+			return cb;
+		} else {
+			ps.close();
+			c.close();
 
-				return null;
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
+			return null;
 		}
 	}
-	
+
+	public int updateClinic(ClinicBean cb) throws SQLException {
+		String updateStatement = 
+				"update Clinic set name=?, address=? where id=?";
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(updateStatement);
+		int result = -1;
+		
+		ps.setString(1, cb.getName());
+		ps.setString(2, cb.getAddress());
+		ps.setLong(3, cb.getId());
+		result = ps.executeUpdate();
+
+		ps.close();
+		c.close();
+
+		return result;
+	}
+
+	public int deleteClinic(ClinicBean cb) throws SQLException {
+		String deleteStatement = "delete from Clinic where id=?";
+		Connection c = db.getConnection();
+		PreparedStatement ps = c.prepareStatement(deleteStatement);
+		int result = -1;
+
+		ps.setLong(1, cb.getId());
+		result = ps.executeUpdate();
+
+		ps.close();
+		c.close();
+
+		return result;
+	}
 }
