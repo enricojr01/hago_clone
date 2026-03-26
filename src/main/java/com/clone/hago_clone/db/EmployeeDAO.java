@@ -87,11 +87,13 @@ public class EmployeeDAO extends BaseDAO {
 					password
 			);
 
+			result.close();
 			ps.close();
 			c.close();
 
 			return eb;
 		} else {
+			result.close();
 			ps.close();
 			c.close();
 			return null;
@@ -105,8 +107,8 @@ public class EmployeeDAO extends BaseDAO {
 		String sql = "select * from Employee where name=?";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setString(1, name);
-
 		ResultSet rs = ps.executeQuery();
+		
 		while (rs.next()) {
 			EmployeeBean eb = new EmployeeBean(
 					rs.getLong("id"),
@@ -118,6 +120,7 @@ public class EmployeeDAO extends BaseDAO {
 			results.add(eb);
 		}
 
+		rs.close();
 		ps.close();
 		c.close();
 		return results;
@@ -144,7 +147,8 @@ public class EmployeeDAO extends BaseDAO {
 					email, 
 					password
 			);
-				
+			
+			rs.close();
 			ps.close();
 			c.close();
 
@@ -169,6 +173,7 @@ public class EmployeeDAO extends BaseDAO {
 					rs.getString("email"),
 					rs.getString("password")
 			);
+			rs.close();
 			ps.close();
 			c.close();
 			return eb;
@@ -205,7 +210,7 @@ public class EmployeeDAO extends BaseDAO {
 			);
 			results.add(eb);
 		} 
-		
+		rs.close();
 		ps.close();
 		c.close();
 		

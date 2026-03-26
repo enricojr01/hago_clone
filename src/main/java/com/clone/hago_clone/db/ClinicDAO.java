@@ -63,20 +63,21 @@ public class ClinicDAO extends BaseDAO {
 		ps.setString(1, name);
 		ps.setString(2, address);
 		ps.executeUpdate(	);
-		ResultSet r = ps.getGeneratedKeys();
-		if (r.next()) {
-			long id = r.getLong(1);
+		ResultSet rs = ps.getGeneratedKeys();
+		if (rs.next()) {
+			long id = rs.getLong(1);
 			ClinicBean cb = new ClinicBean(
 					id,
 					name,
 					address
 			);
-			
+			rs.close();
 			ps.close();
 			c.close();
 			
 			return cb;
 		} else {
+			rs.close();
 			ps.close();
 			c.close();
 
@@ -90,16 +91,16 @@ public class ClinicDAO extends BaseDAO {
 		PreparedStatement ps = c.prepareStatement(query);
 
 		ps.setLong(1, id);
-		ResultSet cursor = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
-		if (cursor.first()) {
+		if (rs.first()) {
 			ClinicBean cb = new ClinicBean(
-					cursor.getLong("id"),
-					cursor.getString("name"),
-					cursor.getString("address")
+					rs.getLong("id"),
+					rs.getString("name"),
+					rs.getString("address")
 			);
 
-			cursor.close();
+			rs.close();
 			ps.close();
 			c.close();
 
@@ -116,7 +117,7 @@ public class ClinicDAO extends BaseDAO {
 		PreparedStatement ps = c.prepareStatement(query);
 
 		ps.setString(1, name);
-		ResultSet cursor = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
 		if (cursor.first()) {
 			ClinicBean cb = new ClinicBean(
@@ -124,7 +125,7 @@ public class ClinicDAO extends BaseDAO {
 					cursor.getString("name"),
 					cursor.getString("address")
 			);
-			cursor.close();
+			rs.close();
 			ps.close();
 			c.close();
 			
@@ -142,18 +143,18 @@ public class ClinicDAO extends BaseDAO {
 		ArrayList<ClinicBean> results = new ArrayList<>();
 
 		ps.setString(1, "%" + address + "%");
-		ResultSet cursor = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
-		while (cursor.next()) {
+		while (rs.next()) {
 			ClinicBean cb = new ClinicBean(
-					cursor.getLong("id"),
-					cursor.getString("name"),
-					cursor.getString("address")
+					rs.getLong("id"),
+					rs.getString("name"),
+					rs.getString("address")
 			);
 			results.add(cb);
 		}
 		
-		cursor.close();
+		rs.close();
 		ps.close();
 		c.close();
 
@@ -169,6 +170,7 @@ public class ClinicDAO extends BaseDAO {
 		ps.setString(1, cb.getName());
 		ps.setString(2, cb.getAddress());
 		ps.setLong(3, cb.getId());
+		
 		int result = ps.executeUpdate();
 
 		ps.close();
@@ -184,6 +186,7 @@ public class ClinicDAO extends BaseDAO {
 		PreparedStatement ps = c.prepareStatement(deleteStatement);
 
 		ps.setLong(1, cb.getId());
+		
 		int result = ps.executeUpdate();
 
 		ps.close();
@@ -198,6 +201,7 @@ public class ClinicDAO extends BaseDAO {
 		PreparedStatement ps = c.prepareStatement(deleteStatement);
 
 		ps.setLong(1, id);
+		
 		int result = ps.executeUpdate();
 
 		ps.close();
