@@ -187,7 +187,7 @@ public class ClinicServiceDAO extends BaseDAO {
 	}
 
 	public int deleteClinicService(ClinicServiceBean csb) throws SQLException {
-		String sqlQuery = "delete form ClinicService where id=?";
+		String sqlQuery = "delete from ClinicService where id=?";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 
@@ -202,7 +202,7 @@ public class ClinicServiceDAO extends BaseDAO {
 	} 
 
 	public int deleteClinicService(long id) throws SQLException {
-		String sqlQuery = "delete form ClinicService where id=?";
+		String sqlQuery = "delete from ClinicService where id=?";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 

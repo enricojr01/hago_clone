@@ -93,8 +93,83 @@ public class TestClinicServiceDao {
 	}
 
 	@Test
-	public void testDeleteClinicService() {
+	public void testDeleteClinicServiceByBean() {
+		try {
+			ClinicServiceDAO csd = createBase();
+			ServiceDAO sd = tsd.createBase();
+			ClinicDAO cd = tcd.createBase();
 
+			ClinicBean cb = cd.createClinic("testClinic", "a");
+			ServiceBean sb = sd.createService("testService", "b");
+			ClinicServiceBean csb = csd.createClinicService(cb, sb);
+
+			int result = csd.deleteClinicService(csb);
+			assertEquals(1, result);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
 	}
 
+	@Test
+	public void testDeleteClinicServiceByBeanFail() {
+		try {
+			ClinicServiceDAO csd = createBase();
+			ServiceDAO sd = tsd.createBase();
+			ClinicDAO cd = tcd.createBase();
+
+			ClinicBean cb = cd.createClinic("testClinic", "a");
+			ServiceBean sb = sd.createService(
+					"testService", "b"
+			);
+			ClinicServiceBean csb = new ClinicServiceBean(21, cb, sb);
+
+			int result = csd.deleteClinicService(csb);
+
+			assertEquals(0, result);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testDeleteClinicServiceById() {
+		try {
+			ClinicServiceDAO csd = createBase();
+			ServiceDAO sd = tsd.createBase();
+			ClinicDAO cd = tcd.createBase();
+
+			ClinicBean cb = cd.createClinic("testClinic", "a");
+			ServiceBean sb = sd.createService("testService", "b");
+			ClinicServiceBean csb = csd.createClinicService(cb, sb);
+
+			int result = csd.deleteClinicService(csb.getId());
+
+			assertEquals(1, result);
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testDeleteClinicServiceByIdFail() {
+		try {
+			ClinicServiceDAO csd = createBase();
+			ServiceDAO sd = tsd.createBase();
+			ClinicDAO cd = tcd.createBase();
+
+			ClinicBean cb = cd.createClinic("testClinic", "a");
+			ServiceBean sb = sd.createService("testService", "b");
+			ClinicServiceBean csb = new ClinicServiceBean(21, cb, sb);
+
+			int result = csd.deleteClinicService(csb);
+
+			assertEquals(0, result);
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
 }
