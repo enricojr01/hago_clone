@@ -4,7 +4,6 @@
  */
 package daotest;
 
-import com.clone.hago_clone.db.BaseDAO;
 import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.models.ClinicBean;
 import java.sql.SQLException;
@@ -74,7 +73,7 @@ public class TestClinicDao {
 	}
 
 	@Test
-	public void testFindByClinicId() {
+	public void testFindClinicById() {
 		ClinicDAO cd = createBase();
 
 		try {
@@ -84,6 +83,22 @@ public class TestClinicDao {
 	
 			ClinicBean res = cd.findClinicById(cb1.getId());
 			assertEquals(1, res.getId());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testFindClinicByIdFail() {
+		ClinicDAO cd = createBase();
+		try {
+			ClinicBean cb1 = cd.createClinic("test1", "address1");
+			ClinicBean cb2 = cd.createClinic("test2", "address1");
+			ClinicBean cb3 = cd.createClinic("test3", "address2");
+			
+			ClinicBean res = cd.findClinicById(5);
+			assertEquals(null, res);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -108,6 +123,22 @@ public class TestClinicDao {
 	}
 
 	@Test
+	public void testFindClinicByNameFail() {
+		ClinicDAO cd = createBase();
+		try {
+			ClinicBean cb1 = cd.createClinic("test1", "address1");
+			ClinicBean cb2 = cd.createClinic("test2", "address1");
+			ClinicBean cb3 = cd.createClinic("test3", "address2");
+
+			ClinicBean res = cd.findClinicByName("apple");
+			assertEquals(null, res);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+
+	@Test
 	public void testFindClinicByAddress() {
 		ClinicDAO cd = createBase();
 
@@ -118,6 +149,23 @@ public class TestClinicDao {
 			
 			ArrayList<ClinicBean> res = cd.findClinicByAddress("add");
 			assertEquals(3, res.size());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testFindClinicByAddressFail() {
+		ClinicDAO cd = createBase();
+
+		try {
+			ClinicBean cb1 = cd.createClinic("test1", "address1");
+			ClinicBean cb2 = cd.createClinic("test2", "address1");
+			ClinicBean cb3 = cd.createClinic("test3", "address2");
+			
+			ArrayList<ClinicBean> res = cd.findClinicByAddress("beetle");
+			assertEquals(0, res.size());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -142,6 +190,23 @@ public class TestClinicDao {
 	}
 
 	@Test
+	public void testUpdateClinicFail() {
+		ClinicDAO cd = createBase();
+
+		try {
+			ClinicBean cb = new ClinicBean(
+					25, 
+					"fake", 
+					"bad clinic data"
+			);
+			int results = cd.updateClinic(cb);
+			assertEquals(0, results);
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
 	public void testDeleteClinicWithBean() {
 		ClinicDAO cd = createBase();
 
@@ -152,6 +217,23 @@ public class TestClinicDao {
 			);
 			int results = cd.deleteClinic(cb);	
 			assertEquals(1, results);
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testDeleteClinicWithBeanFail() {
+		ClinicDAO cd = createBase();
+
+		try {
+			ClinicBean cb = new ClinicBean(
+					25, 
+					"testi", 
+					"address"
+			);
+			int results = cd.deleteClinic(cb);	
+			assertEquals(0, results);
 		} catch (SQLException e) {
 			fail(e.toString());
 		}
@@ -168,6 +250,17 @@ public class TestClinicDao {
 			);
 			int results = cd.deleteClinic(cb.getId());	
 			assertEquals(1, results);
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
+	public void testDeleteClinicWithIdFail() {
+		ClinicDAO cd = createBase();
+		try {
+			int results = cd.deleteClinic(125);
+			assertEquals(0, results);
 		} catch (SQLException e) {
 			fail(e.toString());
 		}

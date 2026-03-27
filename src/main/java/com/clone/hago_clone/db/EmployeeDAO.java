@@ -26,19 +26,17 @@ public class EmployeeDAO extends BaseDAO {
 
 	@Override
 	protected String createTableStatement() {
-		String createStatement = 
-				"create table if not exists Employee (" + 
-						"id int not null auto_increment," +
-						"role varchar(64) not null," +
-						"name varchar(128) not null," +
-						"email varchar(128) not null," +
-						"password varchar(128) not null," +
-						"clinic_id int," +
-						"PRIMARY KEY (id)," +
-						"UNIQUE (email)," +
-						"FOREIGN KEY (clinic_id) REFERENCES Clinic(id)" +
-				")";
-		return createStatement;
+		return "create table if not exists Employee ("
+				+ "id int not null auto_increment,"
+				+ "role varchar(64) not null,"
+				+ "name varchar(128) not null,"
+				+ "email varchar(128) not null,"
+				+ "password varchar(128) not null,"
+				+ "clinic_id int,"
+				+ "PRIMARY KEY (id),"
+				+ "UNIQUE (email),"
+				+ "FOREIGN KEY (clinic_id) REFERENCES Clinic(id)"
+				+ ")";
 	}
 	
 	@Override

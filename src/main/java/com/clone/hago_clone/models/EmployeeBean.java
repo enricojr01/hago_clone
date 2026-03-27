@@ -18,6 +18,7 @@ public class EmployeeBean implements Serializable {
 	private String password;
 	private ClinicBean clinic;
 
+	public EmployeeBean() {};
 	public EmployeeBean(long id, String role, String name, String email, String password) {
 		this.id = id;
 		this.role = role;

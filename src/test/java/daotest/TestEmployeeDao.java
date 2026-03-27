@@ -7,8 +7,6 @@ package daotest;
 import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
 import com.clone.hago_clone.models.EmployeeBean;
-import com.clone.hago_clone.db.BaseDAO;
-import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
 import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
@@ -103,6 +101,24 @@ public class TestEmployeeDao {
 	} 
 
 	@Test
+	public void testUpdateEmployeeFail() {
+		try {
+			EmployeeDAO ed = createBase();
+			EmployeeBean r = new EmployeeBean(
+					2, 
+					"test", 
+					"testName", 
+					"enrico@test.com", 
+					"test"
+			);
+			int result = ed.updateEmployee(r);
+			assertEquals(0, result);
+		} catch (SQLException e) {
+			fail(e.toString());
+		}
+	}
+
+	@Test
 	public void testDeleteEmployeeByBean() {
 		EmployeeDAO ed = createBase();
 		try {
@@ -120,6 +136,24 @@ public class TestEmployeeDao {
 	}
 
 	@Test
+	public void testDeleteEmployeeByBeanFail() {
+		EmployeeDAO ed = createBase();
+		try {
+			EmployeeBean bad = new EmployeeBean(
+					9, 
+					"test", 
+					"test", 
+					"test", 
+					"test"
+			);
+			int result = ed.deleteEmployee(bad);
+			assertEquals(0, result);
+		} catch(SQLException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
 	public void testDeleteEmployeeByID() {
 		EmployeeDAO ed = createBase();
 		try {
@@ -131,6 +165,17 @@ public class TestEmployeeDao {
 			);
 			int result = ed.deleteEmployee(r);
 			assertEquals(1, result);
+		} catch(SQLException e) {
+			fail(e.toString());
+		}
+	}
+	
+	@Test
+	public void testDeleteEmployeeByIDFail() {
+		EmployeeDAO ed = createBase();
+		try {
+			int result = ed.deleteEmployee(999);
+			assertEquals(0, result);
 		} catch(SQLException e) {
 			fail(e.toString());
 		}

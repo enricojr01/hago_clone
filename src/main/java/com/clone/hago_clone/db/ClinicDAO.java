@@ -24,19 +24,29 @@ public class ClinicDAO extends BaseDAO {
 	}
 
 
+	/** 
+	 * Returns a String containing the SQL needed to create
+	 * the table for this model in the database. Should not need
+	 * to be called manually in the client code.
+	 * @returns A string containing SQL (MariaDB / MySQL dialect).
+	 */
 	@Override
 	protected String createTableStatement() {
-		String createStatement = 
-				"create table if not exists Clinic (" +
-					"id int not null auto_increment," +
-					"name varchar(64) not null," +
-					"address varchar(256) not null," +
-					"PRIMARY KEY (id)," +
-					"UNIQUE (name)" +
-				")";
-		return createStatement;
+		return "create table if not exists Clinic (" 
+				+ "id int not null auto_increment,"
+				+ "name varchar(64) not null,"
+				+ "address varchar(256) not null,"
+				+ "PRIMARY KEY (id),"
+				+ "UNIQUE (name)"
+				+ ")";
 	}
 
+	/** 
+	 * Returns a String containing the SQL needed to drop the
+	 * table in the database. Should not need to be called in client
+	 * code.
+	 * @returns A string containing SQL (MariaDB / MySQL dialect)
+	 */
 	@Override
 	protected String dropTableStatement() {
 		return "drop table Clinic";
@@ -50,6 +60,14 @@ public class ClinicDAO extends BaseDAO {
 		return dropTable();
 	}
 
+	/**
+	 * Creates a row in the Clinic table, and returns a ClinicBean containing
+	 * the id and data of the newly created row.
+	 * @param name A string representing the clinic name.
+	 * @param address A string representing the clinic address.
+	 * @returns A ClinicBean containing the id of the row, name, and address.
+	 * @throws SQLException
+	 */
 	public ClinicBean createClinic(String name, String address) 
 			throws SQLException {
 		String insertStatement = 
@@ -84,7 +102,13 @@ public class ClinicDAO extends BaseDAO {
 			return null;
 		}
 	}
-
+	
+	/** 
+	 * Returns a single ClinicBean matching the provided id.
+	 * @param id a `long` representing the id of a row.
+	 * @returns a ClinicBean containing the row matching the provided id, 
+	 * or null if no result.
+	 */
 	public ClinicBean findClinicById(long id) throws SQLException {
 		String query = "select * from Clinic where id=?";
 		Connection c = getConnection();
@@ -110,6 +134,13 @@ public class ClinicDAO extends BaseDAO {
 		}
 	}
 
+	/** 
+	 * Returns a ClinicBean matching the provided name. Needs to be an exact match,
+	 * otherwise will return null.
+	 * @param name A string representing the name of a clinic.
+	 * @returns ClinicBean, or null if no match was found.
+	 * @throws SQLException
+	 */
 	public ClinicBean findClinicByName(String name) 
 			throws SQLException {
 		String query = "select * from Clinic where name=?";
@@ -135,6 +166,12 @@ public class ClinicDAO extends BaseDAO {
 		}
 	}
 
+	/** 
+	 * Returns an ArrayList<ClinicBean> containing all Clinics whose name
+	 * is LIKE %address%. If no matches are found, ArrayList will be empty. 
+	 * @param address String representing the address of a clinic.
+	 * @throws SQLException
+	 */
 	public ArrayList<ClinicBean> findClinicByAddress(String address) 
 			throws SQLException {
 		String query = "select * from Clinic where address like ?";
@@ -161,6 +198,14 @@ public class ClinicDAO extends BaseDAO {
 		return results;
 	}
 
+	/** 
+	 * Updates a row in the Clinic table based on the information in a ClinicBean.
+	 * All fields except for ID will be updated. Fields unchanged can remain
+	 * in the ClinicBean without consequence.
+	 * @param cb a ClinicBean containing updated Clinic informatoin
+	 * @returns an integer representing the number of rows affected by the update.
+	 * @throws SQLException
+	 */
 	public int updateClinic(ClinicBean cb) throws SQLException {
 		String updateStatement = 
 				"update Clinic set name=?, address=? where id=?";
@@ -179,7 +224,13 @@ public class ClinicDAO extends BaseDAO {
 		return result;
 	}
 	
-
+	/** 
+	 * Deletes the row in che Clinic table corresponding to the id of the 
+	 * provided ClinicBean.
+	 * @param cb a ClinicBean containing the id of the row to be deleted.
+	 * @returns an integer representing the number of rows deleted.
+	 * @throws SQLException
+	 */
 	public int deleteClinic(ClinicBean cb) throws SQLException {
 		String deleteStatement = "delete from Clinic where id=?";
 		Connection c = getConnection();
@@ -195,6 +246,12 @@ public class ClinicDAO extends BaseDAO {
 		return result;
 	}
 
+	/** 
+	 * Deletes the row in the Clinic table corresponding to the provided id.
+	 * @param id a long int representing the Clinic row.
+	 * @returns an integer representing the number of rows deleted.
+	 * @throws SQLException
+	 */
 	public int deleteClinic(long id) throws SQLException {
 		String deleteStatement = "delete from Clinic where id=?";
 		Connection c = getConnection();
