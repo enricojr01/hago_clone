@@ -17,6 +17,15 @@ public class ClinicBean {
 
 	private ArrayList<EmployeeBean> employees = new ArrayList<>();
 	private ArrayList<ServiceBean> services = new ArrayList<>();
+	private ArrayList<TimeSlotBean> timeslots = new ArrayList<>();
+
+	public ArrayList<TimeSlotBean> getTimeslots() {
+		return timeslots;
+	}
+
+	public void setTimeslots(ArrayList<TimeSlotBean> timeslots) {
+		this.timeslots = timeslots;
+	}
 
 	public ClinicBean() {}
 	public ClinicBean(long id, String name, String address) {
