@@ -67,7 +67,6 @@ public class TestEmployeeDao {
 	@Test
 	public void testCreateEmployee() {
 		EmployeeDAO ed = createBase();
-		System.out.println("DOES THIS SHOW UP IN THE CONSOLE?!");
 		try {
 			EmployeeBean r = ed.addEmployee(
 					"admin", 
