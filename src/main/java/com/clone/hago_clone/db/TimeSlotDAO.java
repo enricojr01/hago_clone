@@ -49,6 +49,15 @@ public class TimeSlotDAO extends BaseDAO {
 		return dropTable();
 	}
 
+	/** 
+	 * Creates a TimeSlot row with the provided arguments. Returns a 
+	 * TimeSlotBean containing the id of the created row, and associated data.
+	 * 
+	 * @param start LocalTime representing 24hr start time of the time slot.
+	 * @param end LocalTime representing the 24hr end time of the time slot.
+	 * @returns TimeSlotBean with the id of the created row, or null.
+	 * @throws SQLException
+	 */
 	public TimeSlotBean createTimeSlot(
 			LocalTime start, 
 			LocalTime end, 
@@ -88,6 +97,13 @@ public class TimeSlotDAO extends BaseDAO {
 		}
 	}
 
+	/**
+	 * Returns all TimeSlots matching the given start time.
+	 * 
+	 * @param start LocalTime representing a time slot's (24hr) start time.
+	 * @returns ArrayList<TimeSlotBean>
+	 * @throws SQLException
+	 */
 	public ArrayList<TimeSlotBean> findTimeSlotByStartTime(LocalTime start) 
 			throws SQLException {
 		String sqlQuery = "select * from TimeSlot as ts where ts.start=?";
@@ -116,6 +132,13 @@ public class TimeSlotDAO extends BaseDAO {
 		return results;
 	}
 
+	/**
+	 * Returns all TimeSlots matching the given end time.
+	 * 
+	 * @param end LocalTime representing a time slot's (24hr) start time.
+	 * @returns ArrayList<TimeSlotBean>
+	 * @throws SQLException
+	 */
 	public ArrayList<TimeSlotBean> findTimeSlotByEndTime(LocalTime end) 
 			throws SQLException {
 		String sqlQuery = "select * from TimeSlot as ts where ts.end=?";
@@ -144,6 +167,13 @@ public class TimeSlotDAO extends BaseDAO {
 		return results;
 	}
 
+	/**
+	 * Returns all TimeSlots matching the given capacity.
+	 * 
+	 * @param capacity int represents capacity of the TimeSlot.
+	 * @returns ArrayList<TimeSlotBean>
+	 * @throws SQLException
+	 */
 	public ArrayList<TimeSlotBean> findTimeSlotByCapacity(int capacity) 
 			throws SQLException {
 		String sqlQuery = "select * from TimeSlot as ts where ts.capacity=?";
@@ -170,7 +200,15 @@ public class TimeSlotDAO extends BaseDAO {
 
 		return results;
 	}
-		
+
+	/** 
+	 * Updates the TimeSlot row matching the id of the provided TimeSlotBean.
+	 * Returns 0 if the operation fails, 1 otherwise.
+	 * 
+	 * @param tsb TimeSlotBean with valid ID and updated fields.
+	 * @returns 1 on success, 0 otherwise.
+	 * @throws SQLException
+	 */
 	public int updateTimeSlot(TimeSlotBean tsb) throws SQLException {
 		String sqlQuery = 
 				"update TimeSlot set start=?, end=?, capacity=? "
@@ -191,6 +229,14 @@ public class TimeSlotDAO extends BaseDAO {
 		return results;
 	}
 
+	/** 
+	 * Deletes the TimeSlot row matching the id of the provided TimeSlotBean.
+	 * Returns 0 if the operation fails, 1 otherwise.
+	 * 
+	 * @param tsb TimeSlotBean with valid ID.
+	 * @returns 1 on success, 0 otherwise.
+	 * @throws SQLException
+	 */
 	public int deleteTimeSlot(TimeSlotBean tsb) throws SQLException {
 		String sqlQuery = "delete from TimeSlot where id=?";
 		Connection c = getConnection();
@@ -206,6 +252,14 @@ public class TimeSlotDAO extends BaseDAO {
 		return results;
 	}
 
+	/** 
+	 * Deletes the TimeSlot row matching the provide id. Returns 0 if the 
+	 * operation fails, 1 otherwise.
+	 * 
+	 * @param id long int, matching the ID of the target row..
+	 * @returns 1 on success, 0 otherwise.
+	 * @throws SQLException
+	 */
 	public int deleteTimeSlot(long id) throws SQLException {
 		String sqlQuery = "delete from TimeSlot where id=?";
 		Connection c = getConnection();

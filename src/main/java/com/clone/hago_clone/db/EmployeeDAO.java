@@ -52,6 +52,16 @@ public class EmployeeDAO extends BaseDAO {
 		return dropTable();
 	}
 
+	/** 
+	 * Creates row in Employee table with the provided arguments. If the
+	 * operation fails will return null.
+	 * 
+	 * @param role String, representing the role of the employee.
+	 * @param name String, representing employee name.
+	 * @param email String, representing work email of the employee.
+	 * @param password String, representing password of employee.
+	 * @returns EmployeeBean with a valid ID or null.
+	 */
 	public EmployeeBean addEmployee(
 			String role, 
 			String name, 
@@ -94,10 +104,20 @@ public class EmployeeDAO extends BaseDAO {
 			result.close();
 			ps.close();
 			c.close();
+			
 			return null;
 		}
 	}
 
+	/** 
+	 * Finds all Employees matching the name provided. There may be more than
+	 * one employee with the same name. Returns an empty ArrayList<EmployeeBean>
+	 * if no matching rows are found.
+	 * 
+	 * @param name String, representing employee name.
+	 * @returns ArrayList<EmployeeBean>
+	 * @throws SQLException
+	 */
 	public ArrayList<EmployeeBean> findEmployeesByName(String name) 
 			throws SQLException {
 		ArrayList<EmployeeBean> results = new ArrayList<>();
@@ -123,7 +143,16 @@ public class EmployeeDAO extends BaseDAO {
 		c.close();
 		return results;
 	}
-
+	
+	/**
+	 * Finds Employee matching the ID provided. IDs are auto_increment and 
+	 * primary key within the database, so it should return only one row.
+	 * Returns null if there are no matches.
+	 * 
+	 * @param id long int representing the id number of the Employee.
+	 * @returns EmployeeBean
+	 * @throws SQLException
+	 */
 	public EmployeeBean findEmployeeByID(long id) throws SQLException {
 		Connection c = getConnection();
 		String sql = "select * from Employee where id=?";
@@ -156,6 +185,14 @@ public class EmployeeDAO extends BaseDAO {
 		}
 	} 
 
+	/** 
+	 * Returns the Employee row matching the given email. Email is unique, so 
+	 * this operation will only return one row. Returns null if no rows found.
+	 * 
+	 * @param email String, representing an employee's email address.
+	 * @returns EmployeeBean
+	 * @throws SQLException
+	 */
 	public EmployeeBean findEmployeeByEmail(String email) throws SQLException {
 		Connection c = getConnection();
 		String sql = "select * from Employee where email=?";
@@ -215,6 +252,14 @@ public class EmployeeDAO extends BaseDAO {
 		return results;
 	}
 
+	/** 
+	 * Updates Employee row using the provided EmployeeBean. Returns 0 if update
+	 * fails, 1 otherwise.
+	 * 
+	 * @param eb EmployeeBean, must be valid otherwise function will return 0.
+	 * @returns int returns 1 if row was successfully updated, 0 otherwise.
+	 * @throws SQLException
+	 */
 	public int updateEmployee(EmployeeBean eb) throws SQLException {
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
@@ -236,6 +281,14 @@ public class EmployeeDAO extends BaseDAO {
 		return results;
 	}
 
+	/** 
+	 * Deletes Employee row using the provided EmployeeBean. Returns 0 if delete 
+	 * fails, 1 otherwise.
+	 * 
+	 * @param eb EmployeeBean, must be valid otherwise function will return 0.
+	 * @returns int returns 1 if row was successfully deleted, 0 otherwise.
+	 * @throws SQLException
+	 */
 	public int deleteEmployee(EmployeeBean eb) throws SQLException {
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
@@ -251,6 +304,14 @@ public class EmployeeDAO extends BaseDAO {
 		return result;
 	}
 
+	/** 
+	 * Deletes Employee row using the provided id. Returns 0 if delete 
+	 * fails, 1 otherwise.
+	 * 
+	 * @param id long int matching target employee id.
+	 * @returns int returns 1 if row was successfully deleted, 0 otherwise.
+	 * @throws SQLException
+	 */
 	public int deleteEmployee(long id) throws SQLException {
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(
