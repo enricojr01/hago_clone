@@ -256,7 +256,7 @@ public class TimeSlotDAO extends BaseDAO {
 	 * Deletes the TimeSlot row matching the provide id. Returns 0 if the 
 	 * operation fails, 1 otherwise.
 	 * 
-	 * @param id long int, matching the ID of the target row..
+	 * @param id long int, matching the ID of the target row.
 	 * @returns 1 on success, 0 otherwise.
 	 * @throws SQLException
 	 */
