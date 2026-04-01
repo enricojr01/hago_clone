@@ -1,0 +1,112 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.clone.hago_clone.db;
+
+import com.clone.hago_clone.models.TimeslotBean;
+import com.clone.hago_clone.models.ClinicBean;
+import com.clone.hago_clone.models.ClinicTimeslotBean;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author anonymous
+ */
+public class ClinicTimeslotDAO extends BaseDAO {
+
+    private ClinicDAO clinic;
+    private TimeslotDAO timeslot;
+
+    public ClinicTimeslotDAO(String url, String username, String password)
+            throws ClassNotFoundException {
+        super(url, username, password);
+        this.clinic = new ClinicDAO(url, username, password);
+        this.timeslot = new TimeslotDAO(url, username, password);
+
+    }
+
+    @Override
+    protected String createTableStatement() {
+        return "CREATE TABLE IF NOT EXISTS ClinicTimeslot(\n"
+                + "id INT NOT NULL AUTO_INCREMENT,\n"
+                + "clinicId INT NOT NULL,\n"
+                + "timeslotId INT NOT NULL,\n"
+                + "PRIMARY KEY (id),\n"
+                + "FOREIGN KEY (clinicId) REFERENCES Clinic(id),\n"
+                + "FOREIGN KEY (timeslotId) REFERENCES Timeslot(id))";
+    }
+
+    @Override
+    protected String dropTableStatement() {
+        return "DROP TABLE ClinicTimeslot";
+    }
+
+    //Create Functions
+    public ClinicTimeslotBean createClinicTimeslot(ClinicBean cb, TimeslotBean tb) throws SQLException {
+        ClinicTimeslotBean retval = null;
+
+        Connection c = getConnection();
+
+        PreparedStatement ps = c.prepareStatement("INSERT INTO ClinicTimeslot (clinicId,timeslotId) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
+        ps.setInt(1, (int) cb.getId());
+
+        ps.setInt(2, tb.getId());
+
+        if (ps.executeUpdate() > 0) {
+            ResultSet rs = ps.getGeneratedKeys();
+            int id = rs.getInt(1);
+            retval = new ClinicTimeslotBean(id, cb, tb);
+            rs.close();
+        }
+        ps.close();
+        c.close();
+        return retval;
+    }
+
+    //Read Functions
+    public ArrayList<ClinicTimeslotBean> getAllClinicTimeslots() throws SQLException {
+        ArrayList<ClinicTimeslotBean> retval = new ArrayList();
+        Connection c = getConnection();
+        Statement s = c.createStatement();
+        ResultSet rs = s.executeQuery("SELECT id, clinicId,timeslotId FROM ClinicTimeslot");
+        while (rs.next()) {
+            int id = rs.getInt("id"),
+                    clinicId = rs.getInt("clinicId"),
+                    timeslotId = rs.getInt("timeslotId");
+            ClinicTimeslotBean tmp = new ClinicTimeslotBean(id,
+                    clinic.findClinicById(clinicId),
+                    timeslot.findTimeslotById(timeslotId));
+            
+            retval.add(tmp);
+        }
+        rs.close();
+        s.close();
+        c.close();
+        return retval;
+    }
+
+    public ArrayList<ClinicTimeslotBean> findClinicTimeslotsByClinicId(ClinicBean cb) throws SQLException {
+        return null;
+    }
+    
+    //Update Functions
+    //i dont know tbh....
+    
+    //Delete Functions
+    public boolean deleteClinicTimeslot(ClinicTimeslotBean ctb) throws SQLException {
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement("DELETE FROM ClinicTimeslot WHERE id = ?");
+        ps.setInt(1, ctb.getId());
+        boolean retval = (ps.executeUpdate() > 0);
+        ps.close();
+        c.close();
+        return retval;
+    }
+}
