@@ -1,11 +1,18 @@
+<%-- 
+    Document   : staff
+    Created on : Apr 5, 2026, 6:33:28 PM
+    Author     : Enrico Tuvera Jr
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
     </head>
     <body>
-        <h1>Patient Login:</h1>
+        <h1>Staff Login:</h1>
 		<form action="">
 			<fieldset>
 				<legend>Username</legend>
@@ -19,7 +26,7 @@
 				<legend>Login</legend>
 				<input type="submit" value="Login"/>
 				<input type="reset" value="Clear"/> <br/>
-				<a href="staff.jsp">Staff Login</a>
+				<a href="index.html">Patient Login</a>
 			</fieldset>
 		</form>
     </body>
