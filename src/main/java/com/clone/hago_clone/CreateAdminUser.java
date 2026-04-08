@@ -30,6 +30,7 @@ public class CreateAdminUser {
 	public static void main(String[] args) {
 		try {
 			EmployeeDAO ed = createDAO();
+                        ed.createEmployeeTable();
 			ed.addEmployee(
 					"superadmin", 
 					"sadmin", 
