@@ -10,11 +10,10 @@ import java.sql.Time;
  * @author anonymous
  */
 public class TimeslotBean {
-    private int id, capacity;
-    private Time start,end;
-
-    public TimeslotBean() {
-    }
+    private int id; //READ
+    private int capacity; //READ WRITE
+    private Time start; //READ WRITE
+    private Time end; //READ WRITE
 
     public TimeslotBean(int id, int capacity, Time start, Time end) {
         this.id = id;
@@ -26,11 +25,7 @@ public class TimeslotBean {
     public int getId() {
         return id;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    
     public int getCapacity() {
         return capacity;
     }

@@ -47,6 +47,15 @@ public class ClinicTimeslotDAO extends BaseDAO {
     protected String dropTableStatement() {
         return "DROP TABLE ClinicTimeslot";
     }
+    
+    public boolean createClinicTimeslotTable() throws SQLException {
+        return createTable();
+    }
+    
+    public boolean dropClinicTimeslotTable() throws SQLException {
+        return dropTable();
+    }
+    
 
     //Create Functions
     public ClinicTimeslotBean createClinicTimeslot(ClinicBean cb, TimeslotBean tb) throws SQLException {
@@ -61,6 +70,7 @@ public class ClinicTimeslotDAO extends BaseDAO {
 
         if (ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
             int id = rs.getInt(1);
             retval = new ClinicTimeslotBean(id, cb, tb);
             rs.close();

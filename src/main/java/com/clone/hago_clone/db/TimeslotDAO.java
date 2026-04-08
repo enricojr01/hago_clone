@@ -4,7 +4,6 @@
  */
 package com.clone.hago_clone.db;
 
-import com.clone.hago_clone.models.StatusBean;
 import com.clone.hago_clone.models.TimeslotBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,6 +39,13 @@ public class TimeslotDAO extends BaseDAO {
         return "DROP TABLE Timeslot";
     }
     
+    public boolean createTimeslotTable() throws SQLException {
+        return createTable();
+    }
+
+    public boolean dropTimeslotTable() throws SQLException {
+        return dropTable();
+    }
     
     //Create Functions
     public TimeslotBean createTimeslot(Time start, Time end, int capacity) throws SQLException {                       
@@ -53,6 +59,7 @@ public class TimeslotDAO extends BaseDAO {
         
         if(ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
             int id = rs.getInt(1);
             retval = new TimeslotBean(id,capacity,start,end);            
             rs.close();
@@ -106,6 +113,7 @@ public class TimeslotDAO extends BaseDAO {
         
         return retval;                
     }
+        
     
     //Update Functions
     public boolean updateTimeslot(TimeslotBean timeslot) throws SQLException {
@@ -124,6 +132,8 @@ public class TimeslotDAO extends BaseDAO {
         
         return retval;
     }
+    
+    
     //Delete Functions
     
     public boolean deleteTimeslot(TimeslotBean timeslot) throws SQLException {

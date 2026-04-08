@@ -8,9 +8,9 @@ package com.clone.hago_clone.models;
  * @author anonymous
  */
 public class ClinicTimeslotBean {
-    private int id;
-    private ClinicBean clinic;
-    private TimeslotBean timeslot;
+    private int id; //READ
+    private ClinicBean clinic; //READ
+    private TimeslotBean timeslot; //READ
 
     public ClinicTimeslotBean() {
     }

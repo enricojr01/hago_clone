@@ -54,32 +54,47 @@ public class PatientDAO extends BaseDAO {
     public boolean createPatientTable() throws SQLException {
         return createTable();
     }
-    
+
     public boolean dropPatientTable() throws SQLException {
-        return dropTable();    
+        return dropTable();
     }
-    //Create Functions
+    
+    /**
+     * Inserts a new row in Patient
+     * @param name
+     * @param email 
+     * @param password A plaintext version to be encrypted with bcrypt
+     * @return A PatientBean object, or null
+     * @throws SQLException 
+     */    
     public PatientBean createPatient(String name,String email,String password) throws SQLException {
         PatientBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO Patient (name,email,pword) VALUES (?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
         ps.setString(1,name);
         ps.setString(2,email);        
-        ps.setString(3, password);
-        
+        ps.setString(3, password);        
         if(ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
             int id = rs.getInt(1);
             retval = new PatientBean(id,name,email,password);
             rs.close();
         }
+        
+                
         ps.close();
         c.close();
         
         return retval;            
     }
     
-    //Read Functions
+    
+    /**
+     * Collect all Patients
+     * @return An ArrayList of all Patients, can be empty
+     * @throws SQLException 
+     */
     public ArrayList<PatientBean> getAllPatients() throws SQLException {        
         ArrayList<PatientBean> retval = new ArrayList<PatientBean>();
         Connection c = getConnection();
@@ -97,6 +112,13 @@ public class PatientDAO extends BaseDAO {
         return retval;
     }
     
+    
+    /**
+     * 
+     * @param id      
+     * @return A PatientBean, or null
+     * @throws SQLException 
+     */
     public PatientBean findPatientById(int id) throws SQLException {
         PatientBean retval = null;
         Connection c = getConnection();
@@ -113,12 +135,46 @@ public class PatientDAO extends BaseDAO {
         
         rs.close();
         ps.close();
-        c.close();
-        
+        c.close();        
         return retval;
     }
     
+    
+    /**
+     * Returns all Patients that match the fuzzy string given
+     * @param name
+     * @return An ArrayList of PatientBeans, can be empty
+     * @throws SQLException 
+     */
+    public ArrayList<PatientBean>findPatientsByName(String name) throws SQLException {
+        ArrayList<PatientBean> retval = new ArrayList();        
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement("SELECT id,name,email,pword FROM Patient WHERE name LIKE ?");
+        ps.setString(1,'%' + name + '%');
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()) {
+            int _id = rs.getInt("id");
+            String _name = rs.getString("name"),
+                   _email = rs.getString("email"),
+                   _pword = rs.getString("pword");
+            
+            PatientBean tmp = new PatientBean(_id,_name,_email,_pword);            
+            retval.add(tmp);
+        }        
+        rs.close();
+        ps.close();
+        c.close();                
+        return retval;
+    }
+    
+    
     //Update Functions
+    /**
+     * Updates a Patient's record
+     * @param patient 
+     * @return True on success, False on failure
+     * @throws SQLException 
+     */
     public boolean updatePatientData(PatientBean patient) throws SQLException {        
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("UPDATE Patient SET name = ?, email = ?, pword = ? WHERE id = ?");        
@@ -126,8 +182,13 @@ public class PatientDAO extends BaseDAO {
         ps.setString(2,patient.getEmail());
         ps.setString(3,patient.getPword());        
         ps.setInt(4, patient.getId());
+        boolean retval;
         
-        boolean retval = (ps.executeUpdate() > 0);
+        try {
+            retval = (ps.executeUpdate() > 0);
+        } catch(SQLException e) {
+            retval = false;
+        } 
         
         ps.close();
         c.close();
@@ -138,6 +199,12 @@ public class PatientDAO extends BaseDAO {
     
     
     //Delete Functions    
+    /**
+     * 
+     * @param patient
+     * @return True on success, False on failure
+     * @throws SQLException 
+     */
     public boolean deletePatient(PatientBean patient) throws SQLException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("DELETE FROM Patient WHERE id = ?");               
