@@ -20,4 +20,14 @@
 		<param-name>dbPassword</param-name>
 		<param-value></param-value>
 	</context-param>
+
+	<filter>
+		<filter-name>UserLoggedInFilter</filter-name>
+		<filter-class>com.clone.hago_clone.filters.UserLoggedInFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>UserLoggedInFilter</filter-name>
+		<url-pattern>/employees/secure/*</url-pattern>
+	</filter-mapping>
 </web-app>

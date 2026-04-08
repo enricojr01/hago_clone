@@ -4,6 +4,7 @@
  */
 package com.clone.hago_clone.db;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.clone.hago_clone.models.EmployeeBean;
 import java.io.IOException;
 import java.sql.Connection;
@@ -72,14 +73,19 @@ public class EmployeeDAO extends BaseDAO {
 		String sql = 
 				"insert into Employee (role, name, email, password) " +
 				"values (?, ?, ?, ?)";
+		String hashedPassword = 
+				BCrypt
+				.withDefaults()
+				.hashToString(12, password.toCharArray());
 		PreparedStatement ps = c.prepareStatement(
 				sql,
 				Statement.RETURN_GENERATED_KEYS
 		);
+		
 		ps.setString(1, role);
 		ps.setString(2, name);
 		ps.setString(3, email);
-		ps.setString(4, password);
+		ps.setString(4, hashedPassword);
 		
 		// Should return `1` if successful, `0` otherwise.
 		ps.executeUpdate();
@@ -87,12 +93,13 @@ public class EmployeeDAO extends BaseDAO {
 		ResultSet result = ps.getGeneratedKeys();
 		if (result.next()) {
 			long id = result.getLong(1);
+
 			EmployeeBean eb = new EmployeeBean(
 					id, 
 					role, 
 					name, 
 					email, 
-					password
+					hashedPassword
 			);
 
 			result.close();
