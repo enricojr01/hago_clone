@@ -3,14 +3,17 @@ A. Appointment Booking and Management
 1. Clinic & Service Listing 
 o Display list of clinics and services 
 o Filter by clinic, service type, date, and availability 
+
 2. Book Appointments 
 o Patients select a clinic, service, date, and available time slot 
 o System prevents double bookings (per patient and per slot capacity) 
 o Booking confirmation page and record saved 
+
 3. Rescheduling and Cancellation 
 o Patients reschedule within allowed rules (e.g., before cutoff time) 
 o Patients cancel bookings, freeing the slot 
 o Staff can cancel on behalf of the clinic (with reason stored) 
+
 4. Check-in and Attendance 
 o Staff can mark “Arrived”, “Completed”, or “No-show” 
 o Patients can view appointment status 
@@ -19,9 +22,11 @@ B. Walk-in Queue Management
 1. Join Queue 
 o Patients join same-day queue for a clinic/service if enabled 
 o System assigns a queue number and estimated waiting time (simple estimate acceptable) 
+
 2. Queue Progression 
-o Staff call next, skip, or mark as served 
+o Staff call next, skip, or mark as served
 o Patients view live (or near real-time) queue status (refresh-based acceptable) 
+
 3. Queue Rules 
 o Prevent multiple active queue tickets for the same patient in the same clinic/service/day 
 
@@ -48,8 +53,10 @@ E. Account and Role Management
 o List users 
 o Create, edit, or delete users 
 o Assign roles and clinic links for staff (if applicable) 
+
 2. Profile Management (All roles) 
 o Update passwords and personal details 
+
 3. Login Control 
 o Role-based access to pages/features 
 o Session management to secure restricted pages

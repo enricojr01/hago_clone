@@ -54,6 +54,14 @@ public class ClinicServiceDAO extends BaseDAO {
 		return dropTable();
 	}
 
+	/** 
+	 * Creates a new row in the ClinicService join table. Returns a valid
+	 * ClinicServiceBean with an id corresponding to the newly created row.
+	 * @param cb ClinicBean representing the Clinic providing a service.
+	 * @param sb ServiceBean representing the Service provided by a clinic.
+	 * @returns a ClinicServiceBean
+	 * @throws SQLException
+	 */
 	public ClinicServiceBean createClinicService(ClinicBean cb, ServiceBean sb) 
 			throws SQLException {
 		String sqlQuery = "insert into ClinicService (clinic_id, service_id) "
@@ -85,7 +93,15 @@ public class ClinicServiceDAO extends BaseDAO {
 			return null;	
 		}
 	}
-
+	
+	/** 
+	 * Finds a ClinicService row given the row id. Returns a ClinicServiceBean 
+	 * that row's data. The ClinicServiceBean will contain ServiceBean and 
+	 * ClinicBean object references.
+	 * @param id long int, representing a ClinicService row id.
+	 * @returns ClinicServiceBean
+	 * @throws SQLException
+	 */
 	public ClinicServiceBean findClinicServiceById(long id) 
 			throws SQLException {
 		String sqlQuery = "select * from ClinicService as cs"
@@ -118,6 +134,13 @@ public class ClinicServiceDAO extends BaseDAO {
 		}
 	}
 
+	/**
+	 * Finds all ClinicService rows associated with the ID of a clinic. Returns 
+	 * a ClinicServiceBean containing ClinicBean and ServiceBean references.
+	 * @param id long int, representing the ID of a clinic.
+	 * @returns an ArrayList<ClinicBean> containing all rows associated with that id.
+	 * @throws SQLException
+	 */
 	public ArrayList<ClinicServiceBean> findClinicServiceByClinicId(long id) 
 			throws SQLException {
 		String sqlQuery = "select * from ClinicService as cs"
@@ -152,6 +175,13 @@ public class ClinicServiceDAO extends BaseDAO {
 		return results;
 	}
 
+	/**
+	 * Finds all ClinicService rows associated with the ID of a service. Returns 
+	 * a ClinicServiceBean containing ClinicBean and ServiceBean references.
+	 * @param id long int, representing the ID of a service.
+	 * @returns an ArrayList<ClinicBean> containing all rows associated with that id.
+	 * @throws SQLException
+	 */
 	public ArrayList<ClinicServiceBean> findClinicServiceByServiceId(long id) 
 			throws SQLException {
 		String sqlQuery = "select * from ClinicService as cs"
@@ -186,6 +216,13 @@ public class ClinicServiceDAO extends BaseDAO {
 		return results;
 	}
 
+	/** 
+	 * Deletes a ClinicService row matching the id of the provided ClinicServiceBean.
+	 * Associated Clinics and Services are not deleted.
+	 * @param csb ClinicServiceBean representing the row to be deleted.
+	 * @returns int the number of rows to be deleted.
+	 * @throws SQLException
+	 */
 	public int deleteClinicService(ClinicServiceBean csb) throws SQLException {
 		String sqlQuery = "delete from ClinicService where id=?";
 		Connection c = getConnection();
@@ -201,6 +238,13 @@ public class ClinicServiceDAO extends BaseDAO {
 		return result;
 	} 
 
+	/** 
+	 * Deletes a ClinicService row matching the id of the provided id.
+	 * Associated Clinics and Services are not deleted.
+	 * @param id long int representing the row to be deleted.
+	 * @returns int the number of rows to be deleted.
+	 * @throws SQLException
+	 */
 	public int deleteClinicService(long id) throws SQLException {
 		String sqlQuery = "delete from ClinicService where id=?";
 		Connection c = getConnection();

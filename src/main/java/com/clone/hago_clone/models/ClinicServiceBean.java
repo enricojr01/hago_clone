@@ -39,6 +39,4 @@ public class ClinicServiceBean {
 	public void setService(ServiceBean service) {
 		this.service = service;
 	}
-
-
 }

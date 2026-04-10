@@ -8,4 +8,26 @@
             30
         </session-timeout>
     </session-config>
+	<context-param>
+		<param-name>dbUrl</param-name>
+		<param-value>jdbc:mysql://localhost:3306/javaclass</param-value>
+	</context-param>
+	<context-param>
+		<param-name>dbUser</param-name>
+		<param-value>root</param-value>
+	</context-param>
+	<context-param>
+		<param-name>dbPassword</param-name>
+		<param-value></param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>UserLoggedInFilter</filter-name>
+		<filter-class>com.clone.hago_clone.filters.UserLoggedInFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>UserLoggedInFilter</filter-name>
+		<url-pattern>/employees/secure/*</url-pattern>
+	</filter-mapping>
 </web-app>
