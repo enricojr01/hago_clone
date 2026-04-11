@@ -4,9 +4,9 @@
  */
 package com.clone.hago_clone.db;
 
-import com.clone.hago_clone.models.TimeslotBean;
+import com.clone.hago_clone.models.TimeSlotBean;
 import com.clone.hago_clone.models.ClinicBean;
-import com.clone.hago_clone.models.ClinicTimeslotBean;
+import com.clone.hago_clone.models.ClinicTimeSlotBean;
 import com.clone.hago_clone.models.TimeSlotBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,12 +20,12 @@ import java.util.ArrayList;
  *
  * @author anonymous
  */
-public class ClinicTimeslotDAO extends BaseDAO {
+public class ClinicTimeSlotDAO extends BaseDAO {
 
     private ClinicDAO clinic;
     private TimeSlotDAO timeslot;
 
-    public ClinicTimeslotDAO(String url, String username, String password)
+    public ClinicTimeSlotDAO(String url, String username, String password)
             throws ClassNotFoundException {
         super(url, username, password);
         this.clinic = new ClinicDAO(url, username, password);
@@ -35,36 +35,36 @@ public class ClinicTimeslotDAO extends BaseDAO {
 
     @Override
     protected String createTableStatement() {
-        return "CREATE TABLE IF NOT EXISTS ClinicTimeslot(\n"
+        return "CREATE TABLE IF NOT EXISTS ClinicTimeSlot(\n"
                 + "id INT NOT NULL AUTO_INCREMENT,\n"
                 + "clinicId INT NOT NULL,\n"
                 + "timeslotId INT NOT NULL,\n"
                 + "PRIMARY KEY (id),\n"
                 + "FOREIGN KEY (clinicId) REFERENCES Clinic(id),\n"
-                + "FOREIGN KEY (timeslotId) REFERENCES Timeslot(id))";
+                + "FOREIGN KEY (timeslotId) REFERENCES TimeSlot(id))";
     }
 
     @Override
     protected String dropTableStatement() {
-        return "DROP TABLE ClinicTimeslot";
+        return "DROP TABLE ClinicTimeSlot";
     }
     
-    public boolean createClinicTimeslotTable() throws SQLException {
+    public boolean createClinicTimeSlotTable() throws SQLException {
         return createTable();
     }
     
-    public boolean dropClinicTimeslotTable() throws SQLException {
+    public boolean dropClinicTimeSlotTable() throws SQLException {
         return dropTable();
     }
     
 
     //Create Functions
-    public ClinicTimeslotBean createClinicTimeslot(ClinicBean cb, TimeSlotBean tb) throws SQLException {        
-        ClinicTimeslotBean retval = null;
+    public ClinicTimeSlotBean createClinicTimeSlot(ClinicBean cb, TimeSlotBean tb) throws SQLException {        
+        ClinicTimeSlotBean retval = null;
 
         Connection c = getConnection();
 
-        PreparedStatement ps = c.prepareStatement("INSERT INTO ClinicTimeslot (clinicId,timeslotId) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement ps = c.prepareStatement("INSERT INTO ClinicTimeSlot (clinicId,timeslotId) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, (int) cb.getId());
 
         ps.setLong(2, tb.getId());
@@ -73,7 +73,7 @@ public class ClinicTimeslotDAO extends BaseDAO {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             int id = rs.getInt(1);
-            retval = new ClinicTimeslotBean(id, cb, tb);
+            retval = new ClinicTimeSlotBean(id, cb, tb);
             rs.close();
         }
         ps.close();
@@ -82,16 +82,16 @@ public class ClinicTimeslotDAO extends BaseDAO {
     }
 
     //Read Functions
-    public ArrayList<ClinicTimeslotBean> getAllClinicTimeslots() throws SQLException {
-        ArrayList<ClinicTimeslotBean> retval = new ArrayList();
+    public ArrayList<ClinicTimeSlotBean> getAllClinicTimeSlots() throws SQLException {
+        ArrayList<ClinicTimeSlotBean> retval = new ArrayList();
         Connection c = getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT id, clinicId,timeslotId FROM ClinicTimeslot");
+        ResultSet rs = s.executeQuery("SELECT id, clinicId,timeslotId FROM ClinicTimeSlot");
         while (rs.next()) {
             int id = rs.getInt("id"),
                     clinicId = rs.getInt("clinicId"),
                     timeslotId = rs.getInt("timeslotId");
-            ClinicTimeslotBean tmp = new ClinicTimeslotBean(id,
+            ClinicTimeSlotBean tmp = new ClinicTimeSlotBean(id,
                     clinic.findClinicById(clinicId),
                     timeslot.findTimeSlotById(timeslotId));
             
@@ -103,7 +103,7 @@ public class ClinicTimeslotDAO extends BaseDAO {
         return retval;
     }
 
-    public ArrayList<ClinicTimeslotBean> findClinicTimeslotsByClinicId(ClinicBean cb) throws SQLException {
+    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean cb) throws SQLException {
         return null;
     }
     
@@ -111,9 +111,9 @@ public class ClinicTimeslotDAO extends BaseDAO {
     //i dont know tbh....
     
     //Delete Functions
-    public boolean deleteClinicTimeslot(ClinicTimeslotBean ctb) throws SQLException {
+    public boolean deleteClinicTimeSlot(ClinicTimeSlotBean ctb) throws SQLException {
         Connection c = getConnection();
-        PreparedStatement ps = c.prepareStatement("DELETE FROM ClinicTimeslot WHERE id = ?");
+        PreparedStatement ps = c.prepareStatement("DELETE FROM ClinicTimeSlot WHERE id = ?");
         ps.setInt(1, ctb.getId());
         boolean retval = (ps.executeUpdate() > 0);
         ps.close();

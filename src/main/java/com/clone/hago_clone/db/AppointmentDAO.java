@@ -10,7 +10,7 @@ package com.clone.hago_clone.db;
 
 import java.sql.Timestamp;
 
-import com.clone.hago_clone.models.TimeslotBean;
+import com.clone.hago_clone.models.TimeSlotBean;
 import com.clone.hago_clone.models.AppointmentBean;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.PatientBean;
