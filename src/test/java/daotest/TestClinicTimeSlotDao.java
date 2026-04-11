@@ -6,7 +6,7 @@ package daotest;
 
 import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.ClinicTimeslotDAO;
-import com.clone.hago_clone.db.TimeslotDAO;
+import com.clone.hago_clone.db.TimeSlotDAO;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.ClinicTimeslotBean;
 import com.clone.hago_clone.models.TimeslotBean;
@@ -23,14 +23,14 @@ import org.junit.jupiter.api.Test;
  *
  * @author anonymous
  */
-public class TestClinicTimeslotDao {
+public class TestClinicTimeSlotDao {
 
     private final String url = "jdbc:mysql://localhost:3306/javaclass_test",
             uname = "root",
             pword = "";
 
     private TestClinicDao clinicDao = new TestClinicDao();
-    private TestTimeslotDao timeslotDao = new TestTimeslotDao();
+    private TestTimeSlotDao timeslotDao = new TestTimeSlotDao();
 
     public ClinicTimeslotDAO createBase() {
         try {
@@ -47,7 +47,7 @@ public class TestClinicTimeslotDao {
     public void initClinicTimeslotDB() {
         try {
             ClinicTimeslotDAO ctd = createBase();
-            TimeslotDAO td = timeslotDao.createBase();
+            TimeSlotDAO td = timeslotDao.createBase();
             ClinicDAO cd = clinicDao.createBase();
             td.createTimeslotTable();
             cd.createClinicTable();
@@ -63,7 +63,7 @@ public class TestClinicTimeslotDao {
     public void finiClinicTimeslotDB() {
         try {
             ClinicTimeslotDAO ctd = createBase();
-            TimeslotDAO td = timeslotDao.createBase();
+            TimeSlotDAO td = timeslotDao.createBase();
             ClinicDAO cd = clinicDao.createBase();
 
             ctd.dropClinicTimeslotTable();
@@ -79,16 +79,16 @@ public class TestClinicTimeslotDao {
     public void createClinicTimeslot() {
         try {
             ClinicTimeslotDAO ctd = createBase();
-            TimeslotDAO td = timeslotDao.createBase();
+            TimeSlotDAO td = timeslotDao.createBase();
             ClinicDAO cd = clinicDao.createBase();
 
             ClinicBean c = cd.createClinic("Clinic Name", "Address");
-            TimeslotBean t = td.createTimeslot(
+            TimeSlotBean t = td.createTimeSlot(
                     Time.valueOf(LocalTime.of(9, 0, 0)),
                     Time.valueOf(LocalTime.of(12, 30, 0)),
                     10);
 
-            ctd.createClinicTimeslot(c, t);
+            ctd.createClinicTimeSlot(c, t);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,17 +100,17 @@ public class TestClinicTimeslotDao {
     public void deleteClinicTimeslot() {
         try {
             ClinicTimeslotDAO ctd = createBase();
-            TimeslotDAO td = timeslotDao.createBase();
+            TimeSlotDAO td = timeslotDao.createBase();
             ClinicDAO cd = clinicDao.createBase();
 
             ClinicBean c = cd.createClinic("Clinic Name", "Address");
-            TimeslotBean t = td.createTimeslot(
+            TimeSlotBean t = td.createTimeSlot(
                     Time.valueOf(LocalTime.of(9, 0, 0)),
                     Time.valueOf(LocalTime.of(12, 30, 0)),
                     10);
 
-            ClinicTimeslotBean ct = ctd.createClinicTimeslot(c, t);
-            assertTrue(ctd.deleteClinicTimeslot(ct));
+            ClinicTimeSlotBean ct = ctd.createClinicTimeSlot(c, t);
+            assertTrue(ctd.deleteClinicTimeSlot(ct));
 
         } catch (SQLException e) {
             e.printStackTrace();

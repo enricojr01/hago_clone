@@ -7,6 +7,7 @@ package com.clone.hago_clone.db;
 import com.clone.hago_clone.models.TimeslotBean;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.ClinicTimeslotBean;
+import com.clone.hago_clone.models.TimeSlotBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,13 +23,13 @@ import java.util.ArrayList;
 public class ClinicTimeslotDAO extends BaseDAO {
 
     private ClinicDAO clinic;
-    private TimeslotDAO timeslot;
+    private TimeSlotDAO timeslot;
 
     public ClinicTimeslotDAO(String url, String username, String password)
             throws ClassNotFoundException {
         super(url, username, password);
         this.clinic = new ClinicDAO(url, username, password);
-        this.timeslot = new TimeslotDAO(url, username, password);
+        this.timeslot = new TimeSlotDAO(url, username, password);
 
     }
 
@@ -58,7 +59,7 @@ public class ClinicTimeslotDAO extends BaseDAO {
     
 
     //Create Functions
-    public ClinicTimeslotBean createClinicTimeslot(ClinicBean cb, TimeslotBean tb) throws SQLException {
+    public ClinicTimeslotBean createClinicTimeslot(ClinicBean cb, TimeSlotBean tb) throws SQLException {        
         ClinicTimeslotBean retval = null;
 
         Connection c = getConnection();
@@ -66,7 +67,7 @@ public class ClinicTimeslotDAO extends BaseDAO {
         PreparedStatement ps = c.prepareStatement("INSERT INTO ClinicTimeslot (clinicId,timeslotId) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, (int) cb.getId());
 
-        ps.setInt(2, tb.getId());
+        ps.setLong(2, tb.getId());
 
         if (ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
@@ -92,7 +93,7 @@ public class ClinicTimeslotDAO extends BaseDAO {
                     timeslotId = rs.getInt("timeslotId");
             ClinicTimeslotBean tmp = new ClinicTimeslotBean(id,
                     clinic.findClinicById(clinicId),
-                    timeslot.findTimeslotById(timeslotId));
+                    timeslot.findTimeSlotById(timeslotId));
             
             retval.add(tmp);
         }
