@@ -19,11 +19,11 @@ public class ClinicBean {
 	private ArrayList<ServiceBean> services = new ArrayList<>();
 	private ArrayList<TimeSlotBean> timeslots = new ArrayList<>();
 
-	public ArrayList<TimeSlotBean> getTimeslots() {
+	public ArrayList<TimeSlotBean> getTimeSlots() {
 		return timeslots;
 	}
 
-	public void setTimeslots(ArrayList<TimeSlotBean> timeslots) {
+	public void setTimeSlots(ArrayList<TimeSlotBean> timeslots) {
 		this.timeslots = timeslots;
 	}
 

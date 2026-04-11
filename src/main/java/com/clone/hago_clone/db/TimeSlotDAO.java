@@ -97,6 +97,7 @@ public class TimeSlotDAO extends BaseDAO {
 		}
 	}
 
+                
 	/**
 	 * Returns all TimeSlots matching the given start time.
 	 * 
@@ -274,4 +275,32 @@ public class TimeSlotDAO extends BaseDAO {
 		
 		return results;
 	}
+        
+        
+        
+        /**
+         * Returns the TimeSlot with the same id
+         * @param id long, matching the ID of the target row
+         * @returns A TimeSlotBean, or null if the id does not belong to a existing time slot
+         * @throws SQLException 
+         */
+        public TimeSlotBean findTimeSlotById(long id) throws SQLException {
+            TimeSlotBean retval = null;
+            Connection c = getConnection();
+            PreparedStatement ps = c.prepareStatement("select * from TimeSlot where id = ?");
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                retval = new TimeSlotBean(id,
+                        rs.getTime("start").toLocalTime(),
+                        rs.getTime("end").toLocalTime(),
+                            rs.getInt("capacity"));
+            }
+            rs.close();
+            ps.close();
+            c.close();
+            return retval;
+        }
+        
+        
 }

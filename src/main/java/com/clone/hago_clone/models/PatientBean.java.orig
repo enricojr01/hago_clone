@@ -6,6 +6,7 @@ package com.clone.hago_clone.models;
 
 /**
  *
+<<<<<<< HEAD
  * @author anonymous
  */
 
@@ -56,4 +57,10 @@ public class PatientBean {
     
     
     
+=======
+ * @author Enrico Tuvera Jr
+ */
+public class PatientBean {
+	
+>>>>>>> main
 }
