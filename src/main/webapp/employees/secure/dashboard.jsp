@@ -4,6 +4,7 @@
     Author     : Enrico Tuvera Jr
 --%>
 
+<%@page import="com.clone.hago_clone.models.EmployeeBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,21 +13,30 @@
         <title>HAGO Clone Employee Dashboard</title>
     </head>
     <body>
-        <h1>Admin Controls</h1>
-		<ul>
-			<!-- Create new employees and assign them to clinics -->
-			<li><a href="employeeServlet?action=add">Manage Employees system-wide</a></li>
-			<!-- Create new clinics. -->
-			<li><a href="clinicServlet?action=add">Manage Clinics system-wide</a></li>
-			<!-- Create new services. -->
-			<li><a href="serviceServlet?action=add">Manage Service Types system-wide</a></li>
-		</ul>
-		<h1>Employee Controls</h1>
-		<ul>
-			<li>View Appointments</li>
-			<li>Today's Queue</li>
-			<li>Clinic Service Availability</li>
-		</ul>
+		<% 
+EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
+if (eb.getRole().equals("superadmin")) {
+	String adminEmployeePath = request.getContextPath() + "/employees/secure/employees/list.jsp";
+	String adminPatientsPath = request.getContextPath() + "/employees/secure/patients/list.jsp";
+	String adminClinicPath = request.getContextPath() + "/clinicBeanServlet?action=list";
 
+	String adminEmployeeLink = "<a href='" + adminEmployeePath + "'>Manage Employee Accounts</a>";
+	String adminPatientsLink = "<a href='" + adminPatientsPath + "'>Manage Patient Accounts</a>";
+	String adminClinicLink = "<a href='" + adminClinicPath + "'>Manage Clinics</a>";
+	
+	out.println("<h1>Admin Controls</h1>");
+	out.println("<ul>");
+	out.println("<li>" + adminEmployeeLink + "</li>");
+	out.println("<li>" + adminPatientsLink + "</li>");
+	out.println("<li>" + adminClinicLink + "</li>");
+	out.println("</ul>");
+} else {
+	out.println("<h1>Employee Controls</h1>");
+	out.println("<ul>");
+	out.println("<li>Coming Soon!</li>");
+	out.println("</ul>");
+
+}
+		%>
     </body>
 </html>
