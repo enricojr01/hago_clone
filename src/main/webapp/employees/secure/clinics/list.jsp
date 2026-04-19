@@ -43,5 +43,8 @@
 			}
 		%>
 		</table>
+		<a href="<%= request.getContextPath() + "/employeeLogin"%>">Return to Dashboard</a>
+
+		
     </body>
 </html>

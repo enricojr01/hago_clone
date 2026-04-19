@@ -56,185 +56,243 @@ public class ClinicBeanServlet extends HttpServlet {
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		String action = request.getParameter("action");
+
+		switch(action) {
+			case "list":
+				listClinics(request, response);
+				break;
+			case "add":
+				addDisplay(request, response);
+				break;
+			case "save":
+				addSave(request, response);
+				break;
+			case "addSuccess":
+				addSuccess(request, response);
+				break;
+			case "editDisplay":
+				editDisplay(request, response);
+				break;
+			case "editSave":
+				editSave(request, response);
+				break;
+			case "editSuccess":
+				editSuccess(request, response);
+				break;
+			case "deleteConfirm":
+				deleteConfirm(request, response);
+				break;
+			case "delete":
+				deleteSave(request, response);
+				break;
+			case "deleteSuccess":
+				deleteSuccess(request, response);
+				break;
+			default:
+				String error = String.format(
+						"Action %s is unknown and can't be handled!", 
+						action
+				);
+				throw new ServletException(error);
+		}
+	}
+
+	private void listClinics(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		ArrayList<ClinicBean> clinicList = new ArrayList<>();
+		try {
+			clinicList = cd.findClinics();
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
+		request.setAttribute("clinicList", clinicList);
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/clinics/list.jsp");
+		rd.forward(request, response);
+	}
+
+	private void addDisplay(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/clinics/add.jsp");
+		rd.forward(request, response);
+	}
+
+	private void addSave(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		String clinicName = request.getParameter("clinicName");
+		String clinicAddress = request.getParameter("clinicAddress");
+		String error = "";
+
+		if (StringUtils.isNullOrEmpty(clinicName)) {
+			error = error + "Clinic name can't be empty! ";
+		}
+
+		if (StringUtils.isNullOrEmpty(clinicAddress)) {
+			error = error + "Clinic address can't be empty! ";
+		}
 		
-		if (action.equalsIgnoreCase("list")) {
-			ArrayList<ClinicBean> clinicList = new ArrayList<>();
-			try {
-				clinicList = cd.findClinics();
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			}
-			request.setAttribute("clinicList", clinicList);
-			RequestDispatcher rd = this
-					.getServletContext()
-					.getRequestDispatcher("/employees/secure/clinics/list.jsp");
-			rd.forward(request, response);
-		} else if (action.equalsIgnoreCase("add")){
-			RequestDispatcher rd = this
-					.getServletContext()
+		if (error.isEmpty() == false) {
+			request.setAttribute("error", error);
+			RequestDispatcher rd = request 
 					.getRequestDispatcher("/employees/secure/clinics/add.jsp");
 			rd.forward(request, response);
-		} else if (action.equalsIgnoreCase("editDisplay")) {
-			long id = Long.parseLong(request.getParameter("id"));
-			
-			ClinicBean cb;
-			try {
-				cb = cd.findClinicById(id);
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			} 
+			return;
+		}
+		
+		ClinicBean cb;
+		try {
+			cb = this.cd.createClinic(clinicName, clinicAddress);
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
+		
+		String targetPath = String.format(
+				"clinicBeanServlet?action=addSuccess&id=%s&name=%s&address=%s",
+				cb.getId(),
+				cb.getName(),
+				cb.getAddress()
+		);
+		response.sendRedirect(targetPath);
+	}
+	
+	private void addSuccess(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/clinics/addSuccess.jsp");
+		rd.forward(request, response);
+	}
 
-			if (cb == null) {
-				throw new ServletException("Clinic with ID " + id + " not found!");
-			}
+	private void editDisplay(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		long id = Long.parseLong(request.getParameter("id"));
+		
+		ClinicBean cb;
+		try {
+			cb = cd.findClinicById(id);
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		} 
 
-			request.setAttribute("clinicBean", cb);
-			RequestDispatcher rd = this
-					.getServletContext()
-					.getRequestDispatcher("/employees/secure/clinics/edit.jsp");
-			rd.forward(request, response);
-		} else if (action.equalsIgnoreCase("editSave")) {
-			long clinicID = Long.parseLong(request.getParameter("id"));
-			
-			ClinicBean cb;
-			try {
-				cb = cd.findClinicById(clinicID);
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			}
+		if (cb == null) {
+			throw new ServletException("Clinic with ID " + id + " not found!");
+		}
 
-			if (cb == null) {
-				throw new ServletException("Clinic with ID " + clinicID + " not found!");
-			}
+		request.setAttribute("clinicBean", cb);
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/clinics/edit.jsp");
+		rd.forward(request, response);
+	}
 
-			cb.setName(request.getParameter("clinicName"));
-			cb.setAddress(request.getParameter("clinicAddress"));
+	private void editSave(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		long clinicID = Long.parseLong(request.getParameter("id"));
+		
+		ClinicBean cb;
+		try {
+			cb = cd.findClinicById(clinicID);
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
 
-			int res = 0;
-			try {
-				res = cd.updateClinic(cb);
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			}
+		if (cb == null) {
+			throw new ServletException("Clinic with ID " + clinicID + " not found!");
+		}
 
-			if (res > 0) {
-				String successPath = String.format(
-						"%s/clinicBeanServlet?action=editSuccess&id=%s&name=%s&address=%s",
-						request.getContextPath(),
-						cb.getId(),
-						cb.getName(),
-						cb.getAddress()
-				);
-//				RequestDispatcher rd = this
-//						.getServletContext()
-//						.getRequestDispatcher(successPath);
-//				rd.forward(request, response);
-				response.sendRedirect(successPath);
-			} else {
-				String error = String.format("Clinic with ID %s not found!", cb.getId());
-				throw new ServletException(error);
-			}
-		} else if (action.equalsIgnoreCase("deleteConfirm")) {
-			String id = request.getParameter("id");
-			
-			ClinicBean cb;
+		cb.setName(request.getParameter("clinicName"));
+		cb.setAddress(request.getParameter("clinicAddress"));
 
-			try {
-				cb = cd.findClinicById(Long.parseLong(id));
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			}
-			if (cb == null) {
-				String error = String.format("Clinic with ID %s not found!", id);
-				throw new ServletException(error);
-			}
-			
-			request.setAttribute("clinicBean", cb);
-			RequestDispatcher rd = this
-					.getServletContext()
-					.getRequestDispatcher("/employees/secure/clinics/deleteConfirm.jsp");
-			rd.forward(request, response);
-		} else if (action.equalsIgnoreCase("delete")) {
-			String id = request.getParameter("id");
-			ClinicBean cb;
+		int res = 0;
+		try {
+			res = cd.updateClinic(cb);
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
 
-			int results;
-			try {
-				cb = cd.findClinicById(Long.parseLong(id));
-				results = cd.deleteClinic(Long.parseLong(id));
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			}
-
-			if (results == 0) {
-				String error = String.format("Clinic with ID %s not found!", id);
-				throw new ServletException(error);
-			}
-
+		if (res > 0) {
 			String successPath = String.format(
-					"%s/clinicBeanServlet?action=deleteSuccess&id=%s&name=%s&address=%s", 
+					"%s/clinicBeanServlet?action=editSuccess&id=%s&name=%s&address=%s",
 					request.getContextPath(),
-					cb.getId(), 
-					cb.getName(), 
-					cb.getAddress()
-			);
-			response.sendRedirect(successPath);
-		} else if (action.equalsIgnoreCase("deleteSuccess")) {
-			String successPage = "/employees/secure/clinics/deleteSuccess.jsp";
-			RequestDispatcher rd = this
-					.getServletContext()
-					.getRequestDispatcher(successPage);
-			rd.forward(request, response);
-		} else if (action.equalsIgnoreCase("save")) {
-			String clinicName = request
-					.getParameter("clinicName")
-					.toString();
-			String clinicAddress = request
-					.getParameter("clinicAddress")
-					.toString();
-			String error = "";
-
-			if (StringUtils.isNullOrEmpty(clinicName)) {
-				error = error + "Clinic name can't be empty! ";
-			}
-			if (StringUtils.isNullOrEmpty(clinicAddress)) {
-				error = error + "Clinic address can't be empty! ";
-			}
-			if (error.isEmpty() == false) {
-				request.setAttribute("error", error);
-				RequestDispatcher rd = this
-						.getServletContext()
-						.getRequestDispatcher("/employees/secure/clinics/add.jsp");
-				rd.forward(request, response);
-			}
-			
-			ClinicBean cb;
-			try {
-				cb = this.cd.createClinic(clinicName, clinicAddress);
-			} catch (SQLException e) {
-				throw new ServletException(e.getMessage());
-			}
-			
-			String targetPath = String.format(
-					"clinicBeanServlet?action=addSuccess&id=%s&name=%s&address=%s",
 					cb.getId(),
 					cb.getName(),
 					cb.getAddress()
 			);
-			response.sendRedirect(targetPath);
-		} else if (action.equalsIgnoreCase("addSuccess")) {
-			RequestDispatcher rd = this
-					.getServletContext()
-					.getRequestDispatcher("/employees/secure/clinics/addSuccess.jsp");
-			rd.forward(request, response);
-		} else if (action.equalsIgnoreCase("editSuccess")) {
-			RequestDispatcher rd = this
-					.getServletContext()
-					.getRequestDispatcher("/employees/secure/clinics/editSuccess.jsp");
-			rd.forward(request, response);
+			response.sendRedirect(successPath);
 		} else {
-			PrintWriter out = response.getWriter();
-			out.println("No such action!"); 
+			String error = String.format("Clinic with ID %s not found!", cb.getId());
+			throw new ServletException(error);
 		}
+	}
+
+	private void editSuccess(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/clinics/editSuccess.jsp");
+		rd.forward(request, response);
+	}
+
+	private void deleteConfirm(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		String id = request.getParameter("id");
+		
+		ClinicBean cb;
+
+		try {
+			cb = cd.findClinicById(Long.parseLong(id));
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
+		if (cb == null) {
+			String error = String.format("Clinic with ID %s not found!", id);
+			throw new ServletException(error);
+		}
+		
+		request.setAttribute("clinicBean", cb);
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/clinics/deleteConfirm.jsp");
+		rd.forward(request, response);
+	}
+
+	private void deleteSave(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		String id = request.getParameter("id");
+		ClinicBean cb;
+
+		int results;
+		try {
+			cb = cd.findClinicById(Long.parseLong(id));
+			results = cd.deleteClinic(Long.parseLong(id));
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
+
+		if (results == 0) {
+			String error = String.format("Clinic with ID %s not found!", id);
+			throw new ServletException(error);
+		}
+
+		String successPath = String.format(
+				"%s/clinicBeanServlet?action=deleteSuccess&id=%s&name=%s&address=%s", 
+				request.getContextPath(),
+				cb.getId(), 
+				cb.getName(), 
+				cb.getAddress()
+		);
+		response.sendRedirect(successPath);
+	}
+
+	private void deleteSuccess(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		String successPage = "/employees/secure/clinics/deleteSuccess.jsp";
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher(successPage);
+		rd.forward(request, response);
 	}
 }

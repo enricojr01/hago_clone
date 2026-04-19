@@ -49,7 +49,15 @@ public class EmployeeLoginServlet extends HttpServlet {
 			HttpServletRequest request, 
 			HttpServletResponse response
 	) throws ServletException, IOException {
-		// TODO: redirect to dashboard if a user's already logged in.
+		RequestDispatcher rd = request.getRequestDispatcher("employees/secure/dashboard.jsp");
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
+			if (eb != null && eb.getRole().equals("superadmin")) {
+				rd.forward(request, response);
+				return;
+			}
+		}
 		response.sendRedirect("employees/login.jsp");
 	}
 

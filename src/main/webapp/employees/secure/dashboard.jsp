@@ -17,7 +17,7 @@
 EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
 if (eb.getRole().equals("superadmin")) {
 	String adminEmployeePath = request.getContextPath() + "/employees/secure/employees/list.jsp";
-	String adminPatientsPath = request.getContextPath() + "/employees/secure/patients/list.jsp";
+	String adminPatientsPath = request.getContextPath() + "/patientBeanServlet?action=list";
 	String adminClinicPath = request.getContextPath() + "/clinicBeanServlet?action=list";
 
 	String adminEmployeeLink = "<a href='" + adminEmployeePath + "'>Manage Employee Accounts</a>";

@@ -4,6 +4,7 @@
  */
 package com.clone.hago_clone.db;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.clone.hago_clone.models.PatientBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,9 +36,9 @@ public class PatientDAO extends BaseDAO {
         return "CREATE TABLE IF NOT EXISTS Patient (\n" +
                 "id INT NOT NULL AUTO_INCREMENT,\n" +
                 "name VARCHAR(50) NOT NULL,\n" +
-                "email VARCHAR(50) NOT NULL UNIQUE,\n" +
-                "pword VARCHAR(16) NOT NULL,\n" +
-                "PRIMARY KEY (id))";
+                "email VARCHAR(50) NOT NULL,\n" +
+                "pword VARCHAR(128) NOT NULL,\n" +
+                "PRIMARY KEY (id),  UNIQUE (email))";
     }
 
     /**
@@ -67,13 +68,16 @@ public class PatientDAO extends BaseDAO {
      * @return A PatientBean object, or null
      * @throws SQLException 
      */    
-    public PatientBean createPatient(String name,String email,String password) throws SQLException {
+    public PatientBean createPatient(String name, String email, String password) throws SQLException {
         PatientBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO Patient (name,email,pword) VALUES (?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
+
+		String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
         ps.setString(1,name);
         ps.setString(2,email);        
-        ps.setString(3, password);        
+        ps.setString(3, hash);
+
         if(ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
@@ -99,7 +103,7 @@ public class PatientDAO extends BaseDAO {
         ArrayList<PatientBean> retval = new ArrayList<PatientBean>();
         Connection c = getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT id, name, email, pword FROM Patients");
+        ResultSet rs = s.executeQuery("SELECT id, name, email, pword FROM Patient");
         while(rs.next()) {
             int id = rs.getInt("id");
             String name = rs.getString("name"),

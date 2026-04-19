@@ -35,5 +35,6 @@
 				<input type="reset" value="Clear"/>
 			</fieldset>
 		</form>
+		<a href="<%= request.getContextPath() + "/employeeLogin" %>">Return to Dashboard</a>
     </body>
 </html>
