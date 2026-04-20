@@ -58,6 +58,24 @@ public class PatientBeanServlet extends HttpServlet {
 				case "addSuccess":
 					addSuccess(request, response);
 					break;
+				case "editDisplay":
+					editDisplay(request, response);
+					break;
+				case "editSave":
+					editSave(request, response);
+					break;
+				case "editSuccess":
+					editSuccess(request, response);
+					break;
+				case "deleteConfirm":
+					deleteConfirm(request, response);
+					break;
+				case "deleteSave":
+					deleteSave(request, response);
+					break;
+				case "deleteSuccess":
+					deleteSuccess(request, response);
+					break;
 				default:
 					String error = String.format("Unknown action: %s, try again!", action);
 					throw new ServletException(error);
@@ -133,6 +151,140 @@ public class PatientBeanServlet extends HttpServlet {
 		RequestDispatcher rd = this
 				.getServletContext()
 				.getRequestDispatcher("/employees/secure/patients/addSuccess.jsp");
+		rd.forward(request, response);
+	}
+
+	private void editDisplay(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		int patientId = Integer.parseInt(request.getParameter("id"));
+		
+		PatientBean pb;
+		try {
+			pb = pd.findPatientById(patientId);
+			
+			if (pb == null) {
+				String error = String.format("Patient with id %s not found", patientId);
+				throw new ServletException(error);
+			}
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
+
+		request.setAttribute("patientBean", pb);
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/patients/edit.jsp");
+		rd.forward(request, response);
+	}
+
+	private void editSave(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		int patientId = Integer.parseInt(request.getParameter("patientID"));
+		
+		PatientBean pb;
+		try {
+			pb = pd.findPatientById(patientId);
+			if (pb == null) {
+				String error = String.format("Patient with id %s not found!", patientId);
+				throw new ServletException(error);
+			}
+			pb.setEmail(request.getParameter("patientEmail"));
+			pb.setName(request.getParameter("patientName"));
+
+			boolean res = pd.updatePatientData(pb);
+			if (res == false) {
+				String error = String.format(
+						"Database update of Patient id %s failed!", 
+						pb.getId()
+				);
+				throw new ServletException(error);
+			}
+		} catch (SQLException e) {
+			throw new ServletException(e);
+		}
+
+		String targetPath = String.format(
+				"%s/patientBeanServlet?action=editSuccess&id=%s&name=%s&email=%s",
+				request.getContextPath(),
+				pb.getId(),
+				pb.getName(),
+				pb.getEmail()
+		);
+		System.out.println("editSave - Sending redirect");
+		response.sendRedirect(targetPath);
+	}
+
+	private void editSuccess(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		RequestDispatcher rd = this
+				.getServletContext()
+				.getRequestDispatcher("/employees/secure/patients/editSuccess.jsp");
+		System.out.println("editSuccess - Forwarding to success page");
+		rd.forward(request, response);
+	}
+
+	private void deleteConfirm(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		int patientId = Integer.parseInt(request.getParameter("id"));
+
+		PatientBean pb;
+		try {
+			pb = pd.findPatientById(patientId);
+			
+			if (pb == null) {
+				String error = String.format("Patient with id %s not found!", patientId);
+				throw new ServletException(error);
+			}
+		} catch (SQLException e) {
+			throw new ServletException(e);
+		}
+		
+		request.setAttribute("patientBean", pb);
+		RequestDispatcher rd = request.getRequestDispatcher(
+				"/employees/secure/patients/deleteConfirm.jsp"
+		);
+		rd.forward(request, response);
+	}
+
+	private void deleteSave(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		int patientId = Integer.parseInt(request.getParameter("id"));
+	
+		PatientBean pb;
+		boolean results;
+		try {
+			pb = pd.findPatientById(patientId);
+			results = pd.deletePatient(pb);
+			if (pb == null) {
+				String error = String.format(
+						"Patient record with id %s not found!", 
+						patientId
+				);
+				throw new ServletException(error);
+			}
+
+			if (results == false) {
+				String error = "Patient record could not be deleted!";
+				throw new ServletException(error);
+			}
+		} catch (SQLException e) {
+			throw new ServletException(e.getMessage());
+		}
+
+		String targetPath = String.format(
+				"%s/patientBeanServlet?action=deleteSuccess&id=%s&name=%s&email%s", 
+				request.getContextPath(),
+				pb.getId(),
+				pb.getName(),
+				pb.getEmail()
+		);
+		
+		response.sendRedirect(targetPath);
+	}
+	
+	private void deleteSuccess(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/patients/deleteSuccess.jsp");
 		rd.forward(request, response);
 	}
 }

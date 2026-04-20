@@ -14,29 +14,29 @@
     </head>
     <body>
 		<% 
-EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
-if (eb.getRole().equals("superadmin")) {
-	String adminEmployeePath = request.getContextPath() + "/employees/secure/employees/list.jsp";
-	String adminPatientsPath = request.getContextPath() + "/patientBeanServlet?action=list";
-	String adminClinicPath = request.getContextPath() + "/clinicBeanServlet?action=list";
+			EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
+			if (eb.getRole().equals("superadmin")) {
+				String adminEmployeePath = request.getContextPath() + "/employees/secure/employees/list.jsp";
+				String adminPatientsPath = request.getContextPath() + "/patientBeanServlet?action=list";
+				String adminClinicPath = request.getContextPath() + "/clinicBeanServlet?action=list";
 
-	String adminEmployeeLink = "<a href='" + adminEmployeePath + "'>Manage Employee Accounts</a>";
-	String adminPatientsLink = "<a href='" + adminPatientsPath + "'>Manage Patient Accounts</a>";
-	String adminClinicLink = "<a href='" + adminClinicPath + "'>Manage Clinics</a>";
-	
-	out.println("<h1>Admin Controls</h1>");
-	out.println("<ul>");
-	out.println("<li>" + adminEmployeeLink + "</li>");
-	out.println("<li>" + adminPatientsLink + "</li>");
-	out.println("<li>" + adminClinicLink + "</li>");
-	out.println("</ul>");
-} else {
-	out.println("<h1>Employee Controls</h1>");
-	out.println("<ul>");
-	out.println("<li>Coming Soon!</li>");
-	out.println("</ul>");
+				String adminEmployeeLink = "<a href='" + adminEmployeePath + "'>Manage Employee Accounts</a>";
+				String adminPatientsLink = "<a href='" + adminPatientsPath + "'>Manage Patient Accounts</a>";
+				String adminClinicLink = "<a href='" + adminClinicPath + "'>Manage Clinics</a>";
+				
+				out.println("<h1>Admin Controls</h1>");
+				out.println("<ul>");
+				out.println("<li>" + adminEmployeeLink + "</li>");
+				out.println("<li>" + adminPatientsLink + "</li>");
+				out.println("<li>" + adminClinicLink + "</li>");
+				out.println("</ul>");
+			} else {
+				out.println("<h1>Employee Controls</h1>");
+				out.println("<ul>");
+				out.println("<li>Coming Soon!</li>");
+				out.println("</ul>");
 
-}
+			}
 		%>
     </body>
 </html>
