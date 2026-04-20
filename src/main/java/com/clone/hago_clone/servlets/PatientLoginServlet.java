@@ -4,26 +4,54 @@
  */
 package com.clone.hago_clone.servlets;
 
+import com.clone.hago_clone.ConnectionDetails;
+import com.clone.hago_clone.DBConnections;
 import com.clone.hago_clone.db.PatientDAO;
+import com.clone.hago_clone.models.PatientBean;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import com.mysql.jdbc.StringUtils;
+import java.sql.SQLException;
 
 /**
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientLoginServlet", urlPatterns = {"/patientLogin"})
+@WebServlet(name = "PatientLoginServlet", urlPatterns = {"/patients/login"})
 public class PatientLoginServlet extends HttpServlet {
+
     private PatientDAO db;
 
+    //Honestly, why not just make a superclass of HttpServlet, that can handle this fetching? 
+    //And all we would need to do is provide the specific class and we can assign the ouput to a variable
+    //Or is that bad because that would need reflection?
+    @Override
+    public void init() {
+        ConnectionDetails cdt = DBConnections.prod();
+        try {
+            db = new PatientDAO(
+                    cdt.getUrl(),
+                    cdt.getUsername(),
+                    cdt.getPassword()
+            );
+        } catch (ClassNotFoundException e) {
+            // TODO: figure out how to correctly handle exceptions at the
+            // 		 servlet level.
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * Handles the HTTP <code>GET</code> method.
-     * Get the login page if we are not logged in, or if we are then we skip to the dashboard as is
+     * Handles the HTTP <code>GET</code> method. Get the login page if we are
+     * not logged in, or if we are then we skip to the dashboard as is
      *
      * @param request servlet request
      * @param response servlet response
@@ -32,13 +60,35 @@ public class PatientLoginServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException {                
+        RequestDispatcher rd;        
+        HttpSession session = request.getSession(false);                               
         
+        if(session != null) {            
+            if(session.getAttribute("patientBean") != null)  {
+                //skip to the dashboard                
+                response.sendRedirect("patients/dashboard.jsp");
+                return;
+            }
+            
+            //Are they an employee?
+            if(session.getAttribute("employeeBean") != null) {                
+                response.sendRedirect("index.html");                 
+                return;
+            }                                                            
+            session.invalidate();
+        }         
+        
+        //go to login page
+        rd = request.getRequestDispatcher("patients/login.jsp");            
+        rd.forward(request,response);        
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
-     * Validates the login page form. If successful, then go to the dashboard, else return back to the login page with the error info
+     * Handles the HTTP <code>POST</code> method. Validates the login page form.
+     * If successful, then go to the dashboard, else return back to the login
+     * page with the error info
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -47,6 +97,68 @@ public class PatientLoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        //verify that there isn't already a session associated with the user
+        if(session != null) {
+            if(session.getAttribute("patientBean") != null)  {
+                //skip to the dashboard                
+                response.sendRedirect("patients/dashboard.jsp");
+                return;
+            }            
+            //Are they an employee?
+            if(session.getAttribute("employeeBean") != null) {                
+                response.sendRedirect("index.html");                 
+                return;
+            }      
+            //if there is nothing there, then just invalidate the session
+            session.invalidate();            
+        }
+        
+        RequestDispatcher rd;        
+        
+        String email = request.getParameter("email"),        
+               pwd = request.getParameter("password");
+        
+        String errStr = "";                
+        boolean err = false;
+        
+        if(StringUtils.isNullOrEmpty(email)) {
+            err = true;
+            errStr += "Missing Email";
+        }
+        if(StringUtils.isNullOrEmpty(pwd)) {
+            
+            if(err) { 
+                errStr += " and Password"; 
+            } else {                 
+                errStr += "Missing Password"; 
+            }        
+            err = true;
+        }
+        
+        if(err) {            
+            request.setAttribute("error", errStr);
+            rd = request.getRequestDispatcher("patients/loginform.jsp");            
+            rd.forward(request,response);        
+        }
+        
+        //now validate
+        try {
+            PatientBean user = db.validateCredentials(email,pwd);            
+            if(user != null) {                         
+                System.out.println("IS BEAN?");
+                session = request.getSession(true);
+                session.setAttribute("patientBean", user);
+                response.sendRedirect("patients/dashboard.jsp");
+                return;
+            }
+        } catch(SQLException e) {            
+            e.printStackTrace();
+        }
+        
+        request.setAttribute("error", "Invalid Credentials");
+        rd = request.getRequestDispatcher("patients/loginform.jsp");            
+        rd.forward(request,response);        
         
     }
 
@@ -57,7 +169,7 @@ public class PatientLoginServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "For Patient Login";
     }// </editor-fold>
 
 }
