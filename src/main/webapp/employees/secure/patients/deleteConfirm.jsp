@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Delete Patient</title>
     </head>
     <body>
 		<jsp:useBean id="patientBean" scope="request" class="com.clone.hago_clone.models.PatientBean"/>
@@ -22,7 +22,7 @@
 		</ul>
 			<a href="<%= request.getContextPath() + "/patientBeanServlet?action=list" %>">
 				No, I want to go back
-			</a>
+			</a><br/> 
 			<a href="<%= request.getContextPath() + "/patientBeanServlet?action=deleteSave&id=" + patientBean.getId() %>">
 				Yes, I want to delete this Patient account
 			</a>
