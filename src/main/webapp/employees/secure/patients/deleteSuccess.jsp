@@ -20,5 +20,4 @@
 		</ul>
 		<a href="<%= request.getContextPath() + "/clinicBeanServlet?action=list" %>">Back to Patient List</a>
     </body>
-    </body>
 </html>

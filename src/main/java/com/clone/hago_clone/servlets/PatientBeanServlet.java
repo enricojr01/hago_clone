@@ -7,6 +7,7 @@ package com.clone.hago_clone.servlets;
 import com.clone.hago_clone.db.PatientDAO;
 import com.clone.hago_clone.ConnectionDetails;
 import com.clone.hago_clone.DBConnections;
+import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.PatientBean;
 import com.mysql.jdbc.StringUtils;
 import java.io.IOException;

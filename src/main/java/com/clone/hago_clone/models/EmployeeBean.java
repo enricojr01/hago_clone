@@ -16,6 +16,8 @@ public class EmployeeBean implements Serializable {
 	private String name;
 	private String email;
 	private String password;
+
+	private long clinicId;
 	private ClinicBean clinic;
 
 	public EmployeeBean() {};
@@ -51,6 +53,14 @@ public class EmployeeBean implements Serializable {
 		return email;
 	}
 
+	public ClinicBean getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(ClinicBean clinic) {
+		this.clinic = clinic;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -61,6 +71,14 @@ public class EmployeeBean implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public long getClinicId() {
+		return clinicId;
+	}
+
+	public void setClinicId(long clinicId) {
+		this.clinicId = clinicId;
 	}
 	
 }
