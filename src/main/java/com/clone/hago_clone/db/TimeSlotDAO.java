@@ -38,7 +38,7 @@ public class TimeSlotDAO extends BaseDAO {
 
 	@Override
 	protected String dropTableStatement() {
-		return "drop table TimeSlot";
+		return "drop table if exists TimeSlot";
 	}
 
 	public boolean createTimeSlotTable() throws SQLException {

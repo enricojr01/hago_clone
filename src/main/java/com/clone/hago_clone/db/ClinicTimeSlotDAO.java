@@ -46,7 +46,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
 
     @Override
     protected String dropTableStatement() {
-        return "DROP TABLE ClinicTimeSlot";
+        return "DROP TABLE IF EXISTS ClinicTimeSlot";
     }
     
     public boolean createClinicTimeSlotTable() throws SQLException {

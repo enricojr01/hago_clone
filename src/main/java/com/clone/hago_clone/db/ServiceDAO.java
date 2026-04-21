@@ -38,7 +38,7 @@ public class ServiceDAO extends BaseDAO {
 
 	@Override
 	protected String dropTableStatement() {
-		return "drop table Service";
+		return "drop table if exists Service";
 	}
 
 	public boolean createServiceTable() throws SQLException {

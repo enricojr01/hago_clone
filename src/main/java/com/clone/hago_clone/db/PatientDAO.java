@@ -48,7 +48,7 @@ public class PatientDAO extends BaseDAO {
      */
     @Override
     protected String dropTableStatement() {
-        return "DROP TABLE Patient";
+        return "DROP TABLE IF EXISTS Patient";
     }
     
     public boolean createPatientTable() throws SQLException {

@@ -19,9 +19,11 @@ public class CreatePatientUser {
  
     public static void main(String[] args) {
         try {
-            PatientDAO db = new PatientDAO(url,uname,pword);
-            db.createPatientTable();
-            db.createPatient("Test", "email@email.com", "password");                    
+            PatientDAO p = new PatientDAO(url,uname,pword);
+            
+            p.dropPatientTable();
+            p.createPatientTable();
+            p.createPatient("Test", "email@email.com", "password");                    
             
         } catch(ClassNotFoundException e) {
             System.exit(1);

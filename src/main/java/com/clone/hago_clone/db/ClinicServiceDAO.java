@@ -43,7 +43,7 @@ public class ClinicServiceDAO extends BaseDAO {
 
 	@Override
 	protected String dropTableStatement() {
-		return "drop table ClinicService";
+		return "drop table if exists ClinicService";
 	}
 
 	public boolean createClinicServiceTable() throws SQLException {

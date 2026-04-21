@@ -60,7 +60,7 @@ public class AppointmentDAO extends BaseDAO {
 
     @Override
     protected String dropTableStatement() {
-        return "DROP TABLE Appointment";
+        return "DROP TABLE IF EXISTS Appointment";
     }
 
     public boolean createAppointmentTable() throws SQLException {
