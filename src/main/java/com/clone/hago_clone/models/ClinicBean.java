@@ -69,4 +69,8 @@ public class ClinicBean {
 	public void setEmployees(ArrayList<EmployeeBean> employees) {
 		this.employees = employees;
 	}
+
+	public String toString() {
+		return this.name;
+	}
 }

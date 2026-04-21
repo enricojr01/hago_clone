@@ -13,8 +13,8 @@
         <title>Patients Master List</title>
     </head>
     <body>
-		<a href="patientBeanServlet?action=addDisplay">Add New Patient</a>
 		<jsp:useBean id="patientList" scope="request" class="java.util.ArrayList<PatientBean>"/>
+		<a href="patientBeanServlet?action=addDisplay">Add New Patient</a>
 		<table>
 			<tr>
 				<th>ID</th>

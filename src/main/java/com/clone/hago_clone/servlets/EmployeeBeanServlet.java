@@ -102,10 +102,6 @@ public class EmployeeBeanServlet extends HttpServlet {
 			throw new ServletException(e.getMessage());
 		}
 
-		Stream temp = results
-				.stream()
-				.filter(w -> w.getRole().equals("superadmin") == false);
-
 		request.setAttribute("employeeList", results);
 		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/employees/list.jsp");
 		rd.forward(request, response);
@@ -156,8 +152,6 @@ public class EmployeeBeanServlet extends HttpServlet {
 
 		if (error.isEmpty() == false) {
 			ArrayList<ClinicBean> clinicList = new ArrayList<>();
-
-			System.out.println("Error: " + error);
 			
 			try {
 				clinicList = cd.findClinics();
