@@ -36,11 +36,11 @@ public class AppointmentDAO extends BaseDAO {
     public AppointmentDAO(String url, String username, String password)
             throws ClassNotFoundException {
         super(url, username, password);
-
         this.patientDao = new PatientDAO(url, username, password);
         this.clinicDao = new ClinicDAO(url, username, password);
         this.serviceDao = new ServiceDAO(url, username, password);
     }
+    
 
     @Override
     protected String createTableStatement() {
