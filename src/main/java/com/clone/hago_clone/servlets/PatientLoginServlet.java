@@ -25,7 +25,7 @@ import java.sql.SQLException;
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientLoginServlet", urlPatterns = {"/patients/login"})
+@WebServlet(name = "PatientLoginServlet", urlPatterns = {"/patientLogin"})
 public class PatientLoginServlet extends HttpServlet {
 
     private PatientDAO db;

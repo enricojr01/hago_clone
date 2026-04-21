@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientAppointmentServlet", urlPatterns = {"/patients/appointments"})
+@WebServlet(name = "PatientAppointmentServlet", urlPatterns = {"/patientAppointment"})
 public class PatientAppointmentServlet extends HttpServlet {
     private AppointmentDAO db;
     

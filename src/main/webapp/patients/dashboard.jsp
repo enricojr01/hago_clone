@@ -16,10 +16,10 @@
         <h1>Your Dashboard</h1>
         <p>Hello, ${patientBean.getName()}</p>
         <ul>
-            <li><a href="/patients/notifications">Notifications</a></li>
-            <li><a href="/patients/queues/">Queues</a></li>
-            <li><a href="/patients/appointments">Appointments</a></li>
-            <li><a href="/patients/logout">Logout</a></li>
+            <li><a href="/patientNotification">Notifications</a></li>
+            <li><a href="/patientQueue">Queues</a></li>
+            <li><a href="/patientAppointment">Appointments</a></li>
+            <li><a href="/patientLogout">Logout</a></li>
         </ul>       
     </body>
 </html>

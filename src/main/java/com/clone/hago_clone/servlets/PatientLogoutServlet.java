@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientLogoutServlet", urlPatterns = {"/patients/logout"})
+@WebServlet(name = "PatientLogoutServlet", urlPatterns = {"/patientLogout"})
 public class PatientLogoutServlet extends HttpServlet {
     
     //Should a check be done here to ensure that we are logging out an actual patient?
