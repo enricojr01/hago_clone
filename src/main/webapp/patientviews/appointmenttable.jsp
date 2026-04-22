@@ -24,7 +24,8 @@
                             <th>Date</th>
                             <th>Clinic</th>
                             <th>Service</th>
-                            <th>Status</th>                        
+                            <th>Status</th> 
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,6 +36,11 @@
                                 <td>${(app.clinic).name}</td>
                                 <td>${(app.service).name}</td>
                                 <td>${app.cancellation}</td>                                    
+                                <td>                                    
+                                    <c:if test="${app.cancellation eq 'AWAITING'}">
+                                        <a href="<c:url value="/patientAppointmentCancel/${app.id}"/>">Cancel Appointment</a>        
+                                    </c:if>                                                                            
+                                </td>
                             </tr>                
                         </c:forEach>
                     </tbody>
@@ -43,6 +49,7 @@
             <c:otherwise>
                 <p>No appointments were made...</p>
             </c:otherwise>
-        </c:choose>        
+        </c:choose>       
+        <a href="patientBookAppointment">Book new appointment</a>
     </body>
 </html>
