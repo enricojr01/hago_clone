@@ -61,18 +61,21 @@ public class PatientLoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {                
-        RequestDispatcher rd;        
-        HttpSession session = request.getSession(false);                               
+        System.out.println("PatientLoginServer doGet()");
         
+        RequestDispatcher rd;        
+        HttpSession session = request.getSession(false);                                       
         if(session != null) {            
             if(session.getAttribute("patientBean") != null)  {
                 //skip to the dashboard                
-                response.sendRedirect("patients/dashboard.jsp");
+                System.out.println("PatientLoginServer doGet() -> patientviews/dashboard.jsp");
+                response.sendRedirect("patientDashboard");
                 return;
             }
             
             //Are they an employee?
             if(session.getAttribute("employeeBean") != null) {                
+                System.out.println("PatientLoginServer doGet() -> index.html");
                 response.sendRedirect("index.html");                 
                 return;
             }                                                            
@@ -80,7 +83,9 @@ public class PatientLoginServlet extends HttpServlet {
         }         
         
         //go to login page
-        rd = request.getRequestDispatcher("patients/login.jsp");            
+        
+        System.out.println("PatientLoginServer doGet() -> patientviews/loginform.jsp");
+        rd = request.getRequestDispatcher("patientviews/loginform.jsp");            
         rd.forward(request,response);        
     }
 
@@ -102,7 +107,7 @@ public class PatientLoginServlet extends HttpServlet {
         if(session != null) {
             if(session.getAttribute("patientBean") != null)  {
                 //skip to the dashboard                
-                response.sendRedirect("patients/dashboard.jsp");
+                response.sendRedirect("patientDashboard");
                 return;
             }            
             //Are they an employee?
@@ -138,18 +143,17 @@ public class PatientLoginServlet extends HttpServlet {
         
         if(err) {            
             request.setAttribute("error", errStr);
-            rd = request.getRequestDispatcher("patients/loginform.jsp");            
+            rd = request.getRequestDispatcher("patientviews/loginform.jsp");            
             rd.forward(request,response);        
         }
         
         //now validate
         try {
             PatientBean user = db.validateCredentials(email,pwd);            
-            if(user != null) {                         
-                System.out.println("IS BEAN?");
+            if(user != null) {                                         
                 session = request.getSession(true);
                 session.setAttribute("patientBean", user);
-                response.sendRedirect("patients/dashboard.jsp");
+                response.sendRedirect("patientDashboard");
                 return;
             }
         } catch(SQLException e) {            
@@ -157,7 +161,7 @@ public class PatientLoginServlet extends HttpServlet {
         }
         
         request.setAttribute("error", "Invalid Credentials");
-        rd = request.getRequestDispatcher("patients/loginform.jsp");            
+        rd = request.getRequestDispatcher("patientviews/loginform.jsp");            
         rd.forward(request,response);        
         
     }

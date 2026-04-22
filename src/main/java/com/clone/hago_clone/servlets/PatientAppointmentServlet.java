@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientAppointmentServlet", urlPatterns = {"/patientAppointment"})
+@WebServlet(name = "PatientAppointmentServlet", urlPatterns = {"/patientAppointments"})
 public class PatientAppointmentServlet extends HttpServlet {
     private AppointmentDAO db;
     
@@ -33,6 +33,7 @@ public class PatientAppointmentServlet extends HttpServlet {
     //Or is that bad because that would need reflection?
     @Override
     public void init() {
+        System.out.println("PatientAppointmentServlet WHAT");
         ConnectionDetails cdt = DBConnections.prod();
         try {
             db = new AppointmentDAO(cdt.getUrl(),cdt.getUsername(),cdt.getPassword());                  
@@ -55,28 +56,35 @@ public class PatientAppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);                
+        HttpSession session = request.getSession(false);       
+        System.out.println("PatientAppointmentServlet doGet()");
         if(session == null) {
+            System.out.println("PatientAppointmentServlet doGet() null session");
             return;
         }
         if(session.getAttribute("employeeBean") != null) {
+            System.out.println("PatientAppointmentServlet doGet() is employee");
             return;            
         }
         PatientBean pb = (PatientBean)session.getAttribute("patientBean");        
         if(pb == null) {
+            System.out.println("PatientAppointmentServlet doGet() is not patient");
             return;            
         }
-        
+        System.out.println("PatientAppointmentServlet doGet() try statement");
         try {
-            ArrayList<AppointmentBean> appointments = db.findAppointmentsByPatient(pb);        
+            ArrayList<AppointmentBean> appointments = db.findAppointmentsByPatient(pb);
+            
             request.setAttribute("appointments", appointments);
-            RequestDispatcher rd = request.getRequestDispatcher("/patients/appointmenttable.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("patientviews/appointmenttable.jsp");
+            System.out.println("PatientAppointmentServlet doGet() try statement success? " + appointments.size());
             rd.forward(request,response);
+            
             return;
         } catch(SQLException e) {            
             e.printStackTrace();
         }
-        
+        System.out.println("PatientAppointmentServlet doGet() try statement fail");
     }
 
     /**
