@@ -7,6 +7,8 @@ package com.clone.hago_clone.servlets;
 import com.clone.hago_clone.ConnectionDetails;
 import com.clone.hago_clone.DBConnections;
 import com.clone.hago_clone.db.AppointmentDAO;
+import com.clone.hago_clone.models.AppointmentBean;
+import com.clone.hago_clone.models.AppointmentStatus;
 import com.mysql.jdbc.StringUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -59,7 +61,9 @@ public class PatientCancelAppointmentServlet extends HttpServlet {
             String confirm = request.getParameter("confirm");        
             if(!StringUtils.isNullOrEmpty(confirm)) {            
                 if(confirm.equalsIgnoreCase("YES")) {                    
-                    db.deleteAppointment(db.findAppointmentById(id));                    
+                    AppointmentBean tmp = db.findAppointmentById(id);                    
+                    tmp.setStatus(AppointmentStatus.CANCELLED_USER);
+                    db.updateAppointment(tmp);                    
                 } else if (confirm.equalsIgnoreCase("NO")){
                     
                 } else {

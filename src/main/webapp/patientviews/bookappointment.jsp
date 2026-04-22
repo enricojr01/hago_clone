@@ -14,6 +14,7 @@
     <body>
         <h1>Book New Appointment</h1>
         <form>
+            <!-- So for this... It could just be a single select box, with optgroups, but is that a bit painful to navigate? -->
             
         </form>
     </body>
