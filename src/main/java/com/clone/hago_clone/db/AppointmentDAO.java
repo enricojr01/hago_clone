@@ -10,8 +10,8 @@ package com.clone.hago_clone.db;
 
 import java.sql.Timestamp;
 
-import com.clone.hago_clone.models.TimeSlotBean;
 import com.clone.hago_clone.models.AppointmentBean;
+import com.clone.hago_clone.models.AppointmentStatus;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.PatientBean;
 import com.clone.hago_clone.models.ServiceBean;
@@ -47,7 +47,7 @@ public class AppointmentDAO extends BaseDAO {
         return "CREATE TABLE IF NOT EXISTS Appointment (\n"
                 + "id INT NOT NULL AUTO_INCREMENT,\n"
                 + "date DATETIME NOT NULL,\n"
-                + "status ENUM('AWAITING','CONFIRMED') NOT NULL,\n"
+                + "status" + AppointmentStatus.getSQLType() + " NOT NULL,\n"
                 + "patientId INT NOT NULL,\n"
                 + "clinicId INT NOT NULL,\n"
                 + "serviceId INT NOT NULL,\n"
@@ -86,7 +86,7 @@ public class AppointmentDAO extends BaseDAO {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             int id = rs.getInt(1);
-            retval = new AppointmentBean(id, appointmentDate, "awaiting", patient, clinic, service);
+            retval = new AppointmentBean(id, appointmentDate, AppointmentStatus.AWAITING, patient, clinic, service);
             rs.close();
         }
 
@@ -112,7 +112,7 @@ public class AppointmentDAO extends BaseDAO {
 
             AppointmentBean tmp = new AppointmentBean(id,
                     date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinicDao.findClinicById(clinicId),
                     serviceDao.findServiceById(serviceId));
@@ -143,7 +143,7 @@ public class AppointmentDAO extends BaseDAO {
                     serviceId = rs.getInt("serviceId");
 
             retval = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinicDao.findClinicById(clinicId),
                     serviceDao.findServiceById(serviceId)
@@ -169,7 +169,7 @@ public class AppointmentDAO extends BaseDAO {
                     serviceId = rs.getInt("serviceId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patient,
                     clinicDao.findClinicById(clinicId),
                     serviceDao.findServiceById(serviceId)
@@ -198,7 +198,7 @@ public class AppointmentDAO extends BaseDAO {
                     serviceId = rs.getInt("serviceId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinic,
                     serviceDao.findServiceById(serviceId)
@@ -227,7 +227,7 @@ public class AppointmentDAO extends BaseDAO {
                     clinicId = rs.getInt("clinicId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinicDao.findClinicById(clinicId),
                     service
@@ -248,7 +248,7 @@ public class AppointmentDAO extends BaseDAO {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("UPDATE Appointment SET date = ?, status = ? WHERE id = ?");
         ps.setTimestamp(1, appointment.getDate());
-        ps.setString(2, appointment.getCancellation());
+        ps.setString(2, appointment.getStatus().name());
         ps.setInt(3, appointment.getId());
         boolean retval;
         try {

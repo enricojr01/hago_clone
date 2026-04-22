@@ -14,15 +14,15 @@ public class AppointmentBean /* implements Serializable */ {
 
     private int id; //READ
     private Timestamp date; //READ WRITE    
-    private String cancellation; //READ WRITE
+    private AppointmentStatus status; //READ WRITE
     private PatientBean patient; //READ
     private ClinicBean clinic; //READ
     private ServiceBean service; //READ
               
-    public AppointmentBean(int id, Timestamp date,String cancellation,PatientBean patient, ClinicBean clinic, ServiceBean service) {
+    public AppointmentBean(int id, Timestamp date,AppointmentStatus status,PatientBean patient, ClinicBean clinic, ServiceBean service) {
         this.id = id;
         this.date = date;
-        this.cancellation = cancellation;
+        this.status = status;
         this.patient = patient;
         this.clinic = clinic;
         this.service = service;
@@ -39,12 +39,12 @@ public class AppointmentBean /* implements Serializable */ {
         this.date = date; 
     }
 
-    public String getCancellation() {
-        return cancellation;
+    public AppointmentStatus getStatus() {
+        return status;
     }
     
-    public void setCancellation(String cancellation) {
-        this.cancellation = cancellation;
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
     }
 
     public PatientBean getPatient() {

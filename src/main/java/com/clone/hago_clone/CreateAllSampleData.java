@@ -11,6 +11,7 @@ import com.clone.hago_clone.db.EmployeeDAO;
 import com.clone.hago_clone.db.PatientDAO;
 import com.clone.hago_clone.db.ServiceDAO;
 import com.clone.hago_clone.models.AppointmentBean;
+import com.clone.hago_clone.models.AppointmentStatus;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.ClinicServiceBean;
 import com.clone.hago_clone.models.PatientBean;
@@ -92,9 +93,9 @@ public class CreateAllSampleData {
                     pb, cb, sb);
             
             
-            ab0.setCancellation("CONFIRMED");            
-            ab1.setCancellation("CONFIRMED");
-            ab2.setCancellation("CONFIRMED");
+            ab0.setStatus(AppointmentStatus.CONFIRMED);            
+            ab1.setStatus(AppointmentStatus.CONFIRMED);
+            ab2.setStatus(AppointmentStatus.CONFIRMED);
             
             a.updateAppointment(ab0);
             a.updateAppointment(ab1);
