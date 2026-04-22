@@ -4,6 +4,7 @@
     Author     : anonymous
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@page import="com.clone.hago_clone.models.AppointmentStatus" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -35,10 +36,10 @@
                                 <td>${app.date}</td>
                                 <td>${(app.clinic).name}</td>
                                 <td>${(app.service).name}</td>
-                                <td>${app.cancellation}</td>                                    
+                                <td>${(app.status).getNiceString()}</td>                                    
                                 <td>                                    
-                                    <c:if test="${app.cancellation eq 'AWAITING'}">
-                                        <a href="<c:url value="/patientAppointmentCancel/${app.id}"/>">Cancel Appointment</a>        
+                                    <c:if test="${ app.status.canCancel() eq true }">
+                                        <a href="<c:url value="/patientCancelAppointment?id=${app.id}"/>">Cancel Appointment</a>        
                                     </c:if>                                                                            
                                 </td>
                             </tr>                

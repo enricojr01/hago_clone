@@ -47,7 +47,7 @@ public class AppointmentDAO extends BaseDAO {
         return "CREATE TABLE IF NOT EXISTS Appointment (\n"
                 + "id INT NOT NULL AUTO_INCREMENT,\n"
                 + "date DATETIME NOT NULL,\n"
-                + "status" + AppointmentStatus.getSQLType() + " NOT NULL,\n"
+                + "status " + AppointmentStatus.getSQLType() + " NOT NULL,\n"
                 + "patientId INT NOT NULL,\n"
                 + "clinicId INT NOT NULL,\n"
                 + "serviceId INT NOT NULL,\n"

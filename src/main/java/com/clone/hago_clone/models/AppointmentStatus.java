@@ -28,5 +28,13 @@ public enum AppointmentStatus {
     
     public String getNiceString() { return this.niceString; }
     
+    public boolean canCancel() {
+        switch(this) {
+            case AWAITING:
+            case CONFIRMED:
+                return true;                            
+        }            
+        return false;
+    }    
     
 }

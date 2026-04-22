@@ -61,21 +61,21 @@ public class PatientLoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {                
-        System.out.println("PatientLoginServer doGet()");
+        
         
         RequestDispatcher rd;        
         HttpSession session = request.getSession(false);                                       
         if(session != null) {            
             if(session.getAttribute("patientBean") != null)  {
                 //skip to the dashboard                
-                System.out.println("PatientLoginServer doGet() -> patientviews/dashboard.jsp");
+                
                 response.sendRedirect("patientDashboard");
                 return;
             }
             
             //Are they an employee?
             if(session.getAttribute("employeeBean") != null) {                
-                System.out.println("PatientLoginServer doGet() -> index.html");
+                
                 response.sendRedirect("index.html");                 
                 return;
             }                                                            
@@ -84,7 +84,7 @@ public class PatientLoginServlet extends HttpServlet {
         
         //go to login page
         
-        System.out.println("PatientLoginServer doGet() -> patientviews/loginform.jsp");
+        
         rd = request.getRequestDispatcher("patientviews/loginform.jsp");            
         rd.forward(request,response);        
     }

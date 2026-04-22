@@ -33,7 +33,7 @@ public class PatientListAppointmentServlet extends HttpServlet {
     //Or is that bad because that would need reflection?
     @Override
     public void init() {
-        System.out.println("PatientAppointmentServlet WHAT");
+        
         ConnectionDetails cdt = DBConnections.prod();
         try {
             db = new AppointmentDAO(cdt.getUrl(),cdt.getUsername(),cdt.getPassword());                  
@@ -57,34 +57,34 @@ public class PatientListAppointmentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);       
-        System.out.println("PatientListAppointmentServlet doGet()");
+        
         if(session == null) {
-            System.out.println("PatientListAppointmentServlet doGet() null session");
+            
             return;
         }
         if(session.getAttribute("employeeBean") != null) {
-            System.out.println("PatientListAppointmentServlet doGet() is employee");
+            
             return;            
         }
         PatientBean pb = (PatientBean)session.getAttribute("patientBean");        
         if(pb == null) {
-            System.out.println("PatientListAppointmentServlet doGet() is not patient");
+            
             return;            
         }
-        System.out.println("PatientListAppointmentServlet doGet() try statement");
+        
         try {
             ArrayList<AppointmentBean> appointments = db.findAppointmentsByPatient(pb);
             
             request.setAttribute("appointments", appointments);
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/appointmenttable.jsp");
-            System.out.println("PatientListAppointmentServlet doGet() try statement success? " + appointments.size());
+            
             rd.forward(request,response);
             
             return;
         } catch(SQLException e) {            
             e.printStackTrace();
         }
-        System.out.println("PatientListAppointmentServlet doGet() try statement fail");
+        
     }
 
     /**

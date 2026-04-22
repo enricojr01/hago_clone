@@ -18,7 +18,7 @@
         <ul>
             <li><a href="patientNotification">Notifications</a></li>
             <li><a href="patientQueue">Queues</a></li>
-            <li><a href="patientAppointments">Appointments</a></li>
+            <li><a href="patientListAppointments">Appointments</a></li>
             <li><a href="patientLogout">Logout</a></li>
         </ul>       
     </body>

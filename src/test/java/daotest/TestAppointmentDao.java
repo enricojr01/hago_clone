@@ -260,6 +260,8 @@ public class TestAppointmentDao {
         }
     }
 
+    /* Made Invalid by the change to using an enum instead of a string */
+    /*
     @Test
     public void updateAppointmentFail() {
         AppointmentDAO app = createBase();
@@ -283,5 +285,6 @@ public class TestAppointmentDao {
             fail(e.toString());
         }
     }
+    */
 
 }
