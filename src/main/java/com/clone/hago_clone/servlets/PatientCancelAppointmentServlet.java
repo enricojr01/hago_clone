@@ -63,7 +63,7 @@ public class PatientCancelAppointmentServlet extends HttpServlet {
                 if(confirm.equalsIgnoreCase("YES")) {                    
                     AppointmentBean tmp = db.findAppointmentById(id);                    
                     tmp.setStatus(AppointmentStatus.CANCELLED_USER);
-                    db.updateAppointment(tmp);                    
+                    db.updateAppointment(tmp);            
                 } else if (confirm.equalsIgnoreCase("NO")){
                     
                 } else {
