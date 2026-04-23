@@ -7,7 +7,9 @@ package com.clone.hago_clone.servlets;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.clone.hago_clone.ConnectionDetails;
 import com.clone.hago_clone.DBConnections;
+import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
+import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.EmployeeBean;
 import com.mysql.jdbc.StringUtils;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name="employeeLoginServlet", urlPatterns={"/employeeLogin"})
 public class EmployeeLoginServlet extends HttpServlet {
 	private EmployeeDAO ed;
+	private ClinicDAO cd;
 	
 	@Override
 	public void init() {
@@ -37,6 +40,11 @@ public class EmployeeLoginServlet extends HttpServlet {
 					cdt.getUsername(),
 					cdt.getPassword()
 			);	
+			cd = new ClinicDAO(
+					cdt.getUrl(),
+					cdt.getUsername(),
+					cdt.getPassword()
+			);
 		} catch (ClassNotFoundException e) {
 			// TODO: figure out how to correctly handle exceptions at the
 			// 		 servlet level.
@@ -45,27 +53,38 @@ public class EmployeeLoginServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(
-			HttpServletRequest request, 
-			HttpServletResponse response
-	) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("employees/secure/dashboard.jsp");
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
-			if (eb != null && eb.getRole().equals("superadmin")) {
-				rd.forward(request, response);
-				return;
-			}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		String action = request.getParameter("action");
+
+		if (StringUtils.isNullOrEmpty(action)){
+			action = "temporary";
 		}
-		response.sendRedirect("employees/login.jsp");
+		switch (action) {
+			case "logout":
+				handleLogout(request, response);
+				break;
+			default:
+				RequestDispatcher rd = request.getRequestDispatcher("employees/secure/dashboard.jsp");
+				HttpSession session = request.getSession(false);
+				if (session != null) {
+					Object oeb = session.getAttribute("employeeBean");
+					if (oeb == null) {
+						response.sendRedirect("employees/login.jsp");
+					} else {
+						EmployeeBean eb = (EmployeeBean) oeb;
+						request.setAttribute("employeeBean", eb);
+						rd.forward(request, response);
+					}
+				} else {
+					response.sendRedirect("employees/login.jsp");
+				}
+		}
 	}
 
 	@Override	
-	protected void doPost(
-			HttpServletRequest request, 
-			HttpServletResponse response
-	) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		RequestDispatcher start = request.getRequestDispatcher(
@@ -86,8 +105,15 @@ public class EmployeeLoginServlet extends HttpServlet {
 		}
 		
 		EmployeeBean eb;
+		ClinicBean cb;
 		try {
 			eb = ed.findEmployeeByEmail(email);
+			cb = cd.findClinicById(eb.getClinicId());
+			if (cb != null){
+				eb.setClinic(cb);
+			}
+			System.out.println(eb);
+			System.out.println(eb.getClinicId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -103,6 +129,9 @@ public class EmployeeLoginServlet extends HttpServlet {
 			
 			if (result.verified == true) {
 				HttpSession session = request.getSession(true);
+				System.out.println("eb: " + eb);
+				System.out.println("eb.name: " + eb.getName());
+				System.out.println("eb.getRole()" + eb.getRole());
 				session.setAttribute("employeeBean", eb);
 				success.forward(request, response);
 			} else {
@@ -119,5 +148,12 @@ public class EmployeeLoginServlet extends HttpServlet {
 			);
 			start.forward(request, response);
 		}
+	}
+
+	public void handleLogout(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);	
+		session.removeAttribute("employeeBean");
+		response.sendRedirect(request.getContextPath());
 	}
 }

@@ -203,6 +203,8 @@ public class EmployeeBeanServlet extends HttpServlet {
 		try {
 			clinicList = cd.findClinics();
 			eb = ed.findEmployeeByID(id);
+			ClinicBean cb = cd.findClinicById(eb.getClinicId());
+			eb.setClinic(cb);
 		} catch (SQLException e) {
 			throw new ServletException(e.getMessage());
 		}
