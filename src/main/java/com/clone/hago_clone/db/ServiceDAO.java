@@ -30,6 +30,7 @@ public class ServiceDAO extends BaseDAO {
 			+ "name varchar(128) not null,"
 			+ "description varchar(256) not null,"
 			+ "clinic_id int,"
+			+ "hidden bool default false,"
 			+ "PRIMARY KEY (id),"
 			+ "UNIQUE (name),"
 			+ "FOREIGN KEY (clinic_id) REFERENCES Clinic(id)"
@@ -81,8 +82,27 @@ public class ServiceDAO extends BaseDAO {
 		}
 	}
 
+	public ArrayList<ServiceBean> findAllServices() throws SQLException {
+		String sqlQuery = "select * from Service where hidden=false";
+		Connection c = getConnection();
+		Statement s = c.createStatement();
+		ResultSet rs = s.executeQuery(sqlQuery);
+		
+		ArrayList<ServiceBean> results = new ArrayList<>();
+		while (rs.next()) {
+			ServiceBean sb = new ServiceBean(
+					rs.getLong("id"),
+					rs.getString("name"),
+					rs.getString("description")
+			);
+			results.add(sb);
+		}
+
+		return results;
+	}
+
 	public ServiceBean findServiceById(long id) throws SQLException {
-		String sqlQuery = "select * from Service where id=?";
+		String sqlQuery = "select * from Service where id=? and hidden=false";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 		ps.setLong(1, id);
@@ -101,7 +121,7 @@ public class ServiceDAO extends BaseDAO {
 	}
 
 	public ServiceBean findServiceByName(String name) throws SQLException {
-		String sqlQuery = "select * from Service where name=?";
+		String sqlQuery = "select * from Service where name=? and hidden=false";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 		ps.setString(1, name);
@@ -121,7 +141,7 @@ public class ServiceDAO extends BaseDAO {
 
 	public ArrayList<ServiceBean> findServiceByDescription(String desc) 
 			throws SQLException {
-		String sqlQuery = "select * from Service where description like ?";
+		String sqlQuery = "select * from Service where description like ? and hidden=false";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 		String fullDesc = "%" + desc + "%";
@@ -143,12 +163,13 @@ public class ServiceDAO extends BaseDAO {
 	}
 
 	public int updateService(ServiceBean sb) throws SQLException {
-		String sqlQuery = "update Service set name=?, description=?";
+		String sqlQuery = "update Service set name=?, description=? where id=? and hidden=false";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 
 		ps.setString(1, sb.getName());
 		ps.setString(2, sb.getDescription());
+		ps.setLong(3, sb.getId());
 		int result = ps.executeUpdate();
 
 		ps.close();
@@ -158,7 +179,7 @@ public class ServiceDAO extends BaseDAO {
 	}
 
 	public int deleteService(ServiceBean sb) throws SQLException {
-		String sqlQuery = "delete from Service where id=?";
+		String sqlQuery = "update Service set hidden=true where id=?";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 		
@@ -172,7 +193,7 @@ public class ServiceDAO extends BaseDAO {
 	}
 
 	public int deleteService(long id) throws SQLException {
-		String sqlQuery = "delete from Service where id=?";
+		String sqlQuery = "update Service set hidden=true where id=?";
 		Connection c = getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 

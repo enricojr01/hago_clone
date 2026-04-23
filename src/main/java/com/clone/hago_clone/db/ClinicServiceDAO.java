@@ -37,7 +37,8 @@ public class ClinicServiceDAO extends BaseDAO {
 				+ "service_id int,"
 				+ "primary key (id),"
 				+ "foreign key (clinic_id) references Clinic(id),"
-				+ "foreign key (service_id) references Service(id)"
+				+ "foreign key (service_id) references Service(id),"
+				+ "unique (clinic_id, service_id)"
 				+ ")";
 	}
 
@@ -143,10 +144,10 @@ public class ClinicServiceDAO extends BaseDAO {
 	 */
 	public ArrayList<ClinicServiceBean> findClinicServiceByClinicId(long id) 
 			throws SQLException {
-		String sqlQuery = "select * from ClinicService as cs"
+		String sqlQuery = "select * from ClinicService as cs "
 				+ "inner join Clinic as c on cs.clinic_id = c.id "
-				+ "inner join Service as s on cs.service_id = s.id"
-				+ "where c.id=?";
+				+ "inner join Service as s on cs.service_id = s.id "
+				+ "where c.id = ?";
 		Connection c =  getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);
 		ArrayList<ClinicServiceBean> results = new ArrayList<>();
@@ -158,7 +159,7 @@ public class ClinicServiceDAO extends BaseDAO {
 			ClinicBean cb = new ClinicBean(
 					result.getLong("c.id"),
 					result.getString("c.name"),
-					result.getString("c.description")
+					result.getString("c.address")
 			);	
 			ServiceBean sb = new ServiceBean(
 					result.getLong("s.id"),
@@ -175,6 +176,40 @@ public class ClinicServiceDAO extends BaseDAO {
 		return results;
 	}
 
+	public ClinicServiceBean findByClinicIdServiceId(long clinicId, long serviceId) 
+			throws SQLException {
+		String sqlQuery = "select * from ClinicService as cs "
+				+ "inner join Clinic as c on cs.clinic_id = c.id "
+				+ "inner join Service as s on cs.service_id = s.id "
+				+ "where cs.clinic_id = ? and cs.service_id = ?";
+		Connection c = getConnection();
+		PreparedStatement ps = c.prepareStatement(sqlQuery);
+
+		ps.setLong(1, clinicId);
+		ps.setLong(2, serviceId);
+
+		ResultSet result = ps.executeQuery();
+		ClinicServiceBean csb = null;
+		while (result.next()) {
+			ClinicBean cb = new ClinicBean(
+					result.getLong("c.id"),
+					result.getString("c.name"),
+					result.getString("c.address")
+			);
+			ServiceBean sb = new ServiceBean(
+					result.getLong("s.id"),
+					result.getString("s.name"),
+					result.getString("s.description")
+			);
+			csb = new ClinicServiceBean(
+					result.getLong("cs.id"),
+					cb,
+					sb
+			);
+		}
+		return csb;
+	}
+
 	/**
 	 * Finds all ClinicService rows associated with the ID of a service. Returns 
 	 * a ClinicServiceBean containing ClinicBean and ServiceBean references.
@@ -184,9 +219,9 @@ public class ClinicServiceDAO extends BaseDAO {
 	 */
 	public ArrayList<ClinicServiceBean> findClinicServiceByServiceId(long id) 
 			throws SQLException {
-		String sqlQuery = "select * from ClinicService as cs"
+		String sqlQuery = "select * from ClinicService as cs "
 				+ "inner join Clinic as c on cs.clinic_id = c.id "
-				+ "inner join Service as s on cs.service_id = s.id"
+				+ "inner join Service as s on cs.service_id = s.id "
 				+ "where s.id=?";
 		Connection c =  getConnection();
 		PreparedStatement ps = c.prepareStatement(sqlQuery);

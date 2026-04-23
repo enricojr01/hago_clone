@@ -5,6 +5,7 @@
 package com.clone.hago_clone.models;
 
 import java.util.ArrayList;
+import java.util.Objects;
 /**
  *
  * @author Enrico Tuvera Jr
@@ -39,5 +40,40 @@ public class ServiceBean {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String toString() {
+		return this.name;
+	}
+
+	@Override
+	public boolean equals(Object otherObject) {
+		ServiceBean other = (ServiceBean) otherObject;
+		if (this.id == other.getId()) {
+			return true;
+		}
+
+		if (this.name.equals(other.getName())) {
+			return true;
+		}
+		
+		if (otherObject == null) {
+			return false;
+		}
+
+		if (this.getClass() != otherObject.getClass()) {
+			return false;
+		}
+		
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
+		hash = 59 * hash + Objects.hashCode(this.name);
+		hash = 59 * hash + Objects.hashCode(this.description);
+		return hash;
 	}
 }
