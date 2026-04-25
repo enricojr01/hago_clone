@@ -296,7 +296,7 @@ public class EmployeeBeanServlet extends HttpServlet {
 			
 	private void editSuccess(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/employees/editSuccess.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/timeSlots/editSuccess.jsp");
 		rd.forward(request, response);
 	}
 
