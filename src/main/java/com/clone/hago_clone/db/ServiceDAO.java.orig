@@ -82,7 +82,8 @@ public class ServiceDAO extends BaseDAO {
 		}
 	}
 
-        public ArrayList<ServiceBean> findAllServices()
+<<<<<<< HEAD
+        public ArrayList<ServiceBean> getAllServices()
                 throws SQLException {
             ArrayList<ServiceBean> retval = new ArrayList();
             Connection c = getConnection();
@@ -103,6 +104,28 @@ public class ServiceDAO extends BaseDAO {
             
         }
         
+||||||| e7c1913
+=======
+	public ArrayList<ServiceBean> findAllServices() throws SQLException {
+		String sqlQuery = "select * from Service where hidden=false";
+		Connection c = getConnection();
+		Statement s = c.createStatement();
+		ResultSet rs = s.executeQuery(sqlQuery);
+		
+		ArrayList<ServiceBean> results = new ArrayList<>();
+		while (rs.next()) {
+			ServiceBean sb = new ServiceBean(
+					rs.getLong("id"),
+					rs.getString("name"),
+					rs.getString("description")
+			);
+			results.add(sb);
+		}
+
+		return results;
+	}
+
+>>>>>>> main
 	public ServiceBean findServiceById(long id) throws SQLException {
 		String sqlQuery = "select * from Service where id=? and hidden=false";
 		Connection c = getConnection();

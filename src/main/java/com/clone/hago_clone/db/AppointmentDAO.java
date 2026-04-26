@@ -104,7 +104,7 @@ public class AppointmentDAO extends BaseDAO {
 
     //Read Functions
     //This function also needs the timeslot DAO...
-    public ArrayList<AppointmentBean> getAllAppointments() throws SQLException {
+    public ArrayList<AppointmentBean> findAllAppointments() throws SQLException {
         ArrayList<AppointmentBean> retval = new ArrayList();
         Connection c = getConnection();
         Statement s = c.createStatement();

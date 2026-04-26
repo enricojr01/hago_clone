@@ -88,7 +88,7 @@ public class PatientBeanServlet extends HttpServlet {
 		ArrayList<PatientBean> results = new ArrayList<>();	
 
 		try {
-			results = this.pd.getAllPatients();
+			results = this.pd.findAllPatients();
 		} catch (SQLException e) {
 			throw new ServletException(e.getMessage());
 		}

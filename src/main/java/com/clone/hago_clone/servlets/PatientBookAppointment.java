@@ -76,7 +76,7 @@ public class PatientBookAppointment extends HttpServlet {
             throws ServletException, IOException {
         try {
             HashMap cs = csdb.findClinicServicesMap();        
-            ArrayList s = sdb.getAllServices();
+            ArrayList s = sdb.findAllServices();
             request.setAttribute("clinicservices",cs);
             request.setAttribute("services",s);
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/bookappointment.jsp");

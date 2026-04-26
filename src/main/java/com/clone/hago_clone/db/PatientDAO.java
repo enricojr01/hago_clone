@@ -99,7 +99,7 @@ public class PatientDAO extends BaseDAO {
      * @return An ArrayList of all Patients, can be empty
      * @throws SQLException 
      */
-    public ArrayList<PatientBean> getAllPatients() throws SQLException {        
+    public ArrayList<PatientBean> findAllPatients() throws SQLException {        
         ArrayList<PatientBean> retval = new ArrayList<PatientBean>();
         Connection c = getConnection();
         Statement s = c.createStatement();

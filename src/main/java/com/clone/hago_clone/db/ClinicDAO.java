@@ -122,7 +122,7 @@ public class ClinicDAO extends BaseDAO {
 		return out;
 	}
 	
-        public ArrayList<ClinicBean> getAllClinics() throws SQLException {
+        public ArrayList<ClinicBean> findAllClinics() throws SQLException {
             ArrayList<ClinicBean> retval = new ArrayList();
             Connection c = getConnection();
             Statement s = c.createStatement();

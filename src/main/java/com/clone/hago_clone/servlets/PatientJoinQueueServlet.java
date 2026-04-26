@@ -75,8 +75,8 @@ public class PatientJoinQueueServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            HashMap cq = qdb.getAllQueuesMap();
-            ArrayList s = sdb.getAllServices();
+            HashMap cq = qdb.findAllQueuesMap();
+            ArrayList s = sdb.findAllServices();
             request.setAttribute("clinicqueues", cq);
             request.setAttribute("services", s);
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/joinqueueform.jsp");

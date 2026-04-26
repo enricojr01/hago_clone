@@ -82,7 +82,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
     }
 
     //Read Functions
-    public ArrayList<ClinicTimeSlotBean> getAllClinicTimeSlots() throws SQLException {
+    public ArrayList<ClinicTimeSlotBean> findAllClinicTimeSlots() throws SQLException {
         ArrayList<ClinicTimeSlotBean> retval = new ArrayList();
         Connection c = getConnection();
         Statement s = c.createStatement();

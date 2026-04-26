@@ -151,10 +151,10 @@ public class QueueDAO extends BaseDAO {
     }
 
     
-    public HashMap<ClinicBean,ArrayList<QueueBean>> getAllQueuesMap()
+    public HashMap<ClinicBean,ArrayList<QueueBean>> findAllQueuesMap()
             throws SQLException {
         HashMap<ClinicBean,ArrayList<QueueBean>> retval = new HashMap();
-        ArrayList<ClinicBean> cliniclist = clinics.getAllClinics();
+        ArrayList<ClinicBean> cliniclist = clinics.findAllClinics();
         
         for(ClinicBean c : cliniclist) {
             ArrayList<QueueBean> q = findQueuesForClinic(c);
@@ -164,9 +164,9 @@ public class QueueDAO extends BaseDAO {
         return retval;
     }
     
-    public HashMap<ClinicBean,ArrayList<QueueBean>> getAllQueuesMapExcludePatient(PatientBean patient) throws SQLException {
+    public HashMap<ClinicBean,ArrayList<QueueBean>> findAllQueuesMapExcludePatient(PatientBean patient) throws SQLException {
         HashMap<ClinicBean,ArrayList<QueueBean>> retval = new HashMap();
-        ArrayList<ClinicBean> cliniclist = clinics.getAllClinics();
+        ArrayList<ClinicBean> cliniclist = clinics.findAllClinics();
         
         for(ClinicBean c : cliniclist) {
             ArrayList<QueueBean> q = findQueuesForClinicExcludePatient(c,patient);
