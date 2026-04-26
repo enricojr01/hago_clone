@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.clone.hago_clone.servlets;
+package com.clone.hago_clone.servlets.patient;
 
 import com.clone.hago_clone.db.PatientDAO;
 import com.clone.hago_clone.ConnectionDetails;

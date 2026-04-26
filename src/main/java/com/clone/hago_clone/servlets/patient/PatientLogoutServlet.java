@@ -2,24 +2,37 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.clone.hago_clone.servlets;
+package com.clone.hago_clone.servlets.patient;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientDashboardServlet", urlPatterns = {"/patientDashboard"})
-public class PatientDashboardServlet extends HttpServlet {
+@WebServlet(name = "PatientLogoutServlet", urlPatterns = {"/patientLogout"})
+public class PatientLogoutServlet extends HttpServlet {
     
+    //Should a check be done here to ensure that we are logging out an actual patient?
+    //Will it affect internal state?
+    
+    protected void logoutPatient(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+       HttpSession session = request.getSession(false);                               
+        
+        if(session != null) {            
+            session.invalidate();                                                
+        }        
+        
+        response.sendRedirect("index.html");
+    }
     
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -32,9 +45,7 @@ public class PatientDashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher rd = request.getRequestDispatcher("patientviews/dashboard.jsp");
-        rd.forward(request,response);
-        
+        logoutPatient(request, response);
     }
 
     /**
@@ -48,7 +59,7 @@ public class PatientDashboardServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request,response);
+        logoutPatient(request, response);
     }
 
     /**

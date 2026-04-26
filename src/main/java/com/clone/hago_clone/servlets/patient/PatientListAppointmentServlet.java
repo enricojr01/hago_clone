@@ -2,16 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.clone.hago_clone.servlets;
+package com.clone.hago_clone.servlets.patient;
 
 import com.clone.hago_clone.ConnectionDetails;
 import com.clone.hago_clone.DBConnections;
-import com.clone.hago_clone.db.AppointmentDAO;
-import com.clone.hago_clone.db.PatientQueueDAO;
+import com.clone.hago_clone.models.AppointmentBean;
 import com.clone.hago_clone.models.PatientBean;
-import com.clone.hago_clone.models.QueueBean;
+import com.clone.hago_clone.db.AppointmentDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
@@ -26,22 +24,25 @@ import javax.servlet.http.HttpSession;
  *
  * @author anonymous
  */
-@WebServlet(name = "PatientListQueuesServlet", urlPatterns = {"/patientListQueues"})
-public class PatientListQueuesServlet extends HttpServlet {
-    private PatientQueueDAO db;    
+@WebServlet(name = "PatientListAppointmentServlet", urlPatterns = {"/patientListAppointments"})
+public class PatientListAppointmentServlet extends HttpServlet {
+    private AppointmentDAO db;
     
+    //Honestly, why not just make a superclass of HttpServlet, that can handle this fetching? 
+    //And all we would need to do is provide the specific class and we can assign the ouput to a variable
+    //Or is that bad because that would need reflection?
     @Override
-        public void init() {        
+    public void init() {        
         ConnectionDetails cdt = DBConnections.prod();
         try {
-            db = new PatientQueueDAO(cdt.getUrl(),cdt.getUsername(),cdt.getPassword());                              
+            db = new AppointmentDAO(cdt.getUrl(),cdt.getUsername(),cdt.getPassword());                  
         } catch (ClassNotFoundException e) {            
             // TODO: figure out how to correctly handle exceptions at the
             // 		 servlet level.
             e.printStackTrace();
         }
     }
-
+    
     
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -54,19 +55,28 @@ public class PatientListQueuesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if(session == null) { 
-            throw new ServletException("HttpSession not found");            
+        HttpSession session = request.getSession(false);               
+        if(session == null) {
+            throw new ServletException("HttpSession does not exist");            
+            
         }
+        if(session.getAttribute("employeeBean") != null) {            
+            throw new ServletException("Session contains an EmployeeBean");            
+        }
+        PatientBean pb = (PatientBean)session.getAttribute("patientBean");        
+        if(pb == null) {
+            throw new ServletException("Session is missing a PatientBean");                        
+        }
+        
         try {
-            PatientBean pb = (PatientBean)session.getAttribute("patientBean");                        
-            ArrayList<QueueBean> l = db.findAllQueuesByPatient(pb);                       
-            request.setAttribute("queues",l);
-            RequestDispatcher rd = request.getRequestDispatcher("patientviews/viewqueues.jsp");
-            rd.forward(request,response);
+            ArrayList<AppointmentBean> appointments = db.findAppointmentsByPatient(pb);            
+            request.setAttribute("appointments", appointments);
+            RequestDispatcher rd = request.getRequestDispatcher("patientviews/appointmenttable.jsp");            
+            rd.forward(request,response);                        
         } catch(SQLException e) {            
             throw new ServletException(e.getMessage());
-        }                
+        }
+        
     }
 
     /**
@@ -80,7 +90,7 @@ public class PatientListQueuesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        doGet(request,response);
     }
 
     /**
@@ -92,5 +102,6 @@ public class PatientListQueuesServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 
 }
