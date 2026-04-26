@@ -52,5 +52,6 @@
             </c:otherwise>
         </c:choose>       
         <a href="patientBookAppointment">Book new appointment</a>
+        <a href="patientDashboard">Go Back</a>
     </body>
 </html>

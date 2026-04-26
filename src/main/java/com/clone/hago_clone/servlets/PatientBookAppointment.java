@@ -82,7 +82,7 @@ public class PatientBookAppointment extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/bookappointment.jsp");
             rd.forward(request,response);
         } catch(SQLException e) {
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class PatientBookAppointment extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if(session == null) {
-            return;
+            throw new ServletException("HttpSession not found");            
         }
         
                 
@@ -116,9 +116,9 @@ public class PatientBookAppointment extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/bookappointmentconf.jsp");
             rd.forward(request, response);            
         } catch(SQLException e) {
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         } catch(NumberFormatException e) {
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }
     }
 

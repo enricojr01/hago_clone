@@ -27,5 +27,6 @@
             </c:otherwise>
         </c:choose>        
         <a href="patientJoinQueue">Join another queue</a>
+        <a href="patientDashboard">Go Back</a>
     </body>
 </html>

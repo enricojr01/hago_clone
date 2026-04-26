@@ -56,7 +56,7 @@ public class PatientListQueuesServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if(session == null) { 
-            return; 
+            throw new ServletException("HttpSession not found");            
         }
         try {
             PatientBean pb = (PatientBean)session.getAttribute("patientBean");                        
@@ -65,7 +65,7 @@ public class PatientListQueuesServlet extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/viewqueues.jsp");
             rd.forward(request,response);
         } catch(SQLException e) {            
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }                
     }
 

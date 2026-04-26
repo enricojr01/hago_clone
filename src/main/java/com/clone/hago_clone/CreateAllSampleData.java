@@ -7,11 +7,13 @@ package com.clone.hago_clone;
 import com.clone.hago_clone.db.AppointmentDAO;
 import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.ClinicServiceDAO;
+import com.clone.hago_clone.db.ClinicTimeSlotDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
 import com.clone.hago_clone.db.PatientDAO;
 import com.clone.hago_clone.db.PatientQueueDAO;
 import com.clone.hago_clone.db.QueueDAO;
 import com.clone.hago_clone.db.ServiceDAO;
+import com.clone.hago_clone.db.TimeSlotDAO;
 import com.clone.hago_clone.models.AppointmentBean;
 import com.clone.hago_clone.models.AppointmentStatus;
 import com.clone.hago_clone.models.ClinicBean;
@@ -45,9 +47,12 @@ public class CreateAllSampleData {
             ClinicServiceDAO cs = new ClinicServiceDAO(url,uname,pword);
             QueueDAO q = new QueueDAO(url,uname,pword);            
             PatientQueueDAO pq = new PatientQueueDAO(url,uname,pword);
+            TimeSlotDAO ts = new TimeSlotDAO(url,uname,pword);
+            ClinicTimeSlotDAO cts = new ClinicTimeSlotDAO(url,uname,pword);            
             
             
             a.dropAppointmentTable();
+            cts.dropClinicTimeSlotTable();
             cs.dropClinicServiceTable();                                    
             e.dropEmployeeTable();         
             pq.dropPatientQueueTable();
@@ -55,10 +60,10 @@ public class CreateAllSampleData {
             s.dropServiceTable();                        
             c.dropClinicTable();
             p.dropPatientTable();            
-            
+            ts.dropTimeSlotTable();
             
 
-            
+            ts.createTimeSlotTable();
             p.createPatientTable();            
             c.createClinicTable();                                    
             s.createServiceTable();           
@@ -66,6 +71,7 @@ public class CreateAllSampleData {
             pq.createPatientQueueTable();            
             e.createEmployeeTable();
             cs.createClinicServiceTable();            
+            cts.createClinicTimeSlotTable();
             a.createAppointmentTable();                        
             
             
@@ -87,6 +93,8 @@ public class CreateAllSampleData {
             cs.createClinicService(cb, sb1);
             cs.createClinicService(cb, sb2);            
             cs.createClinicService(cb1, sb);
+            cs.createClinicService(cb1, sb1);            
+            
             //cs.createClinicService(cb1, sb1);
 
             q.createNewQueue(cb, sb, 10);
@@ -94,6 +102,7 @@ public class CreateAllSampleData {
             q.createNewQueue(cb, sb2, 10);
             
             q.createNewQueue(cb1, sb, 20);
+            q.createNewQueue(cb1, sb1, 5);
                                     
             AppointmentBean ab0,ab1,ab2,ab3,ab4;
             

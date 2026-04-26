@@ -46,22 +46,7 @@ public class PatientAppointmentServlet extends HttpServlet {
             e.printStackTrace();
         }        
     }
-    
-    private boolean validatePatientSession(HttpSession session) {        
-        if(session == null) {            
-            return false;
-        }
-        if(session.getAttribute("employeeBean") != null) {            
-            return false;            
-        }       
-        
-        if(session.getAttribute("patientBean") == null) {            
-            return false;            
-        }        
-        
-        return true;
-    }
-    
+           
     /**
      * GETS all appointments that the patient (a.k.a. the user) has
      *
@@ -74,10 +59,14 @@ public class PatientAppointmentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {        
         HttpSession session = request.getSession(false);
+        if(session == null) {
+            throw new ServletException("HttpSession not found");
+        }
+        
         PatientBean pb = (PatientBean)session.getAttribute("patientBean");
         
         if(pb == null) {
-            return;
+            throw new ServletException("PatientBean not found");            
         }
         try {
             ArrayList<AppointmentBean> list = db.findAppointmentsByPatient(pb);                                
@@ -85,7 +74,7 @@ public class PatientAppointmentServlet extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("patientview/appointmenttable.jsp");
             rd.forward(request, response);                        
         } catch(SQLException e) {            
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }
     }
 

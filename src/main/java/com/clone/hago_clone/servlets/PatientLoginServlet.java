@@ -116,7 +116,8 @@ public class PatientLoginServlet extends HttpServlet {
                 return;
             }      
             //if there is nothing there, then just invalidate the session
-            session.invalidate();            
+            session.invalidate();      
+            response.sendRedirect("index.html");
         }
         
         RequestDispatcher rd;        

@@ -25,40 +25,39 @@
         <title>Book New Appointment</title>
         <script>
             function
-            onClinicChange(event) 
+            onClinicChange(event)
             {
-                //console.log(event);                
-                if(event.target.value) {                                        
-                    const service = document.getElementById("service");                    
+                //console.log(event);                                                
+                if (event.target.selectedIndex > 0) {
+                    //console.log("YES");
+                    const service = document.getElementById("service");                                                            
                     const selectedService = service.options[service.selectedIndex].value;
-            
-                    const validServices = event.target.options[event.target.selectedIndex].dataset.services.split(" ").filter((e) => {return e;} );
-                    //console.log(validServices);
-                    if(service.selectedIndex > 0 && !validServices.includes(selectedService)) {
+                    const validServices = event.target.options[event.target.selectedIndex].dataset.services.split(" ").filter((e) => {return e;});                    
+                    
+                    if (service.selectedIndex > 0 && !validServices.includes(selectedService)) {
                         service.selectedIndex = 0;
                     }
                     
-                    for(const s of service.options) {
-                        //console.log(s);
-                        if(s.value) {
-                            if(validServices.includes(s.value)) {
+                    for (const s of service.options) {                        
+                        if (s.value) {
+                            
+                            if (validServices.includes(s.value)) {
                                 s.disabled = false;
                             } else {
                                 s.disabled = true;
                             }
                         }
-                    }              
+                    }
                 } else {
                     const service = document.getElementById("service");
                     service.selectedIndex = 0;
-                }                              
+                }
             }
-            
-            window.onload = () => { 
-                const clinic = document.getElementById("clinic");            
+
+            window.onload = () => {
+                const clinic = document.getElementById("clinic");
                 clinic.onchange = onClinicChange;
-            };
-            
+            };            
         </script>
     </head>
     <body>

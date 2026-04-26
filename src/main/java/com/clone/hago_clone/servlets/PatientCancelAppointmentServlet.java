@@ -54,8 +54,12 @@ public class PatientCancelAppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);        
-                                        
+        HttpSession session = request.getSession(false);    
+        if(session == null) {
+            throw new ServletException("HttpSession not found");            
+        }
+        
+        
         try {
             int id = Integer.parseInt(request.getParameter("id"));                                        
             String confirm = request.getParameter("confirm");        
@@ -77,11 +81,10 @@ public class PatientCancelAppointmentServlet extends HttpServlet {
                 request.setAttribute("app", db.findAppointmentById(id));
                 rd.forward(request, response);                
             }
-        } catch(SQLException e) {            
-            e.printStackTrace();            
+        } catch(SQLException e) {      
+            throw new ServletException(e.getMessage());            
         } catch(NumberFormatException e) {
-            e.printStackTrace();
-            
+            throw new ServletException(e.getMessage());
         }
         
     }

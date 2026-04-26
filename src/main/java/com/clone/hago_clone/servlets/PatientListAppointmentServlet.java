@@ -57,30 +57,24 @@ public class PatientListAppointmentServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);               
         if(session == null) {
+            throw new ServletException("HttpSession does not exist");            
             
-            return;
         }
-        if(session.getAttribute("employeeBean") != null) {
-            
-            return;            
+        if(session.getAttribute("employeeBean") != null) {            
+            throw new ServletException("Session contains an EmployeeBean");            
         }
         PatientBean pb = (PatientBean)session.getAttribute("patientBean");        
         if(pb == null) {
-            
-            return;            
+            throw new ServletException("Session is missing a PatientBean");                        
         }
         
         try {
-            ArrayList<AppointmentBean> appointments = db.findAppointmentsByPatient(pb);
-            
+            ArrayList<AppointmentBean> appointments = db.findAppointmentsByPatient(pb);            
             request.setAttribute("appointments", appointments);
-            RequestDispatcher rd = request.getRequestDispatcher("patientviews/appointmenttable.jsp");
-            
-            rd.forward(request,response);
-            
-            return;
+            RequestDispatcher rd = request.getRequestDispatcher("patientviews/appointmenttable.jsp");            
+            rd.forward(request,response);                        
         } catch(SQLException e) {            
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }
         
     }
@@ -96,7 +90,7 @@ public class PatientListAppointmentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request,response);
+        doGet(request,response);
     }
 
     /**

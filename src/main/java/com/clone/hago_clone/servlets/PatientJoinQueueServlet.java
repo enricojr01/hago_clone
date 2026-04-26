@@ -81,8 +81,8 @@ public class PatientJoinQueueServlet extends HttpServlet {
             request.setAttribute("services", s);
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/joinqueueform.jsp");
             rd.forward(request, response);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {            
+            throw new ServletException(e.getMessage());                    
         }
     }
 
@@ -98,13 +98,13 @@ public class PatientJoinQueueServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-
         if (session == null) {
-            return;
+            throw new ServletException("HttpSession not found");
+            
         }
         PatientBean pb = (PatientBean) session.getAttribute("patientBean");
         if (pb == null) {
-            return;
+            throw new ServletException("PatientBean not found");            
         }
 
         try {
@@ -116,9 +116,9 @@ public class PatientJoinQueueServlet extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/joinqueueconf.jsp");
             rd.forward(request, response);            
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());                        
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServletException(e.getMessage());                        
         }
 
     }
