@@ -72,8 +72,8 @@ public class PatientDAO extends BaseDAO {
         PatientBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO Patient (name,email,pword) VALUES (?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
-
-		String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+        
+        String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
         ps.setString(1,name);
         ps.setString(2,email);        
         ps.setString(3, hash);
@@ -143,6 +143,24 @@ public class PatientDAO extends BaseDAO {
         return retval;
     }
     
+    
+    public PatientBean findPatientByEmail(String email) throws SQLException {
+        PatientBean retval = null;
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement("SELECT * FROM Patient WHERE email = ?");                        
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()) {
+            long id = rs.getLong("id");
+            String name = rs.getString("name"),                   
+                   pword = rs.getString("pword");            
+            retval = new PatientBean(id,name,email,pword);
+        }        
+        rs.close();
+        ps.close();
+        c.close();        
+        return retval;               
+    }
     
     /**
      * Returns all Patients that match the fuzzy string given
@@ -228,11 +246,26 @@ public class PatientDAO extends BaseDAO {
     public PatientBean validateCredentials(String email,String password) 
             throws SQLException
     {
-        PatientBean retval = null;
+        PatientBean retval = findPatientByEmail(email);
+        
+        if(retval != null) { 
+            char[] p = password.toCharArray();
+            char[] h = retval.getPword().toCharArray();
+            BCrypt.Result res = BCrypt.verifyer().verify(p,h);
+            if(res.verified == false) {
+                retval = null;
+            }            
+        }
+        
+        return retval;        
+        /*
+        
         Connection c = getConnection();        
         PreparedStatement ps = c.prepareStatement("SELECT id,email,name,pword FROM Patient WHERE (email = ? AND  pword = ?)");        
-        ps.setString(1,email);
-        ps.setString(2,password); 
+        
+        String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+        System.out.println("validateCredentials(): " + password + " -> " + hash);
+        ps.setString(2,hash); 
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
             long _id = rs.getLong("id");
@@ -244,6 +277,7 @@ public class PatientDAO extends BaseDAO {
         rs.close();
         ps.close();
         c.close();        
-        return retval;        
+        
+*/
     }                                   
 }
