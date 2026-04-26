@@ -86,14 +86,14 @@ public class PatientQueueDAO extends BaseDAO {
     throws SQLException {
         ArrayList<QueueBean> retval = new ArrayList();
         Connection c = getConnection();
-        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.clinicId, Queue.serviceId, Queue.capacity FROM Queue JOIN PatientQueue ON Queue.id = PatientQueue.queueId WHERE PatientQueue.patientId = ?");
+        PreparedStatement ps = c.prepareStatement("SELECT q.id, q.clinicId, q.serviceId, q.capacity FROM Queue AS q JOIN PatientQueue ON q.id = PatientQueue.queueId WHERE PatientQueue.patientId = ?");
         ps.setLong(1,patient.getId());
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
-            QueueBean tmp = new QueueBean(rs.getLong("Queue.id"),
-                        clinics.findClinicById(rs.getLong("Queue.clinicId")),
-                        services.findServiceById(rs.getLong("Queue.serviceId")),
-                        rs.getInt("Queue.capacity"));
+            QueueBean tmp = new QueueBean(rs.getLong("q.id"),
+                        clinics.findClinicById(rs.getLong("q.clinicId")),
+                        services.findServiceById(rs.getLong("q.serviceId")),
+                        rs.getInt("q.capacity"));
             retval.add(tmp);
         }
         
