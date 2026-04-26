@@ -5,6 +5,7 @@
 package com.clone.hago_clone.db;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.EmployeeBean;
 import java.io.IOException;
 import java.sql.Connection;
@@ -19,10 +20,12 @@ import java.util.ArrayList;
  * @author Enrico Tuvera Jr
  */
 public class EmployeeDAO extends BaseDAO {
+	private ClinicDAO cd;
 
 	public EmployeeDAO(String url, String username, String password) 
 			throws ClassNotFoundException {
 		super(url, username, password);
+		this.cd = new ClinicDAO(url, username, password);
 	}
 
 	@Override
@@ -116,6 +119,89 @@ public class EmployeeDAO extends BaseDAO {
 		}
 	}
 
+	public EmployeeBean addEmployee(
+			String role,
+			String name,
+			String email,
+			String password,
+			long clinicId
+	) throws SQLException {
+		Connection c = getConnection();
+		String sql = 
+				"insert into Employee (role, name, email, password, clinic_id) " +
+				"values (?, ?, ?, ?, ?)";
+		String hashedPassword = 
+				BCrypt
+				.withDefaults()
+				.hashToString(12, password.toCharArray());
+		PreparedStatement ps = c.prepareStatement(
+				sql,
+				Statement.RETURN_GENERATED_KEYS
+		);
+		
+		ps.setString(1, role);
+		ps.setString(2, name);
+		ps.setString(3, email);
+		ps.setString(4, hashedPassword);
+		ps.setLong(5, clinicId);
+		
+		// Should return `1` if successful, `0` otherwise.
+		ps.executeUpdate();
+
+		ResultSet result = ps.getGeneratedKeys();
+		if (result.next()) {
+			long id = result.getLong(1);
+
+			ClinicBean cb = cd.findClinicById(clinicId);
+			EmployeeBean eb = new EmployeeBean(
+					id, 
+					role, 
+					name, 
+					email, 
+					hashedPassword
+			);
+			eb.setClinic(cb);
+
+			result.close();
+			ps.close();
+			c.close();
+
+			return eb;
+		} else {
+			result.close();
+			ps.close();
+			c.close();
+			
+			return null;
+		}
+
+	}
+	
+	public ArrayList<EmployeeBean> findAllEmployees() throws SQLException {
+		ArrayList<EmployeeBean> results = new ArrayList<>();
+		Connection c = getConnection();
+		String sql = "select * from Employee where role != 'superadmin'";
+		Statement s = c.createStatement();
+		ResultSet rs = s.executeQuery(sql);
+		
+		while (rs.next()) {
+			EmployeeBean eb = new EmployeeBean(
+					rs.getLong("id"),
+					rs.getString("role"),
+					rs.getString("name"),
+					rs.getString("email"),
+					rs.getString("password")
+			);
+			results.add(eb);
+		}
+
+		rs.close();
+		s.close();
+		c.close();
+		
+		return results;
+	}
+
 	/** 
 	 * Finds all Employees matching the name provided. There may be more than
 	 * one employee with the same name. Returns an empty ArrayList<EmployeeBean>
@@ -173,6 +259,7 @@ public class EmployeeDAO extends BaseDAO {
 			String name = rs.getString("name");
 			String email = rs.getString("email");
 			String password = rs.getString("password");
+			long clinicId = rs.getLong("clinic_id");
 
 			EmployeeBean eb = new EmployeeBean(
 					eid, 
@@ -181,6 +268,7 @@ public class EmployeeDAO extends BaseDAO {
 					email, 
 					password
 			);
+			eb.setClinicId(clinicId);
 			
 			rs.close();
 			ps.close();

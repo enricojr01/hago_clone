@@ -102,6 +102,25 @@ public class ClinicDAO extends BaseDAO {
 			return null;
 		}
 	}
+
+	public ArrayList<ClinicBean> findClinics() throws SQLException {
+		String query = "select * from Clinic";
+		Connection c = getConnection();
+		Statement s = c.createStatement();
+		ResultSet rs = s.executeQuery(query);
+
+		ArrayList<ClinicBean> out = new ArrayList<>();
+		while (rs.next()) {
+			ClinicBean cb = new ClinicBean(
+					rs.getLong("id"), 
+					rs.getString("name"), 
+					rs.getString("address")
+			);
+			out.add(cb);
+		}
+
+		return out;
+	}
 	
         public ArrayList<ClinicBean> getAllClinics() throws SQLException {
             ArrayList<ClinicBean> retval = new ArrayList();
@@ -244,7 +263,7 @@ public class ClinicDAO extends BaseDAO {
 	}
 	
 	/** 
-	 * Deletes the row in che Clinic table corresponding to the id of the 
+	 * Deletes the row in the Clinic table corresponding to the id of the 
 	 * provided ClinicBean.
 	 * @param cb a ClinicBean containing the id of the row to be deleted.
 	 * @returns an integer representing the number of rows deleted.
