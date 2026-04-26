@@ -68,15 +68,19 @@ public class EmployeeLoginServlet extends HttpServlet {
 				RequestDispatcher rd = request.getRequestDispatcher("employees/secure/dashboard.jsp");
 				HttpSession session = request.getSession(false);
 				if (session != null) {
+					System.out.println("Session is active! Extracting employeebean...");
 					Object oeb = session.getAttribute("employeeBean");
 					if (oeb == null) {
+						System.out.println("session.employeeBean is null! Redirecting to login");
 						response.sendRedirect("employees/login.jsp");
 					} else {
 						EmployeeBean eb = (EmployeeBean) oeb;
+						System.out.println("session.employeeBean is valid! Redirecting to dashboard.");
 						request.setAttribute("employeeBean", eb);
 						rd.forward(request, response);
 					}
 				} else {
+					System.out.println("No session active!");
 					response.sendRedirect("employees/login.jsp");
 				}
 		}
@@ -112,8 +116,6 @@ public class EmployeeLoginServlet extends HttpServlet {
 			if (cb != null){
 				eb.setClinic(cb);
 			}
-			System.out.println(eb);
-			System.out.println(eb.getClinicId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());

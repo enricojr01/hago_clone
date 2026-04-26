@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<jsp:useBean id="clinicTimeSlotBean" scope="request" class="com.clone.hago_clone.ClinicTimeSlotBean"/>
+<jsp:useBean id="clinicTimeSlotBean" scope="request" class="com.clone.hago_clone.models.ClinicTimeSlotBean"/>
 <jsp:useBean id="clinicBean" scope="request" class="com.clone.hago_clone.models.ClinicBean"/>
 <jsp:useBean id="timeSlotBean" scope="request" class="com.clone.hago_clone.models.TimeSlotBean"/>
 <!DOCTYPE html>
@@ -29,11 +29,11 @@
 		</ul>
 		<br />
 		<a href="<%= request.getContextPath() 
-				+ "/clinicTimeSlotBeanServlet?action=listTimeSlots&clinicId=" 
+				+ "/clinicTimeSlotBeanServlet?action=listClinicTimeSlots&clinicId=" 
 				+ clinicBean.getId() 
 		%>">No, I want to go back.</a><br/>
 		<a href="<%= request.getContextPath() 
-				+ "/clinicServiceBeanServlet?action=deleteSave&clinicTimeSlotId=%s" 
+				+ "/clinicTimeSlotBeanServlet?action=deleteSave&clinicTimeSlotId=" 
 				+ clinicTimeSlotBean.getId()
 		%>">Yes, I would like to remove this Time Slot.</a>
     </body>

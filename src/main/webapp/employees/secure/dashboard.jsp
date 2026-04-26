@@ -21,6 +21,7 @@
 			String adminServicePath = request.getContextPath() + "/serviceBeanServlet?action=list";
 			String adminClinicServicePath = request.getContextPath() + "/clinicServiceBeanServlet?action=list";
 			String adminTimeSlotPath = request.getContextPath() + "/timeSlotBeanServlet?action=list";
+			String adminClinicTimeSlotPath = request.getContextPath() + "/clinicTimeSlotBeanServlet?action=list";
 
 			String adminEmployeeLink = "<a href='" + adminEmployeePath + "'>Manage Employee Accounts</a>";
 			String adminPatientsLink = "<a href='" + adminPatientsPath + "'>Manage Patient Accounts</a>";
@@ -28,6 +29,7 @@
 			String adminServiceLink = "<a href='" + adminServicePath + "'>Manage Services</a>";
 			String adminClinicServiceLink = "<a href='" + adminClinicServicePath + "'>Manage Clinic/Service Mapping</a>";
 			String adminTimeSlotLink = "<a href='" + adminTimeSlotPath + "'>Manage Time Slots</a>";
+			String adminClinicTimeSlotLink = "<a href='" + adminClinicTimeSlotPath + "'>Manage Clinic/Time Slot Mappings</a>";
 
 			String staffAppointmentsPath = request.getContextPath() + "/appointmentBeanServlet?action=list";
 			String staffProfilePath = request.getContextPath() + "/staffProfileServlet?action=list&id=" + employeeBean.getId();
@@ -54,6 +56,7 @@
 				out.println("</ul>");
 				out.println("<ul>");
 				out.println("<li>" + adminClinicServiceLink + "</li>");
+				out.println("<li>" + adminClinicTimeSlotLink + "</li>");
 				out.println("</ul>");
 				out.println("<ul>");
 				out.println("<li>" + logoutLink + "</li>");

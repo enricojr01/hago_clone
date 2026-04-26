@@ -5,7 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="com.clone.hago_clone.models.ClinicBean, com.clone.hago_clone.models.TimeSlotBean, java.util.ArrayList"%>
+<%@page import="com.clone.hago_clone.models.ClinicBean, com.clone.hago_clone.models.TimeSlotBean, com.clone.hago_clone.models.ClinicTimeSlotBean, java.util.ArrayList"%>
+<jsp:useBean id="clinicTimeSlotPairs" scope="request" class="ArrayList<ClinicTimeSlotBean>"/>
 <jsp:useBean id="clinicBean" scope="request" class="com.clone.hago_clone.models.ClinicBean"/>
 <jsp:useBean id="availableTimeSlotList" scope="request" class="java.util.ArrayList<TimeSlotBean>"/>
 <jsp:useBean id="timeSlotList" scope="request" class="java.util.ArrayList<TimeSlotBean>"/>
@@ -26,13 +27,13 @@
 				<th>Delete</th>
 			</tr>
 			<% 
-				for (int i = 0; i < timeSlotList.size(); i++) {
-					TimeSlotBean tsb = timeSlotList.get(i);
+				for (int i = 0; i < clinicTimeSlotPairs.size(); i++) {
+					ClinicTimeSlotBean ctsb = clinicTimeSlotPairs.get(i);
+					TimeSlotBean tsb = ctsb.getTimeSlot();
 					String targetPath = String.format(
 						"%s/clinicTimeSlotBeanServlet?action=deleteConfirm&clinicTimeSlotId=%s", 
 						request.getContextPath(), 
-						clinicBean.getId(), 
-						tsb.getId()
+						ctsb.getId()
 					);
 					String anchor = String.format(
 						"<a href='%s'>Delete</a>", 
@@ -40,10 +41,10 @@
 					);
 					
 					out.println("<tr>");
-					out.println("<td>" + sb.getId() + "</td>");
-					out.println("<td>" + sb.getStart() + "</td>");
-					out.println("<td>" + sb.getEnd() + "</td>");
-					out.println("<td>" + sb.getCapacity() + "</td>");
+					out.println("<td>" + tsb.getId() + "</td>");
+					out.println("<td>" + tsb.getStart() + "</td>");
+					out.println("<td>" + tsb.getEnd() + "</td>");
+					out.println("<td>" + tsb.getCapacity() + "</td>");
 					out.println("<td>" + anchor + "</td>");
 					out.println("</tr>");
 				}
@@ -52,19 +53,20 @@
 
 		<h1>Add a Time Slot to this Clinic</h1>
 		<form action="<%= request.getContextPath() + "/clinicTimeSlotBeanServlet" %>" method="GET">
-			<input type="hidden" name="action" value="addTimeSlot"/>
+			<input type="hidden" name="action" value="addClinicTimeSlot"/>
 			<input type="hidden" name="clinicId" value="<%= clinicBean.getId() %>"/>
 			<fieldset>
-			</fieldset>
 				<legend>Error</legend>
 				<%
-					if (error) {
-						out.println(error);
+					Object error = request.getAttribute("error");
+					if (error != null) {
+						out.println(error.toString());
 					}
 				%>
+			</fieldset>
 			<fieldset>
 				<legend>Select a Time Slot</legend>
-				<select name="serviceId">
+				<select name="timeSlotId">
 					<% 
 						if (availableTimeSlotList.size() == 0) {
 							out.println("<option value='empty'>No available Time Slots</option>");

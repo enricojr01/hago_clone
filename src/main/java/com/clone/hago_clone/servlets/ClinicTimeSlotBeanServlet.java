@@ -24,9 +24,7 @@ import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.ClinicTimeSlotDAO;
 import com.clone.hago_clone.db.TimeSlotDAO;
 import com.clone.hago_clone.models.ClinicBean;
-import com.clone.hago_clone.models.ClinicServiceBean;
 import com.clone.hago_clone.models.ClinicTimeSlotBean;
-import com.clone.hago_clone.models.ServiceBean;
 import com.clone.hago_clone.models.TimeSlotBean;
 
 /**
@@ -144,7 +142,6 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 				ClinicTimeSlotBean ctsb = clinicTimeSlotPairs.get(i);				
 				associatedTimeSlots.add(ctsb.getTimeSlot());
 			}	
-
 			// then we convert associatedTimeSlot and  fullTimeSlotList to sets.
 			Set<TimeSlotBean> all = new HashSet<>();
 			Set<TimeSlotBean> associated = new HashSet<>();
@@ -169,9 +166,14 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 		} catch (SQLException e) {
 			throw new ServletException(e.getMessage());
 		}
+		
+//		System.out.println("clinicBean: " + clinicBeanb);
+//		System.out.println("timeSlotList: " + fullTimeSlotList);
+//		System.out.println("availableTimeSlotList: " + availableTimeSlots);
 
+		request.setAttribute("clinicTimeSlotPairs", clinicTimeSlotPairs);
 		request.setAttribute("clinicBean", cb);
-		request.setAttribute("timeSlotList", fullTimeSlotList);
+		request.setAttribute("timeSlotList", associatedTimeSlots);
 		request.setAttribute("availableTimeSlotList", availableTimeSlots);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicTimeSlots/listTimeSlots.jsp");
@@ -220,17 +222,19 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 		}
 
 		String targetPath = String.format(
-				"%s/clinicServiceBeanServlet"
+				"%s/clinicTimeSlotBeanServlet"
 						+ "?action=addSuccess"
 						+ "&timeSlotId=%s"
 						+ "&timeSlotStart=%s"
 						+ "&timeSlotEnd=%s"
+						+ "&timeSlotCapacity=%s"
 						+ "&clinicId=%s"
 						+ "&clinicName=%s",
 				request.getContextPath(),
 				tsb.getId(),
 				tsb.getStart(),
 				tsb.getEnd(),
+				tsb.getCapacity(),
 				cb.getId(),
 				cb.getName()
 		);
@@ -239,7 +243,7 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 
 	private void addSuccess(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicServices/addSuccess.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicTimeSlots/addSuccess.jsp");
 		rd.forward(request, response);
 	}
 
@@ -255,12 +259,13 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 		} catch (SQLException e) {
 			throw new ServletException(e.getMessage());
 		}
-
+		System.out.println("ctsb: " + ctsb);
+		
 		request.setAttribute("clinicTimeSlotBean", ctsb);
 		request.setAttribute("clinicBean", ctsb.getClinic());
 		request.setAttribute("timeSlotBean", ctsb.getTimeSlot());
 
-		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicServices/deleteConfirm.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicTimeSlots/deleteConfirm.jsp");
 		rd.forward(request, response);
 	}
 
@@ -304,7 +309,7 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 	
 	private void deleteSuccess(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicServices/deleteSuccess.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicTimeSlots/deleteSuccess.jsp");
 		rd.forward(request, response);
 	}
 }

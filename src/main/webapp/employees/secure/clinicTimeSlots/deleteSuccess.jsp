@@ -26,7 +26,7 @@
 		</ul>
 		<a href="<%= 
 			request.getContextPath() 
-					+ "/clinicTimeSlotBeanServlet?action=listTimeSlots&clinicId=" 
+					+ "/clinicTimeSlotBeanServlet?action=listClinicTimeSlots&clinicId=" 
 					+ request.getParameter("clinicId") 
 		%>">Return to List of Time Slots for <%= request.getParameter("clinicName") %></a>
     </body>

@@ -42,7 +42,8 @@ public class ClinicTimeSlotDAO extends BaseDAO {
 				+ "capacity int not null default 0,"
                 + "PRIMARY KEY (id),\n"
                 + "FOREIGN KEY (clinicId) REFERENCES Clinic(id),\n"
-                + "FOREIGN KEY (timeslotId) REFERENCES TimeSlot(id))";
+                + "FOREIGN KEY (timeslotId) REFERENCES TimeSlot(id),\n"
+				+ "UNIQUE (clinicId, timeslotId))";
     }
 
     @Override
@@ -87,7 +88,11 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         ArrayList<ClinicTimeSlotBean> retval = new ArrayList();
         Connection c = getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT id, clinicId,timeslotId FROM ClinicTimeSlot");
+        ResultSet rs = s.executeQuery("SELECT * FROM ClinicTimeSlot as cts "
+				+ "inner join Clinic as c on cts.clinicId=c.id "
+				+ "inner join TimeSlot as ts on cts.timeslotId=ts.id "
+				+ "order by ts.start"
+		);
         while (rs.next()) {
 			int id = rs.getInt("id"),
 			clinicId = rs.getInt("clinicId"),
@@ -107,8 +112,8 @@ public class ClinicTimeSlotDAO extends BaseDAO {
     public ClinicTimeSlotBean findClinicTimeSlotById(int id) throws SQLException {
         String sqlQuery = "select * from ClinicTimeSlot as cts "
                 + "inner join Clinic as c on cts.clinicId=c.id "
-                + "inner join TimeSlot ts on cts.timeSlotId=ts.id "
-                + "where id=?";
+                + "inner join TimeSlot as ts on cts.timeslotId=ts.id "
+                + "where cts.id=? order by ts.start";
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(sqlQuery);
         ps.setInt(1, id);
@@ -141,7 +146,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
 
     public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean cb) 
 			throws SQLException {
-        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id, inner join TimeSlot as ts on cts.timeSlotId=ts.id where cts.clinicId=?";
+        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id inner join TimeSlot as ts on cts.timeslotId=ts.id where cts.clinicId=?";
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(sqlQuery);
         ps.setLong(1, cb.getId());
@@ -158,7 +163,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
                     rs.getLong("ts.id"),
                     rs.getTime("ts.start").toLocalTime(),
                     rs.getTime("ts.end").toLocalTime(),
-                    rs.getInt("capacity")
+                    rs.getInt("ts.capacity")
             );
 
             ClinicTimeSlotBean ctsb = new ClinicTimeSlotBean(
@@ -174,7 +179,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
 
     public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByTimeSlotId(TimeSlotBean ts) 
 			throws SQLException {
-        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id, inner join TimeSlot as ts on cts.timeSlotId=ts.id where cts.timeSlotId=?";
+        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id, inner join TimeSlot as ts on cts.timeslotId=ts.id where cts.timeslotId=?";
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(sqlQuery);
         ps.setLong(1, ts.getId());
