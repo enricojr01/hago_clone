@@ -97,7 +97,7 @@ public class AppointmentDAO extends BaseDAO {
     
     public AppointmentBean createAppointmentById(Timestamp appointmentDate, PatientBean patient, long clinicId, long serviceId) throws SQLException {
         ClinicBean cb = clinicDao.findClinicById(clinicId);
-        ServiceBean sb = serviceDao.findServiceById(clinicId);
+        ServiceBean sb = serviceDao.findServiceById(serviceId);
         return createAppointment(appointmentDate,patient,cb,sb);
     }
     
