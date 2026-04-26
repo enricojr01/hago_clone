@@ -114,13 +114,12 @@ public class PatientJoinQueueServlet extends HttpServlet {
             PatientQueueBean patientQueue = pqdb.CreatePatientQueue(pb, queue);
             request.setAttribute("pq", patientQueue);
             RequestDispatcher rd = request.getRequestDispatcher("patientviews/joinqueueconf.jsp");
-            rd.forward(request, response);            
+            rd.forward(request, response);
         } catch (NumberFormatException e) {
             throw new ServletException(e.getMessage());                        
         } catch (SQLException e) {
             throw new ServletException(e.getMessage());                        
         }
-
     }
 
     /**
