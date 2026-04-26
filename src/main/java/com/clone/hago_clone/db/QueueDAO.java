@@ -106,7 +106,7 @@ public class QueueDAO extends BaseDAO {
             throws SQLException {
         ArrayList<QueueBean> retval = new ArrayList();        
         Connection c = getConnection();                
-        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.serviceId, Queue.capacity FROM Queue JOIN PatientQueue ON Queue.id = PatientQueue.queueId WHERE (q.clinicId = ?) AND (PatientQueue.patientId != ?)");
+        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.serviceId, Queue.capacity FROM Queue JOIN PatientQueue ON PatientQueue.queueId = Queue.id WHERE (Queue.clinicId = ?) AND (PatientQueue.patientId != ?)");
         ps.setLong(1, clinic.getId());
         ps.setLong(2, patient.getId());
         
