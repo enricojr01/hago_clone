@@ -85,14 +85,14 @@ public class QueueDAO extends BaseDAO {
             throws SQLException {
         ArrayList<QueueBean> retval = new ArrayList();        
         Connection c = getConnection();                
-        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.serviceId, Queue.capacity FROM Queue WHERE clinicId = ?");
+        PreparedStatement ps = c.prepareStatement("SELECT id, serviceId, capacity FROM Queue WHERE clinicId = ?");
         ps.setLong(1, clinic.getId());
         ResultSet rs = ps.executeQuery();        
         while(rs.next()) {
-            QueueBean tmp = new QueueBean(rs.getLong("Queue.id"),                    
+            QueueBean tmp = new QueueBean(rs.getLong("id"),                    
                                           clinic,
-                                          services.findServiceById(rs.getLong("Queue.serviceId")),
-                                          rs.getInt("Queue.capacity")
+                                          services.findServiceById(rs.getLong("serviceId")),
+                                          rs.getInt("capacity")
             );
             retval.add(tmp);
         }
@@ -106,7 +106,7 @@ public class QueueDAO extends BaseDAO {
             throws SQLException {
         ArrayList<QueueBean> retval = new ArrayList();        
         Connection c = getConnection();                
-        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.clinicId, Queue.serviceId, Queue.capacity FROM Queue JOIN PatientQueue ON Queue.id = PatientQueue.queueId WHERE (Queue.clinicId = ?) AND (PatientQueue.patientId != ?)");
+        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.serviceId, Queue.capacity FROM Queue JOIN PatientQueue ON Queue.id = PatientQueue.queueId WHERE (q.clinicId = ?) AND (PatientQueue.patientId != ?)");
         ps.setLong(1, clinic.getId());
         ps.setLong(2, patient.getId());
         

@@ -60,31 +60,23 @@ public class PatientLoginServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {                
-        
-        
+            throws ServletException, IOException {                                
         RequestDispatcher rd;        
         HttpSession session = request.getSession(false);                                       
         if(session != null) {            
             if(session.getAttribute("patientBean") != null)  {
-                //skip to the dashboard                
-                
+                //skip to the dashboard                                
                 response.sendRedirect("patientDashboard");
                 return;
-            }
-            
+            }            
             //Are they an employee?
             if(session.getAttribute("employeeBean") != null) {                
                 
                 response.sendRedirect("index.html");                 
                 return;
-            }                                                            
-            session.invalidate();
-        }         
-        
+            }                                                                        
+        }
         //go to login page
-        
-        
         rd = request.getRequestDispatcher("patientviews/loginform.jsp");            
         rd.forward(request,response);        
     }
@@ -114,12 +106,8 @@ public class PatientLoginServlet extends HttpServlet {
             if(session.getAttribute("employeeBean") != null) {                
                 response.sendRedirect("index.html");                 
                 return;
-            }      
-            //if there is nothing there, then just invalidate the session
-            session.invalidate();      
-            response.sendRedirect("index.html");
-        }
-        
+            }
+        }        
         RequestDispatcher rd;        
         
         String email = request.getParameter("email"),        

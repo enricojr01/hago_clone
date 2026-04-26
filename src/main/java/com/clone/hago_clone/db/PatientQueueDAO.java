@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+//TODO: Get and Filter out all Queues that the patient is already in
+
 /**
  *
  * @author anonymous
@@ -84,7 +86,7 @@ public class PatientQueueDAO extends BaseDAO {
     throws SQLException {
         ArrayList<QueueBean> retval = new ArrayList();
         Connection c = getConnection();
-        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.clinicId, Queue.serviceId FROM Queue JOIN PatientQueue ON Queue.id = PatientQueue.queueId WHERE PatientQueue.patientId = ?");
+        PreparedStatement ps = c.prepareStatement("SELECT Queue.id, Queue.clinicId, Queue.serviceId, Queue.capacity FROM Queue JOIN PatientQueue ON Queue.id = PatientQueue.queueId WHERE PatientQueue.patientId = ?");
         ps.setLong(1,patient.getId());
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
