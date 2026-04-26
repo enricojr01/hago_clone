@@ -9,6 +9,8 @@ import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.ClinicServiceDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
 import com.clone.hago_clone.db.PatientDAO;
+import com.clone.hago_clone.db.PatientQueueDAO;
+import com.clone.hago_clone.db.QueueDAO;
 import com.clone.hago_clone.db.ServiceDAO;
 import com.clone.hago_clone.models.AppointmentBean;
 import com.clone.hago_clone.models.AppointmentStatus;
@@ -41,18 +43,27 @@ public class CreateAllSampleData {
             AppointmentDAO a = new AppointmentDAO(url,uname,pword);
             EmployeeDAO e = new EmployeeDAO(url,uname,pword);            
             ClinicServiceDAO cs = new ClinicServiceDAO(url,uname,pword);
+            QueueDAO q = new QueueDAO(url,uname,pword);            
+            PatientQueueDAO pq = new PatientQueueDAO(url,uname,pword);
             
             
             a.dropAppointmentTable();
             cs.dropClinicServiceTable();                                    
             e.dropEmployeeTable();         
+            pq.dropPatientQueueTable();
+            q.dropQueueTable();
             s.dropServiceTable();                        
             c.dropClinicTable();
             p.dropPatientTable();            
+            
+            
 
+            
             p.createPatientTable();            
             c.createClinicTable();                                    
             s.createServiceTable();           
+            q.createQueueTable();
+            pq.createPatientQueueTable();            
             e.createEmployeeTable();
             cs.createClinicServiceTable();            
             a.createAppointmentTable();                        
@@ -66,10 +77,24 @@ public class CreateAllSampleData {
             
             PatientBean pb = p.createPatient("Patient", "patient@patient.com", "password");
             ClinicBean cb = c.createClinic("Clinic","Clinic");
+            ClinicBean cb1 = c.createClinic("Clinic 2","Clinic 2");
+            
             ServiceBean sb = s.createService("Service", "Service");                                    
+            ServiceBean sb1 = s.createService("Service 2", "Service 2");                                    
+            ServiceBean sb2 = s.createService("Service 3", "Service 3");                                    
+                                    
+            ClinicServiceBean csb = cs.createClinicService(cb, sb);            
+            cs.createClinicService(cb, sb1);
+            cs.createClinicService(cb, sb2);            
+            cs.createClinicService(cb1, sb);
+            //cs.createClinicService(cb1, sb1);
+
+            q.createNewQueue(cb, sb, 10);
+            q.createNewQueue(cb, sb1, 10);
+            q.createNewQueue(cb, sb2, 10);
             
-            
-            ClinicServiceBean csb = cs.createClinicService(cb, sb);
+            q.createNewQueue(cb1, sb, 20);
+                                    
             AppointmentBean ab0,ab1,ab2,ab3,ab4;
             
             ab0 = a.createAppointment(Timestamp.valueOf(

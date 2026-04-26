@@ -77,7 +77,7 @@ public class PatientDAO extends BaseDAO {
         if(ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
-            int id = rs.getInt(1);
+            long id = rs.getLong(1);
             retval = new PatientBean(id,name,email,password);
             rs.close();
         }
@@ -101,7 +101,7 @@ public class PatientDAO extends BaseDAO {
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT id, name, email, pword FROM Patients");
         while(rs.next()) {
-            int id = rs.getInt("id");
+            long id = rs.getLong("id");
             String name = rs.getString("name"),
                    email = rs.getString("email"),
                    pword = rs.getString("pword");
@@ -119,11 +119,11 @@ public class PatientDAO extends BaseDAO {
      * @return A PatientBean, or null
      * @throws SQLException 
      */
-    public PatientBean findPatientById(int id) throws SQLException {
+    public PatientBean findPatientById(long id) throws SQLException {
         PatientBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("SELECT name,email,pword FROM Patient WHERE id = ?");                
-        ps.setInt(1,id);
+        ps.setLong(1,id);
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
             String name = rs.getString("name"),
@@ -153,7 +153,7 @@ public class PatientDAO extends BaseDAO {
         ps.setString(1,'%' + name + '%');
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
-            int _id = rs.getInt("id");
+            long _id = rs.getLong("id");
             String _name = rs.getString("name"),
                    _email = rs.getString("email"),
                    _pword = rs.getString("pword");
@@ -181,7 +181,7 @@ public class PatientDAO extends BaseDAO {
         ps.setString(1,patient.getName());
         ps.setString(2,patient.getEmail());
         ps.setString(3,patient.getPword());        
-        ps.setInt(4, patient.getId());
+        ps.setLong(4, patient.getId());
         boolean retval;
         
         try {
@@ -208,7 +208,7 @@ public class PatientDAO extends BaseDAO {
     public boolean deletePatient(PatientBean patient) throws SQLException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("DELETE FROM Patient WHERE id = ?");               
-        ps.setInt(1, patient.getId());
+        ps.setLong(1, patient.getId());
         boolean retval = (ps.executeUpdate() > 0);
         ps.close();
         c.close();
@@ -231,7 +231,7 @@ public class PatientDAO extends BaseDAO {
         ps.setString(2,password); 
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
-            int _id = rs.getInt("id");
+            long _id = rs.getLong("id");
             String _email = rs.getString("email"),
                    _name = rs.getString("name"),
                    _pword = rs.getString("pword");  

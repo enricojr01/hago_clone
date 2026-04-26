@@ -22,14 +22,14 @@ import java.util.ArrayList;
  */
 public class ClinicTimeSlotDAO extends BaseDAO {
 
-    private ClinicDAO clinic;
-    private TimeSlotDAO timeslot;
+    private ClinicDAO clinics;
+    private TimeSlotDAO timeslots;
 
     public ClinicTimeSlotDAO(String url, String username, String password)
             throws ClassNotFoundException {
         super(url, username, password);
-        this.clinic = new ClinicDAO(url, username, password);
-        this.timeslot = new TimeSlotDAO(url, username, password);
+        this.clinics = new ClinicDAO(url, username, password);
+        this.timeslots = new TimeSlotDAO(url, username, password);
 
     }
 
@@ -59,21 +59,21 @@ public class ClinicTimeSlotDAO extends BaseDAO {
     
 
     //Create Functions
-    public ClinicTimeSlotBean createClinicTimeSlot(ClinicBean cb, TimeSlotBean tb) throws SQLException {        
+    public ClinicTimeSlotBean createClinicTimeSlot(ClinicBean clinic, TimeSlotBean timeslot) throws SQLException {        
         ClinicTimeSlotBean retval = null;
 
         Connection c = getConnection();
 
         PreparedStatement ps = c.prepareStatement("INSERT INTO ClinicTimeSlot (clinicId,timeslotId) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
-        ps.setInt(1, (int) cb.getId());
+        ps.setInt(1, (int) clinic.getId());
 
-        ps.setLong(2, tb.getId());
+        ps.setLong(2, timeslot.getId());
 
         if (ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
-            int id = rs.getInt(1);
-            retval = new ClinicTimeSlotBean(id, cb, tb);
+            long id = rs.getLong(1);
+            retval = new ClinicTimeSlotBean(id, clinic, timeslot);
             rs.close();
         }
         ps.close();
@@ -88,12 +88,12 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT id, clinicId,timeslotId FROM ClinicTimeSlot");
         while (rs.next()) {
-            int id = rs.getInt("id"),
-                    clinicId = rs.getInt("clinicId"),
-                    timeslotId = rs.getInt("timeslotId");
+            long id = rs.getLong("id"),
+                    clinicId = rs.getLong("clinicId"),
+                    timeslotId = rs.getLong("timeslotId");
             ClinicTimeSlotBean tmp = new ClinicTimeSlotBean(id,
-                    clinic.findClinicById(clinicId),
-                    timeslot.findTimeSlotById(timeslotId));
+                    clinics.findClinicById(clinicId),
+                    timeslots.findTimeSlotById(timeslotId));
             
             retval.add(tmp);
         }
@@ -103,18 +103,33 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         return retval;
     }
 
-    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean cb) throws SQLException {
-        return null;
+    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean clinic) throws SQLException {
+        ArrayList<ClinicTimeSlotBean> retval = new ArrayList();
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement("SELECT * FROM ClinicTimeSlot WHERE clinicId = ?");
+        ps.setLong(1,clinic.getId());
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()) {
+            ClinicTimeSlotBean tmp = new ClinicTimeSlotBean(rs.getLong("id"),
+                    clinic,
+                    timeslots.findTimeSlotById(rs.getLong("timeslotId")));                    
+            
+            retval.add(tmp);
+        }
+        rs.close();
+        ps.close();
+        c.close();
+        return retval;
     }
     
     //Update Functions
     //i dont know tbh....
     
     //Delete Functions
-    public boolean deleteClinicTimeSlot(ClinicTimeSlotBean ctb) throws SQLException {
+    public boolean deleteClinicTimeSlot(ClinicTimeSlotBean clinicTimeslot) throws SQLException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("DELETE FROM ClinicTimeSlot WHERE id = ?");
-        ps.setInt(1, ctb.getId());
+        ps.setLong(1, clinicTimeslot.getId());
         boolean retval = (ps.executeUpdate() > 0);
         ps.close();
         c.close();

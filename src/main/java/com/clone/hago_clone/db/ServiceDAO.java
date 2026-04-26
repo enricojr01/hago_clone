@@ -81,6 +81,27 @@ public class ServiceDAO extends BaseDAO {
 		}
 	}
 
+        public ArrayList<ServiceBean> getAllServices()
+                throws SQLException {
+            ArrayList<ServiceBean> retval = new ArrayList();
+            Connection c = getConnection();
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Service");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                ServiceBean tmp = new ServiceBean(
+                                        rs.getLong("id"),
+					rs.getString("name"),
+					rs.getString("description")
+                );
+                retval.add(tmp);
+            }
+            rs.close();
+            ps.close();
+            c.close();
+            return retval;
+            
+        }
+        
 	public ServiceBean findServiceById(long id) throws SQLException {
 		String sqlQuery = "select * from Service where id=?";
 		Connection c = getConnection();

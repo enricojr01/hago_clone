@@ -4,13 +4,26 @@
  */
 package com.clone.hago_clone.servlets;
 
+import com.clone.hago_clone.ConnectionDetails;
+import com.clone.hago_clone.DBConnections;
+import com.clone.hago_clone.db.AppointmentDAO;
+import com.clone.hago_clone.db.ClinicServiceDAO;
+import com.clone.hago_clone.db.ServiceDAO;
+import com.clone.hago_clone.models.AppointmentBean;
+import com.clone.hago_clone.models.PatientBean;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -18,7 +31,37 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "PatientBookAppointment", urlPatterns = {"/patientBookAppointment"})
 public class PatientBookAppointment extends HttpServlet {
-
+    private AppointmentDAO adb;
+    private ClinicServiceDAO csdb;        
+    private ServiceDAO sdb;
+    @Override
+    public void init() {
+        ConnectionDetails cdt = DBConnections.prod();
+        
+        try {
+            csdb = new ClinicServiceDAO(
+                    cdt.getUrl(),
+                    cdt.getUsername(),
+                    cdt.getPassword()
+            );
+            sdb = new ServiceDAO(
+                    cdt.getUrl(),
+                    cdt.getUsername(),
+                    cdt.getPassword()
+            );
+            adb = new AppointmentDAO(
+                    cdt.getUrl(),
+                    cdt.getUsername(),
+                    cdt.getPassword()
+            );
+            
+        } catch (ClassNotFoundException e) {
+            // TODO: figure out how to correctly handle exceptions at the
+            // 		 servlet level.
+            e.printStackTrace();
+        }
+    } 
+    
       
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -31,7 +74,16 @@ public class PatientBookAppointment extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        try {
+            HashMap cs = csdb.findClinicServicesMap();        
+            ArrayList s = sdb.getAllServices();
+            request.setAttribute("clinicservices",cs);
+            request.setAttribute("services",s);
+            RequestDispatcher rd = request.getRequestDispatcher("patientviews/bookappointment.jsp");
+            rd.forward(request,response);
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -45,7 +97,29 @@ public class PatientBookAppointment extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            return;
+        }
         
+                
+        try {
+            long clinic = Long.parseLong(request.getParameter("clinic"));
+            long service = Long.parseLong(request.getParameter("service"));
+            String timeStr = request.getParameter("time");
+            timeStr += ":00";
+            System.out.println(timeStr);
+            Timestamp time = Timestamp.valueOf(timeStr.replace("T"," "));                                    
+            PatientBean pb = (PatientBean)session.getAttribute("patientBean");                                       
+            AppointmentBean ab = adb.createAppointmentById(time,pb,clinic,service);
+            request.setAttribute("appointmentInfo", ab);
+            RequestDispatcher rd = request.getRequestDispatcher("patientviews/bookappointmentconf.jsp");
+            rd.forward(request, response);            
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } catch(NumberFormatException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -10,16 +10,16 @@ import java.sql.Timestamp;
  *
  * @author anonymous
  */
-public class AppointmentBean /* implements Serializable */ {
+public class AppointmentBean {
 
-    private int id; //READ
+    private long id; //READ
     private Timestamp date; //READ WRITE    
     private AppointmentStatus status; //READ WRITE
     private PatientBean patient; //READ
     private ClinicBean clinic; //READ
     private ServiceBean service; //READ
               
-    public AppointmentBean(int id, Timestamp date,AppointmentStatus status,PatientBean patient, ClinicBean clinic, ServiceBean service) {
+    public AppointmentBean(long id, Timestamp date,AppointmentStatus status,PatientBean patient, ClinicBean clinic, ServiceBean service) {
         this.id = id;
         this.date = date;
         this.status = status;
@@ -28,7 +28,7 @@ public class AppointmentBean /* implements Serializable */ {
         this.service = service;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

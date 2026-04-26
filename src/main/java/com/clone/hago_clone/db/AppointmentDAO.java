@@ -77,7 +77,7 @@ public class AppointmentDAO extends BaseDAO {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO Appointment (date,status,patientId,clinicId,serviceId) VALUES (?,\'AWAITING\',?,?,?)", Statement.RETURN_GENERATED_KEYS);
         ps.setTimestamp(1, appointmentDate);        
-        ps.setInt(2, patient.getId());
+        ps.setLong(2, patient.getId());
         ps.setInt(3, (int) clinic.getId());
         ps.setInt(4, (int) service.getId());
 
@@ -85,7 +85,7 @@ public class AppointmentDAO extends BaseDAO {
         if (ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
-            int id = rs.getInt(1);
+            long id = rs.getLong(1);
             retval = new AppointmentBean(id, appointmentDate, AppointmentStatus.AWAITING, patient, clinic, service);
             rs.close();
         }
@@ -94,6 +94,13 @@ public class AppointmentDAO extends BaseDAO {
         c.close();
         return retval;
     }
+    
+    public AppointmentBean createAppointmentById(Timestamp appointmentDate, PatientBean patient, long clinicId, long serviceId) throws SQLException {
+        ClinicBean cb = clinicDao.findClinicById(clinicId);
+        ServiceBean sb = serviceDao.findServiceById(clinicId);
+        return createAppointment(appointmentDate,patient,cb,sb);
+    }
+    
 
     //Read Functions
     //This function also needs the timeslot DAO...
@@ -103,7 +110,7 @@ public class AppointmentDAO extends BaseDAO {
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT id,date,status,patientId,clinicId,serviceId FROM Appointment");
         while (rs.next()) {
-            int id = rs.getInt("id");
+            long id = rs.getLong("id");
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
             int patientId = rs.getInt("patientId"),
@@ -128,19 +135,19 @@ public class AppointmentDAO extends BaseDAO {
 
     }
 
-    public AppointmentBean findAppointmentById(int id) throws SQLException {
+    public AppointmentBean findAppointmentById(long id) throws SQLException {
         AppointmentBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("SELECT date,status,patientId,clinicId,serviceId FROM Appointment WHERE id = ?");
-        ps.setInt(1, id);
+        ps.setLong(1, id);
 
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int patientId = rs.getInt("patientId"),
-                    clinicId = rs.getInt("clinicId"),
-                    serviceId = rs.getInt("serviceId");
+            long patientId = rs.getLong("patientId"),
+                    clinicId = rs.getLong("clinicId"),
+                    serviceId = rs.getLong("serviceId");
 
             retval = new AppointmentBean(id, date,
                     AppointmentStatus.valueOf(status),
@@ -159,14 +166,14 @@ public class AppointmentDAO extends BaseDAO {
         ArrayList<AppointmentBean> retval = new ArrayList();
         Connection c = getConnection();        
         PreparedStatement ps = c.prepareStatement("SELECT id,date,status,clinicId,serviceId FROM Appointment WHERE patientId = ?");
-        ps.setInt(1,patient.getId());
+        ps.setLong(1,patient.getId());
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int id = rs.getInt("id"),
-                    clinicId = rs.getInt("clinicId"),
-                    serviceId = rs.getInt("serviceId");
+            long id = rs.getLong("id"),
+                    clinicId = rs.getLong("clinicId"),
+                    serviceId = rs.getLong("serviceId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
                     AppointmentStatus.valueOf(status),
@@ -193,9 +200,9 @@ public class AppointmentDAO extends BaseDAO {
         while(rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int id = rs.getInt("id"),
-                    patientId = rs.getInt("patientId"),
-                    serviceId = rs.getInt("serviceId");
+            long id = rs.getLong("id"),
+                    patientId = rs.getLong("patientId"),
+                    serviceId = rs.getLong("serviceId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
                     AppointmentStatus.valueOf(status),
@@ -222,9 +229,9 @@ public class AppointmentDAO extends BaseDAO {
         while(rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int id = rs.getInt("id"),
-                    patientId = rs.getInt("patientId"),
-                    clinicId = rs.getInt("clinicId");
+            long id = rs.getLong("id"),
+                    patientId = rs.getLong("patientId"),
+                    clinicId = rs.getLong("clinicId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
                     AppointmentStatus.valueOf(status),
@@ -249,7 +256,7 @@ public class AppointmentDAO extends BaseDAO {
         PreparedStatement ps = c.prepareStatement("UPDATE Appointment SET date = ?, status = ? WHERE id = ?");
         ps.setTimestamp(1, appointment.getDate());
         ps.setString(2, appointment.getStatus().name());
-        ps.setInt(3, appointment.getId());
+        ps.setLong(3, appointment.getId());
         boolean retval;
         try {
             retval = (ps.executeUpdate() > 0);
@@ -266,7 +273,7 @@ public class AppointmentDAO extends BaseDAO {
     public boolean deleteAppointment(AppointmentBean appointment) throws SQLException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("DELETE FROM Appointment WHERE id = ?");
-        ps.setInt(1, appointment.getId());
+        ps.setLong(1, appointment.getId());
         boolean retval = (ps.executeUpdate() > 0);
         ps.close();
         c.close();
