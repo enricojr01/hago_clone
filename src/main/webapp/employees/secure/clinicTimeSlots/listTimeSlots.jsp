@@ -66,10 +66,10 @@
 			</fieldset>
 			<fieldset>
 				<legend>Select a Time Slot</legend>
-				<select name="timeSlotId">
+				<select name="timeSlotId" required>
 					<% 
 						if (availableTimeSlotList.size() == 0) {
-							out.println("<option value='empty'>No available Time Slots</option>");
+							out.println("<option value=''>No available Time Slots</option>");
 						} else {
 							for (int i = 0; i < availableTimeSlotList.size(); i++) {
 								TimeSlotBean sb = availableTimeSlotList.get(i);

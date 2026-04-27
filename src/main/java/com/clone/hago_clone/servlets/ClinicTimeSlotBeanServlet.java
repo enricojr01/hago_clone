@@ -187,7 +187,7 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 
 		if (timeSlotId.equals("empty")) {
 			String targetPath = String.format(
-					"%s/clinicTimeSlotBeanServlet?action=listTimeSlots&clinicId=%s", 
+					"%s/clinicTimeSlotBeanServlet?action=listClinicTimeSlots&clinicId=%s", 
 					request.getContextPath(), 
 					clinicId
 			);
