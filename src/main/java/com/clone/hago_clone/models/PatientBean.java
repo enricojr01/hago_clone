@@ -11,13 +11,13 @@ package com.clone.hago_clone.models;
 
 
 public class PatientBean {
-    private int id; //READ
+    private long id; //READ
     private String name; //READ WRITE
     private String email; //READ WRITE
     private String pword; //READ WRITE
     
     
-    public PatientBean(int id, String name, String email, String pword) {
+    public PatientBean(long id, String name, String email, String pword) {
         this.id = id;
         this.name = name;
         this.pword = pword;
@@ -25,7 +25,7 @@ public class PatientBean {
     }
 
     
-    public int getId() {
+    public long getId() {
         return id;
     }
   

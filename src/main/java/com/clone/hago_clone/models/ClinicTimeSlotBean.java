@@ -8,24 +8,20 @@ package com.clone.hago_clone.models;
  * @author anonymous
  */
 public class ClinicTimeSlotBean {
-    private int id; //READ
+    private long id; //READ
     private ClinicBean clinic; //READ
     private TimeSlotBean timeslot; //READ
 
     public ClinicTimeSlotBean() {}
 
-    public ClinicTimeSlotBean(int id, ClinicBean clinic, TimeSlotBean timeslot) {
+    public ClinicTimeSlotBean(long id, ClinicBean clinic, TimeSlotBean timeslot) {
         this.id = id;
         this.clinic = clinic;
         this.timeslot = timeslot;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public ClinicBean getClinic() {

@@ -49,7 +49,7 @@ public class PatientDAO extends BaseDAO {
      */
     @Override
     protected String dropTableStatement() {
-        return "DROP TABLE Patient";
+        return "DROP TABLE IF EXISTS Patient";
     }
     
     public boolean createPatientTable() throws SQLException {
@@ -72,8 +72,8 @@ public class PatientDAO extends BaseDAO {
         PatientBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO Patient (name,email,pword) VALUES (?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
-
-		String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+        
+        String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
         ps.setString(1,name);
         ps.setString(2,email);        
         ps.setString(3, hash);
@@ -81,7 +81,7 @@ public class PatientDAO extends BaseDAO {
         if(ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
-            int id = rs.getInt(1);
+            long id = rs.getLong(1);
             retval = new PatientBean(id,name,email,password);
             rs.close();
         }
@@ -99,13 +99,13 @@ public class PatientDAO extends BaseDAO {
      * @return An ArrayList of all Patients, can be empty
      * @throws SQLException 
      */
-    public ArrayList<PatientBean> getAllPatients() throws SQLException {        
+    public ArrayList<PatientBean> findAllPatients() throws SQLException {        
         ArrayList<PatientBean> retval = new ArrayList<PatientBean>();
         Connection c = getConnection();
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT id, name, email, pword FROM Patient");
         while(rs.next()) {
-            int id = rs.getInt("id");
+            long id = rs.getLong("id");
             String name = rs.getString("name"),
                    email = rs.getString("email"),
                    pword = rs.getString("pword");
@@ -123,11 +123,11 @@ public class PatientDAO extends BaseDAO {
      * @return A PatientBean, or null
      * @throws SQLException 
      */
-    public PatientBean findPatientById(int id) throws SQLException {
+    public PatientBean findPatientById(long id) throws SQLException {
         PatientBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("SELECT name,email,pword FROM Patient WHERE id = ?");                
-        ps.setInt(1,id);
+        ps.setLong(1,id);
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
             String name = rs.getString("name"),
@@ -144,6 +144,24 @@ public class PatientDAO extends BaseDAO {
     }
     
     
+    public PatientBean findPatientByEmail(String email) throws SQLException {
+        PatientBean retval = null;
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement("SELECT * FROM Patient WHERE email = ?");                        
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()) {
+            long id = rs.getLong("id");
+            String name = rs.getString("name"),                   
+                   pword = rs.getString("pword");            
+            retval = new PatientBean(id,name,email,pword);
+        }        
+        rs.close();
+        ps.close();
+        c.close();        
+        return retval;               
+    }
+    
     /**
      * Returns all Patients that match the fuzzy string given
      * @param name
@@ -157,7 +175,7 @@ public class PatientDAO extends BaseDAO {
         ps.setString(1,'%' + name + '%');
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
-            int _id = rs.getInt("id");
+            long _id = rs.getLong("id");
             String _name = rs.getString("name"),
                    _email = rs.getString("email"),
                    _pword = rs.getString("pword");
@@ -185,7 +203,7 @@ public class PatientDAO extends BaseDAO {
         ps.setString(1,patient.getName());
         ps.setString(2,patient.getEmail());
         ps.setString(3,patient.getPword());        
-        ps.setInt(4, patient.getId());
+        ps.setLong(4, patient.getId());
         boolean retval;
         
         try {
@@ -212,7 +230,7 @@ public class PatientDAO extends BaseDAO {
     public boolean deletePatient(PatientBean patient) throws SQLException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("DELETE FROM Patient WHERE id = ?");               
-        ps.setInt(1, patient.getId());
+        ps.setLong(1, patient.getId());
         boolean retval = (ps.executeUpdate() > 0);
         ps.close();
         c.close();
@@ -228,14 +246,29 @@ public class PatientDAO extends BaseDAO {
     public PatientBean validateCredentials(String email,String password) 
             throws SQLException
     {
-        PatientBean retval = null;
+        PatientBean retval = findPatientByEmail(email);
+        
+        if(retval != null) { 
+            char[] p = password.toCharArray();
+            char[] h = retval.getPword().toCharArray();
+            BCrypt.Result res = BCrypt.verifyer().verify(p,h);
+            if(res.verified == false) {
+                retval = null;
+            }            
+        }
+        
+        return retval;        
+        /*
+        
         Connection c = getConnection();        
         PreparedStatement ps = c.prepareStatement("SELECT id,email,name,pword FROM Patient WHERE (email = ? AND  pword = ?)");        
-        ps.setString(1,email);
-        ps.setString(2,password); 
+        
+        String hash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+        System.out.println("validateCredentials(): " + password + " -> " + hash);
+        ps.setString(2,hash); 
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
-            int _id = rs.getInt("id");
+            long _id = rs.getLong("id");
             String _email = rs.getString("email"),
                    _name = rs.getString("name"),
                    _pword = rs.getString("pword");  
@@ -244,6 +277,7 @@ public class PatientDAO extends BaseDAO {
         rs.close();
         ps.close();
         c.close();        
-        return retval;        
+        
+*/
     }                                   
 }

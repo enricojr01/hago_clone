@@ -10,8 +10,8 @@ package com.clone.hago_clone.db;
 
 import java.sql.Timestamp;
 
-import com.clone.hago_clone.models.TimeSlotBean;
 import com.clone.hago_clone.models.AppointmentBean;
+import com.clone.hago_clone.models.AppointmentStatus;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.PatientBean;
 import com.clone.hago_clone.models.ServiceBean;
@@ -36,18 +36,18 @@ public class AppointmentDAO extends BaseDAO {
     public AppointmentDAO(String url, String username, String password)
             throws ClassNotFoundException {
         super(url, username, password);
-
         this.patientDao = new PatientDAO(url, username, password);
         this.clinicDao = new ClinicDAO(url, username, password);
         this.serviceDao = new ServiceDAO(url, username, password);
     }
+    
 
     @Override
     protected String createTableStatement() {
         return "CREATE TABLE IF NOT EXISTS Appointment (\n"
                 + "id INT NOT NULL AUTO_INCREMENT,\n"
                 + "date DATETIME NOT NULL,\n"
-                + "status ENUM('AWAITING','CONFIRMED') NOT NULL,\n"
+                + "status " + AppointmentStatus.getSQLType() + " NOT NULL,\n"
                 + "patientId INT NOT NULL,\n"
                 + "clinicId INT NOT NULL,\n"
                 + "serviceId INT NOT NULL,\n"
@@ -60,7 +60,7 @@ public class AppointmentDAO extends BaseDAO {
 
     @Override
     protected String dropTableStatement() {
-        return "DROP TABLE Appointment";
+        return "DROP TABLE IF EXISTS Appointment";
     }
 
     public boolean createAppointmentTable() throws SQLException {
@@ -77,7 +77,7 @@ public class AppointmentDAO extends BaseDAO {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO Appointment (date,status,patientId,clinicId,serviceId) VALUES (?,\'AWAITING\',?,?,?)", Statement.RETURN_GENERATED_KEYS);
         ps.setTimestamp(1, appointmentDate);        
-        ps.setInt(2, patient.getId());
+        ps.setLong(2, patient.getId());
         ps.setInt(3, (int) clinic.getId());
         ps.setInt(4, (int) service.getId());
 
@@ -85,8 +85,8 @@ public class AppointmentDAO extends BaseDAO {
         if (ps.executeUpdate() > 0) {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
-            int id = rs.getInt(1);
-            retval = new AppointmentBean(id, appointmentDate, "awaiting", patient, clinic, service);
+            long id = rs.getLong(1);
+            retval = new AppointmentBean(id, appointmentDate, AppointmentStatus.AWAITING, patient, clinic, service);
             rs.close();
         }
 
@@ -94,16 +94,23 @@ public class AppointmentDAO extends BaseDAO {
         c.close();
         return retval;
     }
+    
+    public AppointmentBean createAppointmentById(Timestamp appointmentDate, PatientBean patient, long clinicId, long serviceId) throws SQLException {
+        ClinicBean cb = clinicDao.findClinicById(clinicId);
+        ServiceBean sb = serviceDao.findServiceById(serviceId);
+        return createAppointment(appointmentDate,patient,cb,sb);
+    }
+    
 
     //Read Functions
     //This function also needs the timeslot DAO...
-    public ArrayList<AppointmentBean> getAllAppointments() throws SQLException {
+    public ArrayList<AppointmentBean> findAllAppointments() throws SQLException {
         ArrayList<AppointmentBean> retval = new ArrayList();
         Connection c = getConnection();
         Statement s = c.createStatement();
         ResultSet rs = s.executeQuery("SELECT id,date,status,patientId,clinicId,serviceId FROM Appointment");
         while (rs.next()) {
-            int id = rs.getInt("id");
+            long id = rs.getLong("id");
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
             int patientId = rs.getInt("patientId"),
@@ -112,7 +119,7 @@ public class AppointmentDAO extends BaseDAO {
 
             AppointmentBean tmp = new AppointmentBean(id,
                     date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinicDao.findClinicById(clinicId),
                     serviceDao.findServiceById(serviceId));
@@ -128,22 +135,22 @@ public class AppointmentDAO extends BaseDAO {
 
     }
 
-    public AppointmentBean findAppointmentById(int id) throws SQLException {
+    public AppointmentBean findAppointmentById(long id) throws SQLException {
         AppointmentBean retval = null;
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("SELECT date,status,patientId,clinicId,serviceId FROM Appointment WHERE id = ?");
-        ps.setInt(1, id);
+        ps.setLong(1, id);
 
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int patientId = rs.getInt("patientId"),
-                    clinicId = rs.getInt("clinicId"),
-                    serviceId = rs.getInt("serviceId");
+            long patientId = rs.getLong("patientId"),
+                    clinicId = rs.getLong("clinicId"),
+                    serviceId = rs.getLong("serviceId");
 
             retval = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinicDao.findClinicById(clinicId),
                     serviceDao.findServiceById(serviceId)
@@ -159,17 +166,17 @@ public class AppointmentDAO extends BaseDAO {
         ArrayList<AppointmentBean> retval = new ArrayList();
         Connection c = getConnection();        
         PreparedStatement ps = c.prepareStatement("SELECT id,date,status,clinicId,serviceId FROM Appointment WHERE patientId = ?");
-        ps.setInt(1,patient.getId());
+        ps.setLong(1,patient.getId());
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int id = rs.getInt("id"),
-                    clinicId = rs.getInt("clinicId"),
-                    serviceId = rs.getInt("serviceId");
+            long id = rs.getLong("id"),
+                    clinicId = rs.getLong("clinicId"),
+                    serviceId = rs.getLong("serviceId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patient,
                     clinicDao.findClinicById(clinicId),
                     serviceDao.findServiceById(serviceId)
@@ -193,12 +200,12 @@ public class AppointmentDAO extends BaseDAO {
         while(rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int id = rs.getInt("id"),
-                    patientId = rs.getInt("patientId"),
-                    serviceId = rs.getInt("serviceId");
+            long id = rs.getLong("id"),
+                    patientId = rs.getLong("patientId"),
+                    serviceId = rs.getLong("serviceId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinic,
                     serviceDao.findServiceById(serviceId)
@@ -222,12 +229,12 @@ public class AppointmentDAO extends BaseDAO {
         while(rs.next()) {
             Timestamp date = rs.getTimestamp("date");
             String status = rs.getString("status");
-            int id = rs.getInt("id"),
-                    patientId = rs.getInt("patientId"),
-                    clinicId = rs.getInt("clinicId");
+            long id = rs.getLong("id"),
+                    patientId = rs.getLong("patientId"),
+                    clinicId = rs.getLong("clinicId");
 
             AppointmentBean tmp = new AppointmentBean(id, date,
-                    status,
+                    AppointmentStatus.valueOf(status),
                     patientDao.findPatientById(patientId),
                     clinicDao.findClinicById(clinicId),
                     service
@@ -248,8 +255,8 @@ public class AppointmentDAO extends BaseDAO {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("UPDATE Appointment SET date = ?, status = ? WHERE id = ?");
         ps.setTimestamp(1, appointment.getDate());
-        ps.setString(2, appointment.getCancellation());
-        ps.setInt(3, appointment.getId());
+        ps.setString(2, appointment.getStatus().name());
+        ps.setLong(3, appointment.getId());
         boolean retval;
         try {
             retval = (ps.executeUpdate() > 0);
@@ -266,7 +273,7 @@ public class AppointmentDAO extends BaseDAO {
     public boolean deleteAppointment(AppointmentBean appointment) throws SQLException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement("DELETE FROM Appointment WHERE id = ?");
-        ps.setInt(1, appointment.getId());
+        ps.setLong(1, appointment.getId());
         boolean retval = (ps.executeUpdate() > 0);
         ps.close();
         c.close();

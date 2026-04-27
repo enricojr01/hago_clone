@@ -118,7 +118,7 @@ public class AppointmentBeanServlet extends HttpServlet {
 		ArrayList<ClinicServiceBean> clinicServices = new ArrayList<>();
 		ArrayList<ServiceBean> services = new ArrayList<>();
 		try {
-			patients = pd.getAllPatients();
+			patients = pd.findAllPatients();
 			clinicServices = csd.findClinicServiceByClinicId(cb.getId());
 		} catch (SQLException e) {
 			throw new ServletException(e.getMessage());
@@ -181,7 +181,7 @@ public class AppointmentBeanServlet extends HttpServlet {
 			ArrayList<ServiceBean> services = new ArrayList<>();
 			
 			try {
-				patients = pd.getAllPatients();
+				patients = pd.findAllPatients();
 				clinicServices = csd.findClinicServiceByClinicId(cb.getId());
 			} catch (SQLException e) {
 				throw new ServletException(e.getMessage());

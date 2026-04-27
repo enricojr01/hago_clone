@@ -1,80 +1,83 @@
 erDiagram
     EMPLOYEE {
-        int id
+        int id PK
+        int clinic_id FK "References Clinic(id)"
         String role
         String name
-        String email
-        String pword
-        
+        String email UK
+        String pword "Hashed using BCrypt"    
     }    
 
     PATIENT {
-        int id
+        int id PK
         String name
-        String email
-        String pword        
+        String email UK
+        String pword "Hashed using BCrypt"     
     }
 
     CLINIC {
-        int id
+        int id PK
         String name
         String address        
     }
-
-	CLINICSERVICE {
-		int id
-		int clinic_id
-		int service_id
-	}
-
+    
     SERVICE {
-        int id
+        int id PK
         String name
         String desc
     }
 
+	CLINICSERVICE {
+		int id PK
+		int clinic_id FK "References Clinic(id)"
+		int service_id FK "References Service(id)"
+	}
+
     APPOINTMENT {
-        int id
+        int id PK
 		date Date
-        TIMESLOT slot
-		Timestamp created_at 
-		String cancellation 
-    }    
-
-	APPOINTMENTSTATUS {
-		int id
-		int appointment_id
-		int status_id
-	}
-
-	STATUS {
-		int id
-		String name
-		String description
-	}
-    
-    TIMESLOT {
-        id int
-        start Time 
-        end Time
-        capacity int
+        int clinic_id FK "References Clinic(id)"
+        int service_id FK "References Service(id)"
+        TIMESLOT slot_id FK "References CLINICTIMESLOT(id)"
+		Timestamp creationdate 
+		AppointmentStatusEnum status "Can be: 'AWAITING', 'CONFIRMED','CANCELLED_USER',
+        'CANCELLED_CLINIC','MISSED','COMPLETED'"
+    }
+	    
+    CLINICTIMESLOT {
+        id int PK
+        int clinic_id FK "References Clinic(id)"
+        Time start
+        Time end
+        int capacity
     }
 
-	CLINICTIMESLOT {
-		int id 
-		int clinic_id
-		int timeslot_id
-	}
 
-	CLINIC ||--|{ CLINICSERVICE : Provides
-	CLINIC }|--|{ TIMESLOT : Has
-	CLINIC ||--|{ CLINICTIMESLOT : Has
-    CLINIC ||--|{ EMPLOYEE : Works
-    CLINIC ||--|{ APPOINTMENT : At
-	SERVICE||--|{ CLINICSERVICE : Is_Provided_By
-    SERVICE ||--|{ APPOINTMENT : For
-	TIMESLOT ||--|{ CLINICTIMESLOT: Belongs_To
-    APPOINTMENT }|--|| TIMESLOT : In
-	APPOINTMENT ||--|{ APPOINTMENTSTATUS : Is
-	STATUS ||--|{ APPOINTMENTSTATUS: Belongs_To
-    PATIENT ||--|{ APPOINTMENT : Books
+    QUEUE {
+        id int PK
+        int clinic_id FK "References Clinic(id)"
+        int service_id FK "References Service(id)"
+        int capacity        
+    }
+
+    PATIENTQUEUE {
+        id int PK
+        int patient_id FK "References Patient(id)"
+        int queue_id FK "References Queue(id)"
+        Timestamp joindate
+        QueueStatusEnum status "Can be: 'WAITING','CANCELLED_USER','CANCELLED_CLINIC','MISSED','COMPLETED'"
+    }
+
+
+    EMPLOYEE }|--|| CLINIC: Works
+    CLINIC }|--|| CLINICSERVICE: Provides
+    SERVICE }|--|| CLINICSERVICE: Provides
+    PATIENT }|--|| APPOINTMENT: Books
+    PATIENT }|--|| PATIENTQUEUE: Joins
+    QUEUE }|--|| PATIENTQUEUE: Joins
+    CLINIC }|--|| CLINICTIMESLOT: Assigned
+    APPOINTMENT }|--|| CLINICTIMESLOT: "Booked At"
+    APPOINTMENT }|--|| CLINIC: A
+    APPOINTMENT }|--|| SERVICE: B
+    QUEUE }|--|| CLINIC: A
+    QUEUE }|--|| SERVICE: B

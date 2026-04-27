@@ -45,7 +45,7 @@ public class EmployeeDAO extends BaseDAO {
 	
 	@Override
 	protected String dropTableStatement() {
-		return "drop table Employee";
+		return "drop table if exists Employee";
 	}
 	
 	public boolean createEmployeeTable() throws SQLException {

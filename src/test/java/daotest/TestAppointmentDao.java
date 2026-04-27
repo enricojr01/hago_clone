@@ -10,6 +10,7 @@ import com.clone.hago_clone.db.ClinicServiceDAO;
 import com.clone.hago_clone.db.PatientDAO;
 import com.clone.hago_clone.db.ServiceDAO;
 import com.clone.hago_clone.models.AppointmentBean;
+import com.clone.hago_clone.models.AppointmentStatus;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.ClinicServiceBean;
 import com.clone.hago_clone.models.PatientBean;
@@ -248,10 +249,10 @@ public class TestAppointmentDao {
             AppointmentBean ab = app.createAppointment(
                     Timestamp.valueOf(LocalDateTime.of(2026, Month.FEBRUARY, 2, 8, 30)),
                     pb, cb, sb);
-            ab.setCancellation("CONFIRMED");
+            ab.setStatus(AppointmentStatus.CONFIRMED);
             assertTrue(app.updateAppointment(ab));
             AppointmentBean bb = app.findAppointmentById(ab.getId());
-            assertEquals("CONFIRMED", bb.getCancellation());
+            assertEquals(AppointmentStatus.CONFIRMED, bb.getStatus());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -259,6 +260,8 @@ public class TestAppointmentDao {
         }
     }
 
+    /* Made Invalid by the change to using an enum instead of a string */
+    /*
     @Test
     public void updateAppointmentFail() {
         AppointmentDAO app = createBase();
@@ -274,7 +277,7 @@ public class TestAppointmentDao {
             AppointmentBean ab = app.createAppointment(
                     Timestamp.valueOf(LocalDateTime.of(2026, Month.FEBRUARY, 2, 8, 30)),
                     pb, cb, sb);
-            ab.setCancellation("MADE UP STATUS");
+            ab.setStatus(AppointmentStatus.CONFIRMED);
             assertFalse(app.updateAppointment(ab));
 
         } catch (SQLException e) {
@@ -282,5 +285,6 @@ public class TestAppointmentDao {
             fail(e.toString());
         }
     }
+    */
 
 }

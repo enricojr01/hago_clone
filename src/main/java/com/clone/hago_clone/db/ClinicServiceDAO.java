@@ -13,6 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 /**
  *
@@ -44,7 +47,7 @@ public class ClinicServiceDAO extends BaseDAO {
 
 	@Override
 	protected String dropTableStatement() {
-		return "drop table ClinicService";
+		return "drop table if exists ClinicService";
 	}
 
 	public boolean createClinicServiceTable() throws SQLException {
@@ -251,6 +254,47 @@ public class ClinicServiceDAO extends BaseDAO {
 		return results;
 	}
 
+        /**
+         * Returns a HashMap class of all clinics and all their services
+         * @returns A HashMap with ClientBeans as keys, and ArrayList's of ServiceBean as values
+         * @Throws SQLException
+         */
+        public HashMap<ClinicBean,ArrayList<ServiceBean>> findClinicServicesMap()                 
+                    throws SQLException {                        
+            HashMap<ClinicBean,ArrayList<ServiceBean>> retval = new HashMap();                                    
+            Connection c = getConnection();
+            PreparedStatement psClinic = c.prepareStatement("SELECT * FROM Clinic");            
+            
+            ResultSet rsClinic = psClinic.executeQuery();
+            while(rsClinic.next()) {
+                ClinicBean tmpClinic = new ClinicBean(rsClinic.getLong("id"),
+					rsClinic.getString("name"),
+					rsClinic.getString("address")
+                                    );                
+                PreparedStatement psServices = c.prepareStatement("SELECT Service.id, Service.name, Service.description FROM Service JOIN ClinicService ON Service.id = ClinicService.service_id WHERE ClinicService.clinic_id = ?");
+                psServices.setLong(1, tmpClinic.getId());
+                ResultSet rsService = psServices.executeQuery();                
+                ArrayList<ServiceBean> tmpServices = new ArrayList();
+                while(rsService.next()) {
+                    ServiceBean tmpService = new ServiceBean(
+                            rsService.getLong("Service.id"),
+                            rsService.getString("Service.name"),                    
+                            rsService.getString("Service.description")
+                    );
+                    tmpServices.add(tmpService);
+                }                
+                rsService.close();                                
+                psServices.close();
+                retval.put(tmpClinic, tmpServices);                                                
+            }
+            rsClinic.close();
+            
+            psClinic.close();
+            c.close();            
+            return retval;
+            
+        }
+        
 	/** 
 	 * Deletes a ClinicService row matching the id of the provided ClinicServiceBean.
 	 * Associated Clinics and Services are not deleted.

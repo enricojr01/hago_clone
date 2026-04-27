@@ -49,7 +49,7 @@ public class ClinicDAO extends BaseDAO {
 	 */
 	@Override
 	protected String dropTableStatement() {
-		return "drop table Clinic";
+		return "drop table if exists Clinic";
 	}
 
 	public boolean createClinicTable() throws SQLException {
@@ -122,6 +122,25 @@ public class ClinicDAO extends BaseDAO {
 		return out;
 	}
 	
+        public ArrayList<ClinicBean> findAllClinics() throws SQLException {
+            ArrayList<ClinicBean> retval = new ArrayList();
+            Connection c = getConnection();
+            Statement s = c.createStatement();
+            ResultSet rs = s.executeQuery("SELECT * FROM Clinic");
+            while(rs.next()) {
+                ClinicBean tmp = new ClinicBean(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("address")
+			);
+                retval.add(tmp);
+            }
+            rs.close();
+            s.close();
+            c.close();
+            return retval;
+        }
+        
 	/** 
 	 * Returns a single ClinicBean matching the provided id.
 	 * @param id a `long` representing the id of a row.
