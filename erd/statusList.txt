@@ -1,4 +1,3 @@
-
 List of valid appointment statuses:
 
 NoShow - default, so that if a patient doesn't show up we don't have to do anything special to change their status.
@@ -6,3 +5,11 @@ Registered - showed up at clinic, paid, and is waiting
 Completed - consultation / procedure complete
 CancelledByPatient - Cancelled by patient
 CancelledByStaff - Cancelled by staff
+
+Better ones:
+AWAITING - Waiting for confirmation
+CONFIRMED - Confirmed
+COMPLETED - Patient visited and the appointment went well 
+NOSHOW - Patient missed the appointment
+CANCELLED_USER - User cancelled the appointment
+CANCELLED_CLINIC - Clinic cancelled the appointment

@@ -1,6 +1,7 @@
 erDiagram
     EMPLOYEE {
         int id PK
+        int clinic_id FK "References Clinic(id)"
         String role
         String name
         String email UK
@@ -67,3 +68,16 @@ erDiagram
         QueueStatusEnum status "Can be: 'WAITING','CANCELLED_USER','CANCELLED_CLINIC','MISSED','COMPLETED'"
     }
 
+
+    EMPLOYEE }|--|| CLINIC: Works
+    CLINIC }|--|| CLINICSERVICE: Provides
+    SERVICE }|--|| CLINICSERVICE: Provides
+    PATIENT }|--|| APPOINTMENT: Books
+    PATIENT }|--|| PATIENTQUEUE: Joins
+    QUEUE }|--|| PATIENTQUEUE: Joins
+    CLINIC }|--|| CLINICTIMESLOT: Assigned
+    APPOINTMENT }|--|| CLINICTIMESLOT: "Booked At"
+    APPOINTMENT }|--|| CLINIC: A
+    APPOINTMENT }|--|| SERVICE: B
+    QUEUE }|--|| CLINIC: A
+    QUEUE }|--|| SERVICE: B
