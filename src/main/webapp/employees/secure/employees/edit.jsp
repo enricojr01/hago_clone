@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.clone.hago_clone.models.ClinicBean, java.util.ArrayList" %>
+<jsp:useBean id="employeeBean" scope="request" class="com.clone.hago_clone.models.EmployeeBean" />
+<jsp:useBean id="clinicList" scope="request" class="ArrayList<ClinicBean>"/>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,8 +16,6 @@
     </head>
     <body>
         <h1>Edit Employee Account</h1>
-		<jsp:useBean id="employeeBean" scope="request" class="com.clone.hago_clone.models.EmployeeBean" />
-		<jsp:useBean id="clinicList" scope="request" class="ArrayList<ClinicBean>"/>
 		<form action="<%= request.getContextPath() + "/employeeBeanServlet" %>" method="GET">
 			<% 
 				Object error = request.getAttribute("error");
@@ -43,21 +43,12 @@
 					<%
 						for (int i = 0; i < clinicList.size(); i++) {
 							ClinicBean cb = clinicList.get(i);
-							long clinicId;
-							try {
-								clinicId = employeeBean.getClinic().getId();
-								String optionTag = String.format(
-									"<option value='%s' selected>%s</option>",
-									cb.getId(),
-									cb.getName()
-								);
+							long clinicId = employeeBean.getClinic().getId();
+							if (cb.getId() == clinicId) {
+								String optionTag = String.format("<option value='%s' selected>%s</option>", cb.getId(), cb.getName());
 								out.println(optionTag);
-							} catch (NullPointerException e) {
-								String optionTag = String.format(
-									"<option value='%s'>%s</option>",
-									cb.getId(),
-									cb.getName()
-								);
+							} else {
+								String optionTag = String.format("<option value='%s'>%s</option>", cb.getId(), cb.getName());
 								out.println(optionTag);
 							}
 						}

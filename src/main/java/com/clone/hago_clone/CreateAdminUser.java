@@ -40,8 +40,9 @@ public class CreateAdminUser {
             
             cd.createClinicTable();
             ed.createEmployeeTable();
-            
-            ed.addEmployee("superadmin", "sadmin", "sadmin", "123456");
+
+			ClinicBean cb = cd.createClinic("MASTER CLINIC", "for internal use only");
+            ed.addEmployee("superadmin", "sadmin", "sadmin", "123456", cb.getId());
             
             System.out.println("Created new admin user");            
         } catch (ClassNotFoundException e) {            
