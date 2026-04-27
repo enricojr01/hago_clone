@@ -94,9 +94,19 @@ public class ClinicTimeSlotDAO extends BaseDAO {
 				+ "order by ts.start"
 		);
         while (rs.next()) {
+<<<<<<< HEAD
             long id = rs.getLong("id"),
                     clinicId = rs.getLong("clinicId"),
                     timeslotId = rs.getLong("timeslotId");
+||||||| 327920e
+            int id = rs.getInt("id"),
+                    clinicId = rs.getInt("clinicId"),
+                    timeslotId = rs.getInt("timeslotId");
+=======
+			int id = rs.getInt("id"),
+			clinicId = rs.getInt("clinicId"),
+			timeslotId = rs.getInt("timeslotId");
+>>>>>>> main
             ClinicTimeSlotBean tmp = new ClinicTimeSlotBean(id,
                     clinics.findClinicById(clinicId),
                     timeslots.findTimeSlotById(timeslotId));
@@ -109,24 +119,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         return retval;
     }
 
-    public ClinicTimeSlotBean findClinicTimeSlotById(long id) throws SQLException {
-        ClinicTimeSlotBean retval = null;
-        Connection c = getConnection();
-        PreparedStatement ps = c.prepareStatement("SELECT * FROM ClinicTimeSlot WHERE id = ?");
-        ps.setLong(1, id);
-        ResultSet rs = ps.executeQuery();
-        if(rs.next()) {
-            retval = new ClinicTimeSlotBean(id,
-                    clinics.findClinicById(rs.getLong("clinicId")),
-                    timeslots.findTimeSlotById(rs.getLong("timeslotId"))
-            );
-        }
-        rs.close();
-        ps.close();
-        c.close();
-        return retval;
-    }    
-    
+<<<<<<< HEAD
     public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean clinic) throws SQLException {
         ArrayList<ClinicTimeSlotBean> retval = new ArrayList();
         Connection c = getConnection();
@@ -144,8 +137,78 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         ps.close();
         c.close();
         return retval;
+||||||| 327920e
+    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean cb) throws SQLException {
+        return null;
+=======
+    public ClinicTimeSlotBean findClinicTimeSlotById(int id) throws SQLException {
+        String sqlQuery = "select * from ClinicTimeSlot as cts "
+                + "inner join Clinic as c on cts.clinicId=c.id "
+                + "inner join TimeSlot as ts on cts.timeslotId=ts.id "
+                + "where cts.id=? order by ts.start";
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement(sqlQuery);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+
+        ClinicBean cb;
+        TimeSlotBean tsb;
+        ClinicTimeSlotBean ctsb = null;
+        while (rs.next()) {
+            cb = new ClinicBean(
+                    rs.getLong("c.id"),
+                    rs.getString("c.name"),
+                    rs.getString("c.address")
+            );
+            tsb = new TimeSlotBean(
+                    rs.getLong("ts.id"),
+                    rs.getTime("ts.start").toLocalTime(),
+                    rs.getTime("ts.end").toLocalTime(),
+                    rs.getInt("ts.capacity")
+            );
+            ctsb = new ClinicTimeSlotBean(
+                    rs.getInt("cts.id"),
+                    cb,
+                    tsb
+            );
+        }
+
+        return ctsb;
     }
-  
+
+    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean cb) 
+			throws SQLException {
+        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id inner join TimeSlot as ts on cts.timeslotId=ts.id where cts.clinicId=?";
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement(sqlQuery);
+        ps.setLong(1, cb.getId());
+        ResultSet rs = ps.executeQuery();
+
+        ArrayList<ClinicTimeSlotBean> results = new ArrayList<>();
+        while (rs.next()) {
+            ClinicBean newCb = new ClinicBean(
+                    rs.getLong("c.id"),
+                    rs.getString("c.name"),
+                    rs.getString("c.address")
+            );
+            TimeSlotBean newTsb = new TimeSlotBean(
+                    rs.getLong("ts.id"),
+                    rs.getTime("ts.start").toLocalTime(),
+                    rs.getTime("ts.end").toLocalTime(),
+                    rs.getInt("ts.capacity")
+            );
+
+            ClinicTimeSlotBean ctsb = new ClinicTimeSlotBean(
+                    rs.getInt("id"),
+                    newCb,
+                    newTsb
+            );
+
+            results.add(ctsb);
+        }
+        return results;
+    }
+
     public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByTimeSlotId(TimeSlotBean ts) 
 			throws SQLException {
         String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id, inner join TimeSlot as ts on cts.timeslotId=ts.id where cts.timeslotId=?";
@@ -177,6 +240,7 @@ public class ClinicTimeSlotDAO extends BaseDAO {
             results.add(ctsb);
         }
         return results;
+>>>>>>> main
     }
     
     //Update Functions
