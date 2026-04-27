@@ -56,8 +56,8 @@ if (result.verified == true) {
 The add / edit / delete flow for servlets is a bit tedious but at least its standard:
 
 ```
-beanServlet?action=add -> FORWARDS TO add.jsp, add.jsp calls
-beanServlet?action=save -> saves to database then REDIRECTS TO
+beanServlet?action=addDisplay -> FORWARDS TO add.jsp, add.jsp calls
+beanServlet?action=addSave -> saves to database then REDIRECTS TO
 beanServlet?action=addSuccess&id=<n>&name=<n>.... -> FORWARDS TO addSuccess.jsp
 ```
 

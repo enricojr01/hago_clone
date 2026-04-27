@@ -32,7 +32,8 @@ public class TimeSlotDAO extends BaseDAO {
 				+ "start time not null,"
 				+ "end time not null,"
 				+ "capacity int not null,"
-				+ "primary key (id)"
+				+ "primary key (id),"
+				+ "unique (start, end)"
 				+ ")";
 	}
 
@@ -97,6 +98,27 @@ public class TimeSlotDAO extends BaseDAO {
 		}
 	}
 
+
+	public ArrayList<TimeSlotBean> findAllTimeSlots() throws SQLException {
+		String sqlQuery = "select * from TimeSlot order by start";
+		Connection c = getConnection();
+		Statement ps = c.prepareStatement(sqlQuery);
+		ResultSet rs = ps.executeQuery(sqlQuery);
+		ArrayList<TimeSlotBean> results = new ArrayList<>();
+
+		while (rs.next()) {
+			TimeSlotBean tsb = new TimeSlotBean(
+					rs.getLong("id"),
+					rs.getTime("start").toLocalTime(),
+					rs.getTime("end").toLocalTime(),
+					rs.getInt("capacity")
+			);
+			results.add(tsb);
+		}
+
+		return results;
+	}
+		
                 
 	/**
 	 * Returns all TimeSlots matching the given start time.

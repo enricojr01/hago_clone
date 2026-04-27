@@ -39,9 +39,11 @@ public class ClinicTimeSlotDAO extends BaseDAO {
                 + "id INT NOT NULL AUTO_INCREMENT,\n"
                 + "clinicId INT NOT NULL,\n"
                 + "timeslotId INT NOT NULL,\n"
+				+ "capacity int not null default 0,"
                 + "PRIMARY KEY (id),\n"
                 + "FOREIGN KEY (clinicId) REFERENCES Clinic(id),\n"
-                + "FOREIGN KEY (timeslotId) REFERENCES TimeSlot(id))";
+                + "FOREIGN KEY (timeslotId) REFERENCES TimeSlot(id),\n"
+				+ "UNIQUE (clinicId, timeslotId))";
     }
 
     @Override
@@ -86,7 +88,11 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         ArrayList<ClinicTimeSlotBean> retval = new ArrayList();
         Connection c = getConnection();
         Statement s = c.createStatement();
-        ResultSet rs = s.executeQuery("SELECT id, clinicId,timeslotId FROM ClinicTimeSlot");
+        ResultSet rs = s.executeQuery("SELECT * FROM ClinicTimeSlot as cts "
+				+ "inner join Clinic as c on cts.clinicId=c.id "
+				+ "inner join TimeSlot as ts on cts.timeslotId=ts.id "
+				+ "order by ts.start"
+		);
         while (rs.next()) {
             long id = rs.getLong("id"),
                     clinicId = rs.getLong("clinicId"),
@@ -120,6 +126,88 @@ public class ClinicTimeSlotDAO extends BaseDAO {
         ps.close();
         c.close();
         return retval;
+                    rs.getString("c.address")
+            );
+            tsb = new TimeSlotBean(
+                    rs.getLong("ts.id"),
+                    rs.getTime("ts.start").toLocalTime(),
+                    rs.getTime("ts.end").toLocalTime(),
+                    rs.getInt("ts.capacity")
+            );
+            ctsb = new ClinicTimeSlotBean(
+                    rs.getInt("cts.id"),
+                    cb,
+                    tsb
+            );
+        }
+
+        return ctsb;
+    }
+
+    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByClinicId(ClinicBean cb) 
+			throws SQLException {
+        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id inner join TimeSlot as ts on cts.timeslotId=ts.id where cts.clinicId=?";
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement(sqlQuery);
+        ps.setLong(1, cb.getId());
+        ResultSet rs = ps.executeQuery();
+
+        ArrayList<ClinicTimeSlotBean> results = new ArrayList<>();
+        while (rs.next()) {
+            ClinicBean newCb = new ClinicBean(
+                    rs.getLong("c.id"),
+                    rs.getString("c.name"),
+                    rs.getString("c.address")
+            );
+            TimeSlotBean newTsb = new TimeSlotBean(
+                    rs.getLong("ts.id"),
+                    rs.getTime("ts.start").toLocalTime(),
+                    rs.getTime("ts.end").toLocalTime(),
+                    rs.getInt("ts.capacity")
+            );
+
+            ClinicTimeSlotBean ctsb = new ClinicTimeSlotBean(
+                    rs.getInt("id"),
+                    newCb,
+                    newTsb
+            );
+
+            results.add(ctsb);
+        }
+        return results;
+    }
+
+    public ArrayList<ClinicTimeSlotBean> findClinicTimeSlotsByTimeSlotId(TimeSlotBean ts) 
+			throws SQLException {
+        String sqlQuery = "select * from ClinicTimeSlot as cts inner join Clinic as c on cts.clinicId=c.id, inner join TimeSlot as ts on cts.timeslotId=ts.id where cts.timeslotId=?";
+        Connection c = getConnection();
+        PreparedStatement ps = c.prepareStatement(sqlQuery);
+        ps.setLong(1, ts.getId());
+        ResultSet rs = ps.executeQuery();
+
+        ArrayList<ClinicTimeSlotBean> results = new ArrayList<>();
+        while (rs.next()) {
+            ClinicBean newCb = new ClinicBean(
+                    rs.getLong("c.id"),
+                    rs.getString("c.name"),
+                    rs.getString("c.address")
+            );
+            TimeSlotBean newTsb = new TimeSlotBean(
+                    rs.getLong("ts.id"),
+                    rs.getTime("ts.start").toLocalTime(),
+                    rs.getTime("ts.end").toLocalTime(),
+                    rs.getInt("capacity")
+            );
+
+            ClinicTimeSlotBean ctsb = new ClinicTimeSlotBean(
+                    rs.getInt("id"),
+                    newCb,
+                    newTsb
+            );
+
+            results.add(ctsb);
+        }
+        return results;
     }
     
     //Update Functions

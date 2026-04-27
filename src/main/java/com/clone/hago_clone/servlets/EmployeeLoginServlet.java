@@ -7,7 +7,9 @@ package com.clone.hago_clone.servlets;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.clone.hago_clone.ConnectionDetails;
 import com.clone.hago_clone.DBConnections;
+import com.clone.hago_clone.db.ClinicDAO;
 import com.clone.hago_clone.db.EmployeeDAO;
+import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.EmployeeBean;
 import com.mysql.jdbc.StringUtils;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name="employeeLoginServlet", urlPatterns={"/employeeLogin"})
 public class EmployeeLoginServlet extends HttpServlet {
 	private EmployeeDAO ed;
+	private ClinicDAO cd;
 	
 	@Override
 	public void init() {
@@ -37,6 +40,11 @@ public class EmployeeLoginServlet extends HttpServlet {
 					cdt.getUsername(),
 					cdt.getPassword()
 			);	
+			cd = new ClinicDAO(
+					cdt.getUrl(),
+					cdt.getUsername(),
+					cdt.getPassword()
+			);
 		} catch (ClassNotFoundException e) {
 			// TODO: figure out how to correctly handle exceptions at the
 			// 		 servlet level.
@@ -45,27 +53,42 @@ public class EmployeeLoginServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(
-			HttpServletRequest request, 
-			HttpServletResponse response
-	) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("employees/secure/dashboard.jsp");
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			EmployeeBean eb = (EmployeeBean) session.getAttribute("employeeBean");
-			if (eb != null && eb.getRole().equals("superadmin")) {
-				rd.forward(request, response);
-				return;
-			}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		String action = request.getParameter("action");
+
+		if (StringUtils.isNullOrEmpty(action)){
+			action = "temporary";
 		}
-		response.sendRedirect("employees/login.jsp");
+		switch (action) {
+			case "logout":
+				handleLogout(request, response);
+				break;
+			default:
+				RequestDispatcher rd = request.getRequestDispatcher("employees/secure/dashboard.jsp");
+				HttpSession session = request.getSession(false);
+				if (session != null) {
+					System.out.println("Session is active! Extracting employeebean...");
+					Object oeb = session.getAttribute("employeeBean");
+					if (oeb == null) {
+						System.out.println("session.employeeBean is null! Redirecting to login");
+						response.sendRedirect("employees/login.jsp");
+					} else {
+						EmployeeBean eb = (EmployeeBean) oeb;
+						System.out.println("session.employeeBean is valid! Redirecting to dashboard.");
+						request.setAttribute("employeeBean", eb);
+						rd.forward(request, response);
+					}
+				} else {
+					System.out.println("No session active!");
+					response.sendRedirect("employees/login.jsp");
+				}
+		}
 	}
 
 	@Override	
-	protected void doPost(
-			HttpServletRequest request, 
-			HttpServletResponse response
-	) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		RequestDispatcher start = request.getRequestDispatcher(
@@ -88,30 +111,50 @@ public class EmployeeLoginServlet extends HttpServlet {
 		EmployeeBean eb;
 		try {
 			eb = ed.findEmployeeByEmail(email);
+			if (eb == null) {
+				String error = String.format("Employee with email %s not found!", email);
+				request.setAttribute("error", error);
+				start.forward(request, response);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 		}
 
-		if (eb != null) {
-			char[] pass = password.toCharArray();
-			char[] hash = eb.getPassword().toCharArray();
-			
-			BCrypt.Result result = BCrypt
-					.verifyer()
-					.verify(pass, hash);
-			
-			if (result.verified == true) {
-				HttpSession session = request.getSession(true);
-				session.setAttribute("employeeBean", eb);
-				success.forward(request, response);
-			} else {
-				request.setAttribute(
-						"error", 
-						"Incorrect email or password, try again."
+		ClinicBean cb;
+		try {
+			cb = cd.findClinicById(eb.getClinicId());
+			if (cb == null){
+				String error = String.format(
+						"Clinic with id %s not found, for employee %s", 
+						eb.getClinicId(),
+						email
 				);
+				request.setAttribute("error", error);
 				start.forward(request, response);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ServletException(e.getMessage());
+		}
+
+		// Note for the future: maybe not do this outside the DAO anymore
+		eb.setClinic(cb);
+		char[] pass = password.toCharArray();
+		char[] hash = eb.getPassword().toCharArray();
+		
+		BCrypt.Result result = BCrypt
+				.verifyer()
+				.verify(pass, hash);
+		
+		if (result.verified == true) {
+			HttpSession session = request.getSession(true);
+			System.out.println("eb: " + eb);
+			System.out.println("eb.name: " + eb.getName());
+			System.out.println("eb.getRole()" + eb.getRole());
+			session.setAttribute("employeeBean", eb);
+			// maybe I should have redirected here....
+			success.forward(request, response);
 		} else {
 			request.setAttribute(
 					"error", 
@@ -119,5 +162,12 @@ public class EmployeeLoginServlet extends HttpServlet {
 			);
 			start.forward(request, response);
 		}
+	}
+
+	public void handleLogout(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);	
+		session.removeAttribute("employeeBean");
+		response.sendRedirect(request.getContextPath());
 	}
 }

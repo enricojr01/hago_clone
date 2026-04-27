@@ -192,6 +192,7 @@ public class EmployeeDAO extends BaseDAO {
 					rs.getString("email"),
 					rs.getString("password")
 			);
+			eb.setClinicId(rs.getLong("clinic_id"));
 			results.add(eb);
 		}
 
@@ -303,6 +304,7 @@ public class EmployeeDAO extends BaseDAO {
 					rs.getString("email"),
 					rs.getString("password")
 			);
+			eb.setClinicId(rs.getLong("clinic_id"));
 			rs.close();
 			ps.close();
 			c.close();
