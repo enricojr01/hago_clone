@@ -26,13 +26,13 @@
 				<input type="hidden" name="action" value="addSave"/>
 				<legend>Time Slot Details</legend>
 				<label>Start Time:</label>
-				<input type="time" id="name" name="timeSlotStart"/> 
+				<input type="time" id="name" name="timeSlotStart" required/> 
 				<br/>
 				<label>End Time:</label>
-				<input type="time" id="address" name="timeSlotEnd"/> 
+				<input type="time" id="address" name="timeSlotEnd" required/> 
 				<br/>
 				<label>Capacity:</label>
-				<input type="number" id="address" name="timeSlotCapacity"/> 
+				<input type="number" id="address" name="timeSlotCapacity" min="1" required/> 
 				<br/>
 			</fieldset>
 			<fieldset>

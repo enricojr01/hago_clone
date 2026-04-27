@@ -109,40 +109,52 @@ public class EmployeeLoginServlet extends HttpServlet {
 		}
 		
 		EmployeeBean eb;
-		ClinicBean cb;
 		try {
 			eb = ed.findEmployeeByEmail(email);
-			cb = cd.findClinicById(eb.getClinicId());
-			if (cb != null){
-				eb.setClinic(cb);
+			if (eb == null) {
+				String error = String.format("Employee with email %s not found!", email);
+				request.setAttribute("error", error);
+				start.forward(request, response);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 		}
 
-		if (eb != null) {
-			char[] pass = password.toCharArray();
-			char[] hash = eb.getPassword().toCharArray();
-			
-			BCrypt.Result result = BCrypt
-					.verifyer()
-					.verify(pass, hash);
-			
-			if (result.verified == true) {
-				HttpSession session = request.getSession(true);
-				System.out.println("eb: " + eb);
-				System.out.println("eb.name: " + eb.getName());
-				System.out.println("eb.getRole()" + eb.getRole());
-				session.setAttribute("employeeBean", eb);
-				success.forward(request, response);
-			} else {
-				request.setAttribute(
-						"error", 
-						"Incorrect email or password, try again."
+		ClinicBean cb;
+		try {
+			cb = cd.findClinicById(eb.getClinicId());
+			if (cb == null){
+				String error = String.format(
+						"Clinic with id %s not found, for employee %s", 
+						eb.getClinicId(),
+						email
 				);
+				request.setAttribute("error", error);
 				start.forward(request, response);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ServletException(e.getMessage());
+		}
+
+		// Note for the future: maybe not do this outside the DAO anymore
+		eb.setClinic(cb);
+		char[] pass = password.toCharArray();
+		char[] hash = eb.getPassword().toCharArray();
+		
+		BCrypt.Result result = BCrypt
+				.verifyer()
+				.verify(pass, hash);
+		
+		if (result.verified == true) {
+			HttpSession session = request.getSession(true);
+			System.out.println("eb: " + eb);
+			System.out.println("eb.name: " + eb.getName());
+			System.out.println("eb.getRole()" + eb.getRole());
+			session.setAttribute("employeeBean", eb);
+			// maybe I should have redirected here....
+			success.forward(request, response);
 		} else {
 			request.setAttribute(
 					"error", 
