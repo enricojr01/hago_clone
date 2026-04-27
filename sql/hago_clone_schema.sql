@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS Patient (
                 name VARCHAR(50) NOT NULL,
                 email VARCHAR(50) NOT NULL,
                 pword VARCHAR(128) NOT NULL,
-                PRIMARY KEY (id),  UNIQUE (email)
+                PRIMARY KEY (id),  
+                UNIQUE (email)
 );
 
 
@@ -33,9 +34,9 @@ CREATE TABLE IF NOT EXISTS Service(
 			description varchar(256) not null,
 			clinic_id int,
 			hidden bool default false,
-			PRIMARY KEY (id),
-			UNIQUE (name),
-			FOREIGN KEY (clinic_id) REFERENCES Clinic(id)
+			PRIMARY KEY (id),			
+			FOREIGN KEY (clinic_id) REFERENCES Clinic(id),
+                        UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS ClinicService(
@@ -49,9 +50,9 @@ CREATE TABLE IF NOT EXISTS ClinicService(
 );
 
 CREATE TABLE IF NOT EXISTS Appointment (
-                id INT NOT NULL AUTO_INCREMENT,\n
+                id INT NOT NULL AUTO_INCREMENT,
                 date DATETIME NOT NULL,
-                status " + AppointmentStatus.getSQLType() + " NOT NULL,
+                status ENUM('AWAITING','CANCELLED_CLINIC','CANCELLED_USER','MISSED','DONE','CONFIRMED') NOT NULL,
                 patientId INT NOT NULL,
                 clinicId INT NOT NULL,
                 serviceId INT NOT NULL,
@@ -90,9 +91,9 @@ CREATE TABLE IF NOT EXISTS PatientQueue (
                 patientId INT NOT NULL,
                 queueId INT NOT NULL,         
                 PRIMARY KEY (id),
-                FOREIGN KEY (patientId) REFERENCES Patient(id)
+                FOREIGN KEY (patientId) REFERENCES Patient(id),
                 FOREIGN KEY (queueId) REFERENCES Queue(id)
-);    
+);   
 
 CREATE TABLE IF NOT EXISTS TimeSlot(
 				id int not null auto_increment,
@@ -113,8 +114,3 @@ CREATE TABLE IF NOT EXISTS ClinicTimeSlot(
                 FOREIGN KEY (timeslotId) REFERENCES TimeSlot(id),
 		UNIQUE (clinicId, timeslotId)
 );
-
-
-
-
-
