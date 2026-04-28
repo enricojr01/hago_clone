@@ -228,7 +228,8 @@ public class TimeSlotBeanServlet extends HttpServlet {
 				tsb.setCapacity(Integer.parseInt(timeSlotCapacity));
 
 				tsd.updateTimeSlot(tsb);
-
+                                request.setAttribute("timeSlotBean",tsb);
+                                /*
 				String targetPath = String.format(
 						"%s/timeSlotBeanServlet?action=editSuccess&id=%s&start=%s&end=%scapacity=%s",
 						request.getContextPath(),
@@ -237,7 +238,9 @@ public class TimeSlotBeanServlet extends HttpServlet {
 						tsb.getEnd(),
 						tsb.getCapacity()
 				);
-				response.sendRedirect(targetPath);
+*/                                
+                                RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/timeSlots/editSuccess.jsp");
+                                rd.forward(request,response);                               
 			} catch (SQLException e) {
 				throw new ServletException(e);
 			}
