@@ -25,7 +25,7 @@
 				No, I want to go back.
 			</a>
 			<br />
-			<a href="<%= request.getContextPath() + "/timeSlotBeanServlet?action=delete&id=" + timeSlotBean.getId() %>">
+			<a href="<%= request.getContextPath() + "/timeSlotBeanServlet?action=deleteSave&id=" + timeSlotBean.getId() %>">
 				Yes, I want to delete this Clinic.
 			</a>
     </body>

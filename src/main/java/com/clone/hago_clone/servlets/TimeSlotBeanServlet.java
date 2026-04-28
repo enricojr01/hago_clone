@@ -276,21 +276,24 @@ public class TimeSlotBeanServlet extends HttpServlet {
 		TimeSlotBean tsb;
 		try {
 			tsb = tsd.findTimeSlotById(timeSlotId);
-
+                        
 			int res = tsd.deleteTimeSlot(tsb);
 			if (res == 0) {
 				String error = String.format("Could not delete Time Slot with id %s", timeSlotId);
 				throw new ServletException(error);
 			} else {
-				String targetPath = String.format(
-						"%s/employeeBeanServlet?action=deleteSuccess&id=%s&start=%s&end=%s&capacity=%s",
-						request.getContextPath(),
-						tsb.getId(),
-						tsb.getStart(),
-						tsb.getEnd(),
-						tsb.getCapacity()
-				);
-				response.sendRedirect(targetPath);
+				//String targetPath = String.format(
+				//		"%s/employeeBeanServlet?action=deleteSuccess&id=%s&start=%s&end=%s&capacity=%s",
+				//		request.getContextPath(),
+				//		tsb.getId(),
+				//		tsb.getStart(),
+				//		tsb.getEnd(),
+				//		tsb.getCapacity()
+				//);
+				//response.sendRedirect(targetPath);
+                                request.setAttribute("timeSlotBean",tsb);
+                                RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/timeSlots/deleteSuccess.jsp");
+                                rd.forward(request,response);
 			}
 		} catch (SQLException e) {
 			throw new ServletException(e.getMessage());
