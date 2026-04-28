@@ -86,7 +86,7 @@ public class ServiceDAO extends BaseDAO {
                 throws SQLException {
             ArrayList<ServiceBean> retval = new ArrayList();
             Connection c = getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT * FROM Service");
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Service WHERE hidden = false");
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
                 ServiceBean tmp = new ServiceBean(
@@ -101,7 +101,7 @@ public class ServiceDAO extends BaseDAO {
             c.close();
             return retval;
             
-        }
+        }                
         
 	public ServiceBean findServiceById(long id) throws SQLException {
 		String sqlQuery = "select * from Service where id=? and hidden=false";
