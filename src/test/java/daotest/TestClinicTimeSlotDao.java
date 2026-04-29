@@ -82,11 +82,10 @@ public class TestClinicTimeSlotDao {
             TimeSlotDAO td = timeslotDao.createBase();
             ClinicDAO cd = clinicDao.createBase();
 
-            ClinicBean c = cd.createClinic("Clinic Name", "Address");
+            ClinicBean c = cd.createClinic("Clinic Name 2", "Address");
             TimeSlotBean t = td.createTimeSlot(
                     LocalTime.of(9, 0, 0),
-                    LocalTime.of(12, 30, 0),
-                    10);
+                    LocalTime.of(12, 30, 0),10);
 
             ctd.createClinicTimeSlot(c, t);
 
@@ -106,8 +105,7 @@ public class TestClinicTimeSlotDao {
             ClinicBean c = cd.createClinic("Clinic Name", "Address");
             TimeSlotBean t = td.createTimeSlot(
                     LocalTime.of(9, 0, 0),
-                    LocalTime.of(12, 30, 0),
-                    10);
+                    LocalTime.of(12, 30, 0),10);
 
             ClinicTimeSlotBean ct = ctd.createClinicTimeSlot(c, t);
             assertTrue(ctd.deleteClinicTimeSlot(ct));

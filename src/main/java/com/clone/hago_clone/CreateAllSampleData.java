@@ -18,11 +18,14 @@ import com.clone.hago_clone.models.AppointmentBean;
 import com.clone.hago_clone.models.AppointmentStatus;
 import com.clone.hago_clone.models.ClinicBean;
 import com.clone.hago_clone.models.ClinicServiceBean;
+import com.clone.hago_clone.models.ClinicTimeSlotBean;
 import com.clone.hago_clone.models.PatientBean;
 import com.clone.hago_clone.models.ServiceBean;
+import com.clone.hago_clone.models.TimeSlotBean;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 
 /**
@@ -75,10 +78,98 @@ public class CreateAllSampleData {
             a.createAppointmentTable();                        
             
             
+            ClinicBean cb,cb1,cb2;
+            ServiceBean sb,sb1,sb2,sb3;
+            //ClinicServiceBean csb,csb1,csb2,csb3,csb4,csb5,csb6;
+            
+            cb = c.createClinic("Onett Clinic","Hong Kong");
+            cb1 = c.createClinic("Twosome Clinic","Somewhere in Asia");
+            cb2 = c.createClinic("Threed Clinic","Camelot");
+            
+            sb = s.createService("General Check-Up", "General");
+            sb1 = s.createService("ENT Check-Up", "Ears, Nose, Throat");
+            sb2 = s.createService("Foot Check-Up", "Feet");
+            sb3 = s.createService("X-Ray", "X-Ray");
+            
+            cs.createClinicService(cb,sb);
+            cs.createClinicService(cb,sb1);
+            cs.createClinicService(cb,sb2);
+            
+            cs.createClinicService(cb1,sb1);
+            cs.createClinicService(cb1,sb3);
+            
+            cs.createClinicService(cb2,sb);
+            cs.createClinicService(cb2,sb2);
+            cs.createClinicService(cb2,sb3);
+            
+            TimeSlotBean tb,tb1,tb2,tb3;            
+            tb = ts.createTimeSlot(LocalTime.of(9, 0, 0), LocalTime.of(12,0,0), 10);
+            tb1 = ts.createTimeSlot(LocalTime.of(13, 30, 0), LocalTime.of(18,0,0), 10);
+            
+            tb2 = ts.createTimeSlot(LocalTime.of(10, 30, 0), LocalTime.of(21,30,0), 10);
+            
+            tb3 = ts.createTimeSlot(LocalTime.of(6, 0, 0), LocalTime.of(8,30,0), 10);            
             
             
-                                               
+            //ClinicTimeSlotBean ctb;
             
+            cts.createClinicTimeSlot(cb,tb);
+            cts.createClinicTimeSlot(cb,tb1);
+            
+            cts.createClinicTimeSlot(cb1,tb2);
+            
+            cts.createClinicTimeSlot(cb2,tb3);
+            
+                        
+            q.createNewQueue(cb, sb, 10);
+            q.createNewQueue(cb, sb1, 10);
+            q.createNewQueue(cb, sb2, 10);
+            
+            q.createNewQueue(cb1, sb1, 10);
+            q.createNewQueue(cb1, sb3, 10);
+            
+            q.createNewQueue(cb2, sb, 10);
+            q.createNewQueue(cb2, sb2, 10);
+            q.createNewQueue(cb2, sb3,10);
+            
+            
+            
+            e.addEmployee("superadmin", "sadmin", "sadmin", "123456", cb.getId());
+            
+            PatientBean pb = p.createPatient("Patient", "email@email.com", "password");
+            
+            AppointmentBean ab0,ab1,ab2,ab3,ab4;
+            
+            ab0 = a.createAppointment(Timestamp.valueOf(
+                    LocalDateTime.of(2026, Month.MAY, 1, 10, 0)), 
+                    pb, cb, sb);
+            
+            ab1 = a.createAppointment(Timestamp.valueOf(
+                    LocalDateTime.of(2026, Month.MAY, 2, 14, 30)), 
+                    pb, cb, sb1);
+            
+            ab2 = a.createAppointment(Timestamp.valueOf(
+                    LocalDateTime.of(2026, Month.MAY, 3, 13, 0)), 
+                    pb, cb1, sb3);
+
+            ab3 = a.createAppointment(Timestamp.valueOf(
+                    LocalDateTime.of(2026, Month.MAY, 4, 12, 0)), 
+                    pb, cb2, sb);
+
+            ab4 = a.createAppointment(Timestamp.valueOf(
+                    LocalDateTime.of(2026, Month.MAY, 5, 19, 0)), 
+                    pb, cb2, sb3);
+                        
+            ab0.setStatus(AppointmentStatus.CONFIRMED);            
+            ab1.setStatus(AppointmentStatus.CONFIRMED);
+            ab2.setStatus(AppointmentStatus.CONFIRMED);
+            
+            a.updateAppointment(ab0);
+            a.updateAppointment(ab1);
+            a.updateAppointment(ab2);
+            
+            
+/*            
             e.addEmployee("superadmin", "sadmin", "admin@admin.com", "123456");
             
             PatientBean pb = p.createPatient("Patient", "patient@patient.com", "password");
@@ -134,6 +225,7 @@ public class CreateAllSampleData {
             a.updateAppointment(ab0);
             a.updateAppointment(ab1);
             a.updateAppointment(ab2);
+*/
             
             
         } catch(SQLException e) {

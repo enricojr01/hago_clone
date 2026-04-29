@@ -14,10 +14,10 @@
     <body>
         <h1>Time Slot Successfully Edited</h1>
 		<ul>
-			<li>Id: <%= request.getParameter("id") %></li>
-			<li>Start: <%= request.getParameter("start") %></li>
-			<li>End: <%= request.getParameter("end") %></li>
-			<li>Capacity: <%= request.getParameter("capacity") %></li>
+			<li>Id: ${timeSlotBean.id}</li>
+			<li>Start: ${timeSlotBean.start}</li>
+			<li>End: ${timeSlotBean.end}</li>
+			<li>Capacity: ${timeSlotBean.capacity}</li>
 		</ul>
 		<a href="<%= request.getContextPath() + "/timeSlotBeanServlet?action=list" %>">Back to Time Slot List</a>
     </body>

@@ -312,4 +312,5 @@ public class ClinicTimeSlotBeanServlet extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher("/employees/secure/clinicTimeSlots/deleteSuccess.jsp");
 		rd.forward(request, response);
 	}
+                
 }

@@ -16,8 +16,8 @@
 		<ul>
 			<li>Id: <%= request.getParameter("id") %></li>
 			<li>Name: <%= request.getParameter("name") %></li>
-			<li>Email: <%= request.getParameter("address") %></li>
+			<li>Email: <%= request.getParameter("email") %></li>
 		</ul>
-		<a href="<%= request.getContextPath() + "/clinicBeanServlet?action=list" %>">Back to Patient List</a>
+		<a href="<%= request.getContextPath() + "/patientBeanServlet?action=list" %>">Back to Patient List</a>
     </body>
 </html>

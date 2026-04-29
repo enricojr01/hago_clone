@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.clone.hago_clone.servlets.patient;
+package com.clone.hago_clone.servlets;
 
 import com.clone.hago_clone.db.PatientDAO;
 import com.clone.hago_clone.ConnectionDetails;
@@ -273,7 +273,7 @@ public class PatientBeanServlet extends HttpServlet {
 		}
 
 		String targetPath = String.format(
-				"%s/patientBeanServlet?action=deleteSuccess&id=%s&name=%s&email%s", 
+				"%s/patientBeanServlet?action=deleteSuccess&id=%s&name=%s&email=%s", 
 				request.getContextPath(),
 				pb.getId(),
 				pb.getName(),
